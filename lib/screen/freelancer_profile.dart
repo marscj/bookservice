@@ -40,6 +40,13 @@ class _FreelancerProfileState extends State<FreelancerProfile> {
   AppBar get appBar => new AppBar(
     elevation: elevation,
     title: new Text(AppLocalizations.of(context).freelancerProfile),
+    actions: <Widget>[
+      new FlatButton(
+        child: new Text(AppLocalizations.of(context).save),
+        textColor: Colors.white,
+        onPressed: () => _save(),
+      )
+    ],
   );
 
   Widget get body => new Form(
@@ -47,42 +54,43 @@ class _FreelancerProfileState extends State<FreelancerProfile> {
     child: card,
   );
 
-  Widget get card => new CardSettings(
-    padding: 8.0,
+  Widget get card => new ListView(
+    padding: new EdgeInsets.all(12.0),
     children: <Widget>[
-      new CardSettingsHeader(label: AppLocalizations.of(context).address),
-      // new CardSettingsText( 
-      //   label: '${AppLocalizations.of(context).country}:', 
-      //   initialValue: freelancerData.country,
-      //   validator: validator,
-      //   onSaved: (value) => freelancerData.country = value,
-      // ),
-      new CardSettingsText( 
-        label: '${AppLocalizations.of(context).city}:', 
+      new TextFormField(
         initialValue: freelancerData.city,
         validator: validator,
         onSaved: (value) => freelancerData.city = value,
+        decoration: new InputDecoration(
+          labelText: '${AppLocalizations.of(context).city}:'
+        )
       ),
-      new CardSettingsText( 
-        label: '${AppLocalizations.of(context).community}:', 
+      new TextFormField(
         initialValue: freelancerData.community,
         validator: validator,
         onSaved: (value) => freelancerData.community = value,
+        decoration: new InputDecoration(
+          labelText: '${AppLocalizations.of(context).community}:'
+        )
       ),
-      new CardSettingsText( 
-        label: '${AppLocalizations.of(context).street}:', 
+      new TextFormField(
         initialValue: freelancerData.community,
         validator: validator,
         onSaved: (value) => freelancerData.streetName = value,
+        decoration: new InputDecoration(
+          labelText: '${AppLocalizations.of(context).street}:'
+        )
       ),
-      new CardSettingsText( 
-        label: '${AppLocalizations.of(context).villaNo}:', 
+      new TextFormField(
         initialValue: freelancerData.villaNo,
         validator: validator,
         onSaved: (value) => freelancerData.villaNo = value,
+        decoration: new InputDecoration(
+          labelText: '${AppLocalizations.of(context).villaNo}:'
+        )
       ),
-      new CardSettingsHeader(label: AppLocalizations.of(context).skill),
       new CardSettingsFieldState( 
+        style: true,
         label: '${AppLocalizations.of(context).skills}:',
         pickerIcon: new Icon(Icons.arrow_drop_down),
         validator: validatorSkill,
@@ -116,8 +124,8 @@ class _FreelancerProfileState extends State<FreelancerProfile> {
           )
         ) : null,
       ),
-      new CardSettingsHeader(label: AppLocalizations.of(context).workTime),
       new CardSettingsFieldState( 
+        style: true,
         label: '${AppLocalizations.of(context).times}:',
         pickerIcon: new Icon(Icons.arrow_drop_down),
         validator: validatorTime,
@@ -152,15 +160,6 @@ class _FreelancerProfileState extends State<FreelancerProfile> {
             }).toList(),
           )
         ): null,
-      ),
-      new CardSettingsButton(
-        label: 'Click to Save',
-        bottomSpacing: 4.0,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).accentColor,
-        onPressed: () {
-          _save();
-        },
       ),
     ],
   );

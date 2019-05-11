@@ -127,7 +127,7 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> with AfterLay
         visible: widget.addrType == 1,
         child: new ListBody(
           children: <Widget>[
-            addressData.place == null ? new CardSettingsFieldState( 
+            addressData.place == null ? new CardSettingsFieldState(
               label: '${AppLocalizations.of(context).map}:', 
               contentOnNewLine: false, 
               validator: (value) => validatorLocation(addressData?.place),

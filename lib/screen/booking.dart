@@ -106,17 +106,17 @@ class BookingDetailState extends State<BookingDetail> {
 
   dynamic getAction() {
     switch(widget.userData.category) {
-      case 0:
-      case 1:
-      return <Widget>[
-        new FlatButton(
-          onPressed: () {
+      // case 0:
+      // case 1:
+      // return <Widget>[
+      //   new FlatButton(
+      //     onPressed: () {
 
-          },
-          textColor: Colors.white,
-          child: new Text(AppLocalizations.of(context).cancel),
-        ),
-      ];
+      //     },
+      //     textColor: Colors.white,
+      //     child: new Text(AppLocalizations.of(context).cancel),
+      //   ),
+      // ];
       case 2:
       case 3:
       return status == 0 ? <Widget>[
@@ -205,130 +205,144 @@ class BookingDetailState extends State<BookingDetail> {
   : status == 2 ? AppLocalizations.of(context).cancel
   : AppLocalizations.of(context).delete;
 
-  Widget get body => new CardSettings(
-    padding: 8.0,
-    children: <Widget>[
-      new CardSettingsHeader(label: AppLocalizations.of(context).bookingInformation),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).bookingInfo}:',
-        content: new Text(ConfigHome.clientCategories(context)[widget.data.cagetory].name),
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).status}:',
-        content: new Text(getStatus),
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).createTime}:',
-        content: new Text(widget.data.createTime),
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).startTime}:',
-        content: new Text(widget.data.fromDate),
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).endTime}:',
-        content: new Text(widget.data.toDate),
-      ),
-      new Visibility(
-        visible: widget.userData.category == 4 || widget.data.userId == widget.userData.profile.userId,
-        child: new CardSettingsField(
-          label: '${AppLocalizations.of(context).serviceCode}:',
-          content: new Text(widget.data.serviceCode),
-        )
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).additionalInfo}:',
-        contentOnNewLine: true,
-        content: new Text(ConfigBooking.of(context).additionalFirst[widget.data.cagetory][widget.data.info].valueText),
-      ),
-      widget.data.subInfo != -1 ? new CardSettingsField(
-        label: '${AppLocalizations.of(context).additionalInfo}:',
-        contentOnNewLine: true,
-        content: new Text(ConfigBooking.of(context).additionalSecond[widget.data.cagetory][widget.data.info][widget.data.subInfo].valueText),
-      ) : new CardSettingsField(
-        label: '${AppLocalizations.of(context).otherIns}:',
-        contentOnNewLine: true,
-        content: new Text(widget.data.otherInfo ?? AppLocalizations.of(context).unknow),
-      ),
-      new Visibility( 
-        visible: widget.data.url != null,
-        child: CachedNetworkImage(
-          imageUrl: widget.data.url ?? '',
-          width: 480.0,
-          height: 270.0,
-          fit: BoxFit.fitWidth,
-        ),
-      ),
-      new CardSettingsHeader(label: AppLocalizations.of(context).userInfo),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).userName}:',
-        content: new Text(widget.data.userName ?? AppLocalizations.of(context).unknow), 
-      ),
-      new CardSettingsField(
-        label: '${AppLocalizations.of(context).userNumber}:',
-        content: new Text(widget.data.userNumber ?? AppLocalizations.of(context).unknow),
-      ),
-      new Visibility(
-        visible: widget.data.place == null ,
-        child: new CardSettingsFieldState(
-          label: '${AppLocalizations.of(context).address}:',
-          contentOnNewLine: true,
-          content: new Text(widget.data.addr ?? ''),
-        )
-      ),
-      new Visibility(
-        visible: widget.data.place != null,
-        child: new CardSettingsFieldState(
-          label: '${AppLocalizations.of(context).location}:',
-          contentOnNewLine: true,
-          content: widget.data.place != null ? new Text(widget.data.place.toString()) : new Container(),
-          onPressed: () {
-            Routes.instance.navigateTo(context, Routes.instance.map, transition: TransitionType.inFromRight, object: widget.data.place);
-          },
-        )
-      ),
-      new Visibility(
-        visible: widget.userData.category == 4,
-        child: new ListBody(
-          children: <Widget>[
-            new CardSettingsHeader(label: AppLocalizations.of(context).staffInfo),
-            new CardSettingsField(
-              label: '${AppLocalizations.of(context).staffName}:',
-              content: new Text(widget.data.staffName ?? AppLocalizations.of(context).unknow),
-            ),
-            new CardSettingsField(
-              label: '${AppLocalizations.of(context).staffNumber}:',
-              content: new Text(widget.data.staffNumber ?? AppLocalizations.of(context).unknow),
-            ),
-          ],
-        ),
-      ),
-      new CardSettingsHeader(label: AppLocalizations.of(context).evaluation),
-        widget.data.userId == widget.userData.profile.userId ? new CardSettingsField(
-          label: '',
-          contentOnNewLine: true,
-          content: new TextField(
-            controller: evaluationController,
-            maxLength: 128,
-            maxLines: 5,
+  Widget get body => new CardSettings.sectioned(
+    showMaterialIOS: true,
+    children: <CardSettingsSection> [
+      new CardSettingsSection(
+        showMaterialIOS: true,
+        header: new CardSettingsHeader(label: AppLocalizations.of(context).bookingInformation, showMaterialIOS: true),
+        children: <Widget>[
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).bookingInfo}:',
+            content: new Text(ConfigHome.clientCategories(context)[widget.data.cagetory].name),
           ),
-        ) : new CardSettingsField(
-        label: '${AppLocalizations.of(context).evaluation}:',
-        contentOnNewLine: true,
-        content: new Text('${widget.data.evaluation ?? AppLocalizations.of(context).none}'),
-      ), 
-      new CardSettingsButton(
-        label: AppLocalizations.of(context).save,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: evaluationController.text != evaluation ? Theme.of(context).accentColor : Colors.black45,
-        onPressed: evaluationController.text != evaluation ? () {
-            setState(() {
-              evaluation = evaluationController.text;
-            });
-            
-            Store.instance.bookingRef.document(widget.data.id).setData({'evaluation': evaluationController.text}, merge: true);
-            Navigator.of(context).pop();
-          } : null,
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).status}:',
+            content: new Text(getStatus),
+          ),
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).createTime}:',
+            content: new Text(widget.data.createTime),
+          ),
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).startTime}:',
+            content: new Text(widget.data.fromDate),
+          ),
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).endTime}:',
+            content: new Text(widget.data.toDate),
+          ),
+          new Visibility(
+            visible: widget.userData.category == 4 || widget.data.userId == widget.userData.profile.userId,
+            child: new CardSettingsField(
+              label: '${AppLocalizations.of(context).serviceCode}:',
+              content: new Text(widget.data.serviceCode),
+            )
+          ),
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).additionalInfo}:',
+            contentOnNewLine: true,
+            content: new Text(ConfigBooking.of(context).additionalFirst[widget.data.cagetory][widget.data.info].valueText),
+          ),
+          widget.data.subInfo != -1 ? new CardSettingsField(
+            label: '${AppLocalizations.of(context).additionalInfo}:',
+            contentOnNewLine: true,
+            content: new Text(ConfigBooking.of(context).additionalSecond[widget.data.cagetory][widget.data.info][widget.data.subInfo].valueText),
+          ) : new CardSettingsField(
+            label: '${AppLocalizations.of(context).otherIns}:',
+            contentOnNewLine: true,
+            content: new Text(widget.data.otherInfo ?? AppLocalizations.of(context).unknow),
+          ),
+          new Visibility( 
+            visible: widget.data.url != null,
+            child: CachedNetworkImage(
+              imageUrl: widget.data.url ?? '',
+              width: 480.0,
+              height: 270.0,
+              fit: BoxFit.fitWidth,
+            ),
+          )
+        ]
+      ),
+      new CardSettingsSection(
+        showMaterialIOS: true,
+        header: new CardSettingsHeader(label: AppLocalizations.of(context).userInfo, showMaterialIOS: true),
+        children: <Widget> [
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).userName}:',
+            content: new Text(widget.data.userName ?? AppLocalizations.of(context).unknow), 
+          ),
+          new CardSettingsField(
+            label: '${AppLocalizations.of(context).userNumber}:',
+            content: new Text(widget.data.userNumber ?? AppLocalizations.of(context).unknow),
+          ),
+          new Visibility(
+            visible: widget.data.place == null ,
+            child: new CardSettingsFieldState(
+              label: '${AppLocalizations.of(context).address}:',
+              contentOnNewLine: true,
+              content: new Text(widget.data.addr ?? ''),
+            )
+          ),
+          new Visibility(
+            visible: widget.data.place != null,
+            child: new CardSettingsFieldState(
+              label: '${AppLocalizations.of(context).location}:',
+              contentOnNewLine: true,
+              content: widget.data.place != null ? new Text(widget.data.place.toString()) : new Container(),
+              onPressed: () {
+                Routes.instance.navigateTo(context, Routes.instance.map, transition: TransitionType.inFromRight, object: widget.data.place);
+              },
+            )
+          ),
+          new Visibility(
+            visible: widget.userData.category == 4,
+            child: new ListBody(
+              children: <Widget>[
+                new CardSettingsHeader(label: AppLocalizations.of(context).staffInfo),
+                new CardSettingsField(
+                  label: '${AppLocalizations.of(context).staffName}:',
+                  content: new Text(widget.data.staffName ?? AppLocalizations.of(context).unknow),
+                ),
+                new CardSettingsField(
+                  label: '${AppLocalizations.of(context).staffNumber}:',
+                  content: new Text(widget.data.staffNumber ?? AppLocalizations.of(context).unknow),
+                )
+              ]
+            )
+          )
+        ]
+      ),
+      new CardSettingsSection(
+        showMaterialIOS: true,
+        header: new CardSettingsHeader(label: AppLocalizations.of(context).evaluation, showMaterialIOS: true),
+        children: <Widget> [
+          widget.data.userId == widget.userData.profile.userId ? new CardSettingsField(
+            label: '',
+            contentOnNewLine: true,
+            content: new TextField(
+              controller: evaluationController,
+              maxLength: 128,
+              maxLines: 2,
+            ),
+          ) : new CardSettingsField(
+            label: '${AppLocalizations.of(context).evaluation}:',
+            contentOnNewLine: true,
+            content: new Text('${widget.data.evaluation ?? AppLocalizations.of(context).none}')
+          ),
+          
+          new CardSettingsButton(label: AppLocalizations.of(context).save,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: evaluationController.text != evaluation ? Theme.of(context).accentColor : Colors.black45,
+            onPressed: evaluationController.text != evaluation ? () {
+                setState(() {
+                  evaluation = evaluationController.text;
+                });
+                Store.instance.bookingRef.document(widget.data.id).setData({'evaluation': evaluationController.text}, merge: true);
+                Navigator.of(context).pop();
+              } : null,
+          )
+        ]
       )
     ],
   );
@@ -344,86 +358,89 @@ class BookingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new CardSettings(
-      padding: 8.0,
-      children: userData.category == 4 ?
-      <Widget>[
-        new CardSettingsHeaderEx(
-          label: new Text(data.createTime), 
-          icon: data.status != 3 ? 
-            new IconButton(
+    return new CardSettings.sectioned(
+      shrinkWrap: true, 
+      showMaterialIOS: true,
+      children: <CardSettingsSection> [
+        new CardSettingsSection(
+          children: userData.category == 4 ? <Widget>[
+            new CardSettingsHeaderEx(
+              label: new Text(data.createTime), 
+              icon: data.status != 3 ? 
+                new IconButton(
+                  icon: new Icon(Icons.delete, color: Colors.white),
+                  onPressed: () {
+                    Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
+                  }) : new Container()
+            ),
+            new CardSettingsField( 
+              label: '${AppLocalizations.of(context).bookingInfo}:', 
+              content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
+            ), 
+            new CardSettingsField(
+              label: '${AppLocalizations.of(context).startTime}:',
+              content: new Text(data.fromDate),
+            ),
+            new CardSettingsFieldState(
+              label: '${AppLocalizations.of(context).user}:',
+              contentOnNewLine: false,
+              content: new Text('${data.userName ?? AppLocalizations.of(context).unknow}'),
+            ),
+            new CardSettingsFieldState(
+              label: '${AppLocalizations.of(context).staff}:',
+              contentOnNewLine: false,
+              content: new Text('${data.staffName ?? AppLocalizations.of(context).unknow}'),
+              pickerIcon: new Icon(Icons.arrow_drop_down),
+              onPressed: () {
+                Routes.instance.navigateTo(context, Routes.instance.userPageStaff, transition: TransitionType.inFromRight).then<UserModel>((user){
+                  if (user != null) {
+                    Store.instance.bookingRef.document(data.id).setData({'staffId': user.profile.userId, 'staffName': user.profile.displayName, 'staffNumber': user.profile.phoneNumber, 'staffEmail': user.profile.email}, merge: true);
+                  }
+                });
+              },
+            ),
+            new CardSettingsButton(
+              label: AppLocalizations.of(context).clickDetail,
+              bottomSpacing: 4.0,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).accentColor,
+              onPressed: () {
+                Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
+              }
+            ),
+          ] : <Widget> [ 
+            new CardSettingsHeaderEx(
+              label: new Text(data.createTime), 
+              color: data.status == 2 ? Colors.orange : Theme.of(context).accentColor,
+              icon: data.userId == userData.profile.userId ? new IconButton(
               icon: new Icon(Icons.delete, color: Colors.white),
               onPressed: () {
                 Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
               }) : new Container()
-        ),
-        new CardSettingsField( 
-          label: '${AppLocalizations.of(context).bookingInfo}:', 
-          content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
-        ), 
-        new CardSettingsField(
-          label: '${AppLocalizations.of(context).startTime}:',
-          content: new Text(data.fromDate),
-        ),
-        new CardSettingsFieldState(
-          label: '${AppLocalizations.of(context).user}:',
-          contentOnNewLine: false,
-          content: new Text('${data.userName ?? AppLocalizations.of(context).unknow}'),
-        ),
-        new CardSettingsFieldState(
-          label: '${AppLocalizations.of(context).staff}:',
-          contentOnNewLine: false,
-          content: new Text('${data.staffName ?? AppLocalizations.of(context).unknow}'),
-          pickerIcon: new Icon(Icons.arrow_drop_down),
-          onPressed: () {
-            Routes.instance.navigateTo(context, Routes.instance.userPageStaff, transition: TransitionType.inFromRight).then<UserModel>((user){
-              if (user != null) {
-                Store.instance.bookingRef.document(data.id).setData({'staffId': user.profile.userId, 'staffName': user.profile.displayName, 'staffNumber': user.profile.phoneNumber, 'staffEmail': user.profile.email}, merge: true);
+            ),
+            new CardSettingsField( 
+              label: '${AppLocalizations.of(context).bookingInfo}:', 
+              content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
+            ),
+            new CardSettingsField(
+              label: '${AppLocalizations.of(context).startTime}:',
+              content: new Text(data.fromDate),
+            ),
+            new CardSettingsButton(
+              label: AppLocalizations.of(context).clickDetail,
+              bottomSpacing: 4.0,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).accentColor,
+              onPressed: () {
+                if (callback != null) {
+                  callback();
+                }
+                Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
               }
-            });
-          },
-        ),
-        new CardSettingsButton(
-          label: AppLocalizations.of(context).clickDetail,
-          bottomSpacing: 4.0,
-          backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).accentColor,
-          onPressed: () {
-            Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
-          }
-        ),
-      ] :
-      <Widget>[
-        new CardSettingsHeaderEx(
-          label: new Text(data.createTime), 
-          color: data.status == 2 ? Colors.orange : Theme.of(context).accentColor,
-          icon: data.userId == userData.profile.userId ? new IconButton(
-          icon: new Icon(Icons.delete, color: Colors.white),
-          onPressed: () {
-            Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
-          }) : new Container()
-        ),
-        new CardSettingsField( 
-          label: '${AppLocalizations.of(context).bookingInfo}:', 
-          content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
-        ),
-        new CardSettingsField(
-          label: '${AppLocalizations.of(context).startTime}:',
-          content: new Text(data.fromDate),
-        ),
-        new CardSettingsButton(
-          label: AppLocalizations.of(context).clickDetail,
-          bottomSpacing: 4.0,
-          backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).accentColor,
-          onPressed: () {
-            if (callback != null) {
-              callback();
-            }
-            Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
-          }
-        ),
-      ],
+            ),
+          ]
+        )
+      ]
     );
   }
 }

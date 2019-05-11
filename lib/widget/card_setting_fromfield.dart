@@ -9,6 +9,7 @@ class _CardSettingsField extends StatelessWidget {
     this.labelWidth = 120.0,
     this.visible: true,
     this.contentOnNewLine = true,
+    this.style = false
   });
 
   final String label;
@@ -18,6 +19,7 @@ class _CardSettingsField extends StatelessWidget {
   final bool visible;
   final bool contentOnNewLine;
   final double labelWidth;
+  final bool style;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +27,10 @@ class _CardSettingsField extends StatelessWidget {
       visible: visible,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           border: Border(bottom: BorderSide(width: 1.0, color: Theme.of(context).dividerColor)),
         ),
-        padding: EdgeInsets.all(10.0),
+        padding: style ? const EdgeInsets.symmetric(vertical: 14) : const EdgeInsets.all(14),
         child: contentOnNewLine ? Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -88,11 +90,10 @@ class _CardSettingsField extends StatelessWidget {
   }
 
   TextStyle _buildLabelStyle(BuildContext context) {
-    // TextStyle labelStyle = TextStyle(
-    //   fontWeight: FontWeight.bold,
-    //   fontSize: 16.0,
-    // );
-    TextStyle labelStyle = Theme.of(context).textTheme.body2;
+    TextStyle labelStyle = style ? Theme.of(context).textTheme.body2: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16.0,
+    );
 
     return labelStyle.merge(Theme.of(context).inputDecorationTheme.labelStyle);
   }
@@ -113,6 +114,7 @@ class CardSettingsFieldState<T> extends FormField {
     Widget content,
     Widget pickerIcon,
     String errorText,
+    bool style = false,
     bool visible = true,
     bool contentOnNewLine = true,
     double labelWidth = 120.0,
@@ -131,6 +133,7 @@ class CardSettingsFieldState<T> extends FormField {
         child: new _CardSettingsField(
           label: label,
           content: content,
+          style: style,
           pickerIcon: pickerIcon,
           errorText: field.errorText,
           visible: visible,
