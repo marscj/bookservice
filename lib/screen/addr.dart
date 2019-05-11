@@ -21,11 +21,21 @@ class CustomerAddressPage extends StatefulWidget {
   State<CustomerAddressPage> createState() => new _CustomerAddressPageState();
 }
 
-class _CustomerAddressPageState extends State<CustomerAddressPage> {
+class _CustomerAddressPageState extends State<CustomerAddressPage> with AfterLayoutMixin<CustomerAddressPage> {
 
   CustomerAddressModel addressData;
 
-  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  ValueNotifier<AnyItem> _controller = new ValueNotifier<AnyItem>(null);
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    if(widget.addressData != null && widget.addressData.type != null) {
+      setState(() {
+        _controller.value = ConfigAddr.of(context).typeItems[widget.addressData.type];
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -34,6 +44,11 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
 
     addressData = widget.addressData != null ? CustomerAddressModel.fromJson(json.decode(json.encode(widget.addressData))) : new CustomerAddressModel();
     addressData.addrType = widget.addrType;
+
+    _controller = new ValueNotifier<AnyItem>(new AnyItem(
+      value: null,
+      valueText: 'Choose type'
+    ));
   }
 
   @override
@@ -41,6 +56,13 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
     appBar: new AppBar(
       title: new Text(AppLocalizations.of(context).addNewAddr),
       elevation: elevation,
+      actions: <Widget>[
+        new FlatButton(
+          textColor: Colors.white,
+          child: new Text('Save'),
+          onPressed: () => _save()
+        )
+      ],
     ),
     body: new Form(
       key: _formKey,
@@ -48,71 +70,55 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
     ),
   );
 
-  Widget get body => new CardSettings(
-    padding: 8.0,
+  Widget get body => new ListView(
+    padding: new EdgeInsets.all(12.0),
     children: <Widget>[
       new Visibility(
         visible: widget.addrType == 0,
         child:  new ListBody(
           children: <Widget>[
-            new CardSettingsHeader(
-              label: AppLocalizations.of(context).address,
-            ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).city}:', 
+            new TextFormField(
               initialValue: addressData.city,
-              validator: validator,
+              validator: (value) => validator(value),
               onSaved: (value) => addressData.city = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).city}:',
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).community}:', 
+            new TextFormField(
               initialValue: addressData.community,
               validator: validator,
               onSaved: (value) => addressData.community = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).community}:',
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).street}:', 
+            new TextFormField(
               initialValue: addressData.streetName,
               validator: validator,
               onSaved: (value) => addressData.streetName = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).street}:',
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).villaNo}:', 
+            new TextFormField(
               initialValue: addressData.villaNo,
               validator: validator,
               onSaved: (value) => addressData.villaNo = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).villaNo}:', 
+              )
             ),
-            new CardSettingsFieldState( 
-              label: '${AppLocalizations.of(context).type}:', 
-              contentOnNewLine: false, 
-              pickerIcon: new Icon(Icons.arrow_drop_down),
-              validator: validatorType,
-              initialValue: addressData.type == null ? null : ConfigAddr.of(context).typeItems[addressData.type].valueText,
-              onSaved: (value) => addressData.type = ConfigAddr.of(context).typeItems[addressData.type].value,
-              content: new Text(addressData.type == null ? '' : ConfigAddr.of(context).typeItems[addressData.type].valueText),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_){
-                    return new SimpleDialog(
-                      children: ConfigAddr.of(context).typeItems.map((item){
-                        return new ListTile(
-                          title: new Text(item.valueText),
-                          onTap: () {
-                            Navigator.of(context).pop(item);
-                          },
-                        );
-                      }).toList()
-                    );
-                  }
-                ).then((onValue){
-                  if (onValue != null){
-                    setState(() {
-                      addressData.type = onValue.value;
-                    });
-                  }
-                });
+            new AnyFormField.menu(
+              controller: _controller,
+              lableText: '${AppLocalizations.of(context).type}:',
+              items: ConfigAddr.of(context).typeItems,
+              onSaved: (value) {
+                addressData.type = value.value;
               },
+              validator: (value)  {
+                return validatorType(value);
+              }
             ),
           ],
         ) 
@@ -121,9 +127,6 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
         visible: widget.addrType == 1,
         child: new ListBody(
           children: <Widget>[
-            new CardSettingsHeader(
-              label: '${AppLocalizations.of(context).location}',
-            ),
             addressData.place == null ? new CardSettingsFieldState( 
               label: '${AppLocalizations.of(context).map}:', 
               contentOnNewLine: false, 
@@ -153,21 +156,12 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
               content: new Text(addressData.place.toString()),
               onPressed: () {
                 Routes.instance.navigateTo(context, Routes.instance.map, transition: TransitionType.inFromRight, object: addressData.place);
-              },
-            ),
-          ],
+              }
+            )
+          ]
         )
-      ),
-      new CardSettingsButton( 
-        label: AppLocalizations.of(context).clickSave,
-        bottomSpacing: 4.0,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).accentColor,
-        onPressed: () {
-          _save();
-        },
-      ),
-    ],
+      )
+    ]
   );
  
   String validator(value) {
@@ -185,7 +179,7 @@ class _CustomerAddressPageState extends State<CustomerAddressPage> {
   }
 
   String validatorType(value) {
-    if (addressData.type == null) {
+    if (value == null || value.value == null) {
       return AppLocalizations.of(context).required;
     }
     return null;
@@ -224,7 +218,7 @@ class _CompanyAddressPageState extends State<CompanyAddressPage> {
     
     super.initState();
 
-    addressData = addressData != null ? CompanyAddressModel.fromJson(json.decode(json.encode(widget.addressData))) : new CompanyAddressModel();
+    addressData = widget.addressData != null ? CompanyAddressModel.fromJson(json.decode(json.encode(widget.addressData))) : new CompanyAddressModel();
     addressData.addrType = widget.addrType;
   }
 
@@ -233,6 +227,13 @@ class _CompanyAddressPageState extends State<CompanyAddressPage> {
     appBar: new AppBar(
       title: new Text(AppLocalizations.of(context).addNewAddr),
       elevation: elevation,
+      actions: <Widget>[
+        new FlatButton(
+          textColor: Colors.white,
+          child: new Text('Save'),
+          onPressed: () => _save()
+        )
+      ]
     ),
     body: new Form(
       key: _formKey,
@@ -240,56 +241,60 @@ class _CompanyAddressPageState extends State<CompanyAddressPage> {
     ),
   );
 
-  Widget get body => new CardSettings(
-    padding: 8.0,
+  Widget get body => new ListView(
+    padding: new EdgeInsets.all(12.0),
     children: <Widget>[
       new Visibility(
         visible: widget.addrType == 0,
         child: new ListBody(
           children: <Widget>[
-            new CardSettingsHeader(
-              label: AppLocalizations.of(context).address,
-            ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).city}:', 
+            new TextFormField(
               initialValue: addressData.city,
               validator: validator,
               onSaved: (value) => addressData.city = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).city}:'
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).community}:', 
+            new TextFormField(
               initialValue: addressData.community,
               validator: validator,
               onSaved: (value) => addressData.community = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).community}:'
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).street}:', 
+            new TextFormField(
               initialValue: addressData.streetName,
               validator: validator,
               onSaved: (value) => addressData.streetName = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).street}:'
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).buildName}:', 
+            new TextFormField(
               initialValue: addressData.buildingName,
               validator: validator,
               onSaved: (value) => addressData.buildingName = value,
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).buildName}:'
+              )
             ),
-            new CardSettingsText( 
-              label: '${AppLocalizations.of(context).officeNo}:', 
+            new TextFormField(
               initialValue: addressData.officeNo,
               validator: validator,
               onSaved: (value) => addressData.officeNo = value,
-            ),
-          ],
-        ),
+              decoration: new InputDecoration(
+                labelText: '${AppLocalizations.of(context).officeNo}:'
+              )
+            )
+          ]
+        )
       ),
       new Visibility(
         visible: widget.addrType == 1,
         child: new ListBody(
           children: <Widget>[
-            new CardSettingsHeader(
-              label: '${AppLocalizations.of(context).location}',
-            ),
             addressData.place == null ? new CardSettingsFieldState( 
               label: '${AppLocalizations.of(context).map}:', 
               contentOnNewLine: false, 
@@ -322,15 +327,6 @@ class _CompanyAddressPageState extends State<CompanyAddressPage> {
             ),
           ],
         ),
-      ),
-      new CardSettingsButton( 
-        label: AppLocalizations.of(context).clickSave,
-        bottomSpacing: 4.0,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).accentColor,
-        onPressed: () {
-          _save();
-        },
       ),
     ],
   );
@@ -426,44 +422,48 @@ class _AddrPageState extends State<AddrPage> {
     ] : null,
   ); 
 
-  Widget get body => _getList() != null && _getList().length > 0 ? new ListView(
+  Widget get body => _getList() != null && _getList().length > 0 ? new CardSettings(
     children: _getList().map((item){
-      return new CardSettings(
-         padding: 8.0,
-         children: <Widget>[
-          new CardSettingsHeaderEx(
-             label: item.uuid == widget.userData.defAddr ? new Text(AppLocalizations.of(context).defaultText) : new IconButton(
-               icon: new Icon(Icons.radio_button_unchecked, color:  Colors.white),
-               onPressed: () {
-                 _defAddress(item);
-               },
-             ),
-             icon: new IconButton(
-               icon: new Icon(Icons.delete, color: Colors.white,),
-               onPressed: () {
-                 _delAddress(item);
-               },
-             ),
-          ),
-          new CardSettingsField(
-            label: AppLocalizations.of(context).address,
-            contentOnNewLine: true, 
-            content: new Text(item.toAllTitle()),
-          ),
-          new CardSettingsButton(
-            label: AppLocalizations.of(context).clickDetail,
-            bottomSpacing: 4.0,
-            backgroundColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).accentColor,
-            onPressed: () {
-               Routes.instance.navigateTo(context, _getRoute(), transition: TransitionType.nativeModal, object: {
-                 'addrType': item.addrType ,'data': item
-               }).then((onValue){
-                 _updateAddress(onValue);
-               });
-            },
-          ),
-         ],
+      return new Padding(
+        padding: new EdgeInsets.all(8.0),
+        child: new Card(
+          child: new ListBody(
+          children: <Widget>[
+            new CardSettingsHeaderEx(
+                label: item.uuid == widget.userData.defAddr ? new Text(AppLocalizations.of(context).defaultText) : new IconButton(
+                  icon: new Icon(Icons.radio_button_unchecked, color:  Colors.white),
+                  onPressed: () {
+                    _defAddress(item);
+                  },
+                ),
+                icon: new IconButton(
+                  icon: new Icon(Icons.delete, color: Colors.white,),
+                  onPressed: () {
+                    _delAddress(item);
+                  },
+                ),
+              ),
+              new CardSettingsField(
+                label: AppLocalizations.of(context).address,
+                contentOnNewLine: true, 
+                content: new Text(item.toAllTitle()),
+              ),
+              new CardSettingsButton(
+                label: AppLocalizations.of(context).clickDetail,
+                bottomSpacing: 4.0,
+                backgroundColor: Theme.of(context).cardColor,
+                textColor: Theme.of(context).accentColor,
+                onPressed: () {
+                  Routes.instance.navigateTo(context, _getRoute(), transition: TransitionType.nativeModal, object: {
+                    'addrType': item.addrType ,'data': item
+                  }).then((onValue){
+                    _updateAddress(onValue);
+                  });
+                }
+              )
+          ]
+        )
+        ),
       );
     }).toList()
   ) : new Center(child: new Text(AppLocalizations.of(context).noData));
@@ -509,9 +509,38 @@ class _AddrPageState extends State<AddrPage> {
   }
 
   Future<void> _updateAddress(value) async {
+    if (value == null) {
+      return null;
+    }
     if (widget.userData.category == 0) {
+      var j = 0;
+      var index = 0;
+      widget.userData.customerData.forEach((f){
+        print(f.uuid);
+        print(value.uuid);
+        if (f.uuid == value.uuid){
+          index = j;
+        } else {
+          j ++;
+        }
+      });
+
+      widget.userData.customerData[index] = value;
       return Store.instance.userRef.setData({'customerData': List.generate(widget.userData.customerData.length, (index) => json.decode(json.encode(widget.userData.customerData[index])))}, merge: true);
     } else if (widget.userData.category == 1) {
+      var j = 0;
+      var index = 0;
+      widget.userData.companyData.forEach((f){
+        print(f.uuid);
+        print(value.uuid);
+        if (f.uuid == value.uuid){
+          index = j;
+        } else {
+          j ++;
+        }
+      });
+
+      widget.userData.companyData[index] = value;
       return Store.instance.userRef.setData({'companyData': List.generate(widget.userData.companyData.length, (index) => json.decode(json.encode(widget.userData.companyData[index])))}, merge: true);
     }
   }

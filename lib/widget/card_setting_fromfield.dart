@@ -25,9 +25,10 @@ class _CardSettingsField extends StatelessWidget {
       visible: visible,
       child: Container(
         decoration: BoxDecoration(
+          color: Colors.white,
           border: Border(bottom: BorderSide(width: 1.0, color: Theme.of(context).dividerColor)),
         ),
-        padding: EdgeInsets.all(14.0),
+        padding: EdgeInsets.all(10.0),
         child: contentOnNewLine ? Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -87,10 +88,11 @@ class _CardSettingsField extends StatelessWidget {
   }
 
   TextStyle _buildLabelStyle(BuildContext context) {
-    TextStyle labelStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16.0,
-    );
+    // TextStyle labelStyle = TextStyle(
+    //   fontWeight: FontWeight.bold,
+    //   fontSize: 16.0,
+    // );
+    TextStyle labelStyle = Theme.of(context).textTheme.body2;
 
     return labelStyle.merge(Theme.of(context).inputDecorationTheme.labelStyle);
   }

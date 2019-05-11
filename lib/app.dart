@@ -57,18 +57,19 @@ class _BookService extends State<BookService> {
         new Locale('en', 'US'), // English
       ],
       theme: new ThemeData(
-          primarySwatch: Colors.blue,
-          iconTheme: new IconThemeData(color: Colors.blue[700]),
-          accentIconTheme: new IconThemeData(color: Colors.white),
-          buttonColor: Colors.blue[700],
-          cardColor: Colors.white,
-          textTheme: TextTheme(
-            button: TextStyle(color: Colors.white),
-          ),
-          primaryTextTheme: TextTheme(
-            title: TextStyle(color: Colors.lightBlue[50]),
-          ),
-          indicatorColor: Colors.white),
+        primarySwatch: Colors.blue,
+        iconTheme: new IconThemeData(color: Colors.blue[700]),
+        accentIconTheme: new IconThemeData(color: Colors.white),
+        buttonColor: Colors.blue[700],
+        cardColor: Colors.white,
+        textTheme: TextTheme(
+          button: TextStyle(color: Colors.white),
+        ),
+        primaryTextTheme: TextTheme(
+          title: TextStyle(color: Colors.lightBlue[50]),
+        ),
+        indicatorColor: Colors.white,
+      ),
       onGenerateRoute: Routes.instance.generator,
     );
   }
