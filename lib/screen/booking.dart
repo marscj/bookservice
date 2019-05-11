@@ -294,12 +294,17 @@ class BookingDetailState extends State<BookingDetail> {
                 Routes.instance.navigateTo(context, Routes.instance.map, transition: TransitionType.inFromRight, object: widget.data.place);
               },
             )
-          ),
+          ) 
+        ]
+      ),
+      new CardSettingsSection(
+        showMaterialIOS: true,
+        header: new CardSettingsHeader(label: AppLocalizations.of(context).staffInfo, showMaterialIOS: true),
+        children: <Widget> [
           new Visibility(
             visible: widget.userData.category == 4,
             child: new ListBody(
               children: <Widget>[
-                new CardSettingsHeader(label: AppLocalizations.of(context).staffInfo),
                 new CardSettingsField(
                   label: '${AppLocalizations.of(context).staffName}:',
                   content: new Text(widget.data.staffName ?? AppLocalizations.of(context).unknow),
@@ -648,6 +653,8 @@ class BookingPageState extends State<BookingPage> {
           if (!snapshot.hasData) return new Center(child: new CircularProgressIndicator());
           
           return new ListView(
+            primary: true,
+            shrinkWrap: false,
             children: snapshot.data.map((item){
               return snapshot.data.isNotEmpty ? new BookingItem(item, widget.userData, callback: (){
                 delegate.close(context, null);
