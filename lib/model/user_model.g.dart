@@ -202,7 +202,6 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
         : ProfileModel.fromJson(json['profile'] as Map<String, dynamic>)
     ..category = json['category'] as int
     ..isAdmin = json['isAdmin'] as bool
-    ..isEnable = json['isEnable'] as bool
     ..defAddr = json['defAddr'] as String
     ..contract = json['contract'] == null
         ? null
@@ -227,7 +226,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'profile': instance.profile,
       'category': instance.category,
       'isAdmin': instance.isAdmin,
-      'isEnable': instance.isEnable,
       'defAddr': instance.defAddr,
       'contract': instance.contract,
       'freelancerData': instance.freelancerData,

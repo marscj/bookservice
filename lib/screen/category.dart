@@ -75,7 +75,7 @@ class _CategoryPageState extends State<CategoryPage> {
       })
       .then<bool>((whitelist){ 
         if(whitelist != null) {
-          onCategory(whitelist.category, true, whitelist.isAdmin);
+          onCategory(whitelist.category, whitelist.isAdmin);
           return false;
         }
         return true;
@@ -111,7 +111,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       _pageController.nextPage(duration: Duration(milliseconds: 400), curve: Curves.fastOutSlowIn);
                     }),
                     iconText('assets/company.jpg', 'Register as Company', () {
-                      onCategory(1, true, false);
+                      onCategory(1, false);
                     }),
                   ],
                 )
@@ -141,10 +141,10 @@ class _CategoryPageState extends State<CategoryPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     iconText('assets/customer.jpg', 'A Customer', () {
-                      onCategory(0, true, false);
+                      onCategory(0, false);
                     }),
                     iconText('assets/freelancer.jpg', 'A Freelance', () {
-                      onCategory(2, false, false);
+                      onCategory(2, false);
                     }),
                   ],
                 ),
@@ -194,14 +194,14 @@ class _CategoryPageState extends State<CategoryPage> {
     );
   } 
 
-  Future<String> onCategory(category, isEnable, isAdmin) async {
+  Future<String> onCategory(category, isAdmin) async {
     
     FirebaseUser user = UserWithFirebase.instance.firebaseUser;
 
     return asyncDialog(
       context: context, 
       barrierDismissible: true,  
-      future: Store.instance.userRef.setData({'category': category, 'isAdmin': isAdmin, 'isEnable': isEnable, 'profile': {'userId': user.uid ,'displayName': user.displayName, 'phoneNumber': user.phoneNumber,'email': user.email, 'isEmailVerified': user.isEmailVerified}}, merge: true).then((onValue){
+      future: Store.instance.userRef.setData({'category': category, 'isAdmin': isAdmin, 'profile': {'userId': user.uid ,'displayName': user.displayName, 'phoneNumber': user.phoneNumber,'email': user.email, 'isEmailVerified': user.isEmailVerified}}, merge: true).then((onValue){
         return category;
       }).timeout(new Duration(seconds: 10), onTimeout: (){
         Fluttertoast.showToast(msg: 'Network error (such as timeout, interrupted connection or unreachable host) has occurred.');

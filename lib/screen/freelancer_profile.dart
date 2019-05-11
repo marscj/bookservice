@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:card_settings/card_settings.dart';
 
 import '../store/store.dart';
 import '../widgets.dart';

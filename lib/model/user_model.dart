@@ -181,7 +181,6 @@ class UserModel {
   ProfileModel profile;
   int category;
   bool isAdmin;
-  bool isEnable;
   String defAddr;
   ContractModel contract;
   FreelancerModel freelancerData;

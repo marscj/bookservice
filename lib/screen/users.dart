@@ -493,138 +493,106 @@ class UserDetailState extends State<UserDetail> {
     },
   );
 
-  Widget body(UserModel userData) {
-    return new CardSettings(
-      children: <Widget>[
-        new CardSettingsHeader(
-          label: AppLocalizations.of(context).userProfile
-        ),
-        new CardSettingsField(
-          label: '${AppLocalizations.of(context).displayName}:',
-          content: new Text(userData.profile?.displayName ?? AppLocalizations.of(context).unknow),
-        ),
-        new CardSettingsField(
-          label: '${AppLocalizations.of(context).phoneNumber}:',
-          content: new Text(userData.profile?.phoneNumber ?? AppLocalizations.of(context).unknow),
-        ),
-        new CardSettingsField(
-          label: '${AppLocalizations.of(context).email}:',
-          content: new Text(userData.profile?.email ?? AppLocalizations.of(context).unknow),
-        ),
-        new Visibility(
-          visible: userData.category < 2,
-          child: new CardSettingsFieldState(
-            label: '${AppLocalizations.of(context).contract}:',
-            contentOnNewLine: false,
-            pickerIcon: new Icon(Icons.arrow_drop_down),
-            content: new Text(userData.contract != null ? ConfigUsers.of(context).options[userData.contract.option].title : AppLocalizations.of(context).none),
-            onPressed: (){
-              Routes.instance.navigateTo(context, Routes.instance.contract, transition: TransitionType.inFromRight, object: {'viewData': userData, 'userData': widget.userData});
-            },
-          ),
-        ),
-        new CardSettingsHeader(
-          label: '${AppLocalizations.of(context).permission}' 
-        ), 
-        new CardSettingsFieldState(
-          label: '${AppLocalizations.of(context).status}:',
-          contentOnNewLine: false,
-          pickerIcon: widget.userData.category != 4 ? new Container() : new Icon(Icons.arrow_drop_down),
-          content: new Text(userData.isEnable ?? false ? AppLocalizations.of(context).enable : AppLocalizations.of(context).disable),
-          onPressed: widget.userData.category != 4 ? null : () {
-            showDialog(
-              context: context,
-              builder: (_){
-                return new SimpleDialog(
-                  children: <Widget>[
-                    new ListTile(
-                      title: new Text(AppLocalizations.of(context).enable),
-                      onTap: () {
-                        Navigator.of(context).pop(true);
-                      },
-                    ),
-                    new ListTile(
-                      title: new Text(AppLocalizations.of(context).disable),
-                      onTap: () {
-                        Navigator.of(context).pop(false);
-                      },
-                    )
-                  ],
-                );
-              }
-            ).then((onValue){
-              if (onValue != null) {
-                Store.instance.usersRef.document(widget.userId).setData({'isEnable': onValue}, merge: true);
-              }
-            });
-          },
-        ),
-        new Visibility(
-          visible: userData.category == 4,
-          child: new CardSettingsField( 
-            label: '${AppLocalizations.of(context).admin}:',
-            content: new Text(userData.isAdmin != null ? userData.isAdmin ? AppLocalizations.of(context).yes : AppLocalizations.of(context).no : AppLocalizations.of(context).unknow),
-          ),
-        ),
-        new Visibility(
-          visible: userData.category < 4,
-          child: new ListBody(
-            children: <Widget>[
-              new CardSettingsHeader(
-                label: AppLocalizations.of(context).bookings 
-              ),
-              new CardSettingsFieldState(
-                label: '${AppLocalizations.of(context).bookings}:',
+  Widget body(UserModel userData) { 
+    return new CardSettings.sectioned(
+      showMaterialIOS: true,
+      children: <CardSettingsSection> [
+        new CardSettingsSection(
+          header: new CardSettingsHeader(label: AppLocalizations.of(context).userProfile, showMaterialIOS: true),
+          children: <Widget>[
+            new CardSettingsField(
+              label: '${AppLocalizations.of(context).displayName}:',
+              content: new Text(userData.profile?.displayName ?? AppLocalizations.of(context).unknow),
+            ),
+            new CardSettingsField(
+              label: '${AppLocalizations.of(context).phoneNumber}:',
+              content: new Text(userData.profile?.phoneNumber ?? AppLocalizations.of(context).unknow),
+            ),
+            new CardSettingsField(
+              label: '${AppLocalizations.of(context).email}:',
+              content: new Text(userData.profile?.email ?? AppLocalizations.of(context).unknow),
+            ),
+            new Visibility(
+              visible: userData.category < 2,
+              child: new CardSettingsFieldState(
+                label: '${AppLocalizations.of(context).contract}:',
                 contentOnNewLine: false,
                 pickerIcon: new Icon(Icons.arrow_drop_down),
-                onPressed: () {
-                  Routes.instance.navigateTo(context, Routes.instance.bookingList, transition: TransitionType.inFromRight, object: {'viewData': userData, 'userData': widget.userData});
+                content: new Text(userData.contract != null ? ConfigUsers.of(context).options[userData.contract.option].title : AppLocalizations.of(context).none),
+                onPressed: (){
+                  Routes.instance.navigateTo(context, Routes.instance.contract, transition: TransitionType.inFromRight, object: {'viewData': userData, 'userData': widget.userData});
                 },
               ),
-            ],
-          )
+            ),
+            new Visibility(
+              visible: userData.category == 4,
+              child: new CardSettingsField( 
+                label: '${AppLocalizations.of(context).admin}:',
+                content: new Text(userData.isAdmin != null ? userData.isAdmin ? AppLocalizations.of(context).yes : AppLocalizations.of(context).no : AppLocalizations.of(context).unknow),
+              ),
+            ),
+            new Visibility(
+              visible: userData.category < 4,
+              child: new ListBody(
+                children: <Widget>[
+                  new CardSettingsFieldState(
+                    label: '${AppLocalizations.of(context).bookings}:',
+                    contentOnNewLine: false,
+                    pickerIcon: new Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                      Routes.instance.navigateTo(context, Routes.instance.bookingList, transition: TransitionType.inFromRight, object: {'viewData': userData, 'userData': widget.userData});
+                    },
+                  ),
+                ],
+              )
+            ),
+          ]
         ),
-        userData.customerData != null ? new CardSettingsHeader(
-          label: AppLocalizations.of(context).customerData,
-        ) : new Container(),
-        userData.customerData != null ? new CardSettingsFieldState(
-          contentOnNewLine: true,
-          label: '${AppLocalizations.of(context).address}:',
-          content: new ListBody(
-            children: userData.customerData.map((item){
-              return new ListTile(
-                leading: new Checkbox(
-                  value: item.uuid == userData.defAddr,
-                  onChanged: (value){},
-                ),
-                title: new Text(item.toAllTitle()),
-              );
-            }).toList(),
-          )
-        ) : new Container(),
-        userData.companyData != null ? new CardSettingsHeader(
-          label: AppLocalizations.of(context).companyData,
-        ) : new Container(),
-        userData.companyData != null ? new CardSettingsFieldState(
-          contentOnNewLine: true,
-          label: '${AppLocalizations.of(context).address}:',
-          content: new ListBody(
-            children: userData.companyData.map((item){
-              return new ListTile(
-                leading: new Checkbox(
-                  value: item.uuid == userData.defAddr,
-                  onChanged: (value){},
-                ),
-                title: new Text(item.toAllTitle()),
-              );
-            }).toList(),
-          )
-        ) : new Container(),
-        userData.freelancerData != null ? new CardSettingsHeader(
-          label: AppLocalizations.of(context).freelancerData,
-        ) : new Container(),
-        userData.freelancerData != null ? new ListBody(
-          children: <Widget>[
+        userData.customerData != null ? new CardSettingsSection(
+          showMaterialIOS: true,
+          header: new CardSettingsHeader(label: AppLocalizations.of(context).customerData, showMaterialIOS: true),
+          children: <Widget> [
+            new CardSettingsFieldState(
+              contentOnNewLine: true,
+              label: '${AppLocalizations.of(context).address}:',
+              content: new ListBody(
+                children: userData.customerData.map((item){
+                  return new ListTile(
+                    leading: new Checkbox(
+                      value: item.uuid == userData.defAddr,
+                      onChanged: (value){},
+                    ),
+                    title: new Text(item.toAllTitle()),
+                  );
+                }).toList(),
+              )
+            )
+          ]
+        ) : new CardSettingsSection(),
+        userData.companyData != null ? new CardSettingsSection(
+          header: new CardSettingsHeader(label: AppLocalizations.of(context).companyData, showMaterialIOS: true),
+          children: [
+            new CardSettingsFieldState(
+              contentOnNewLine: true,
+              label: '${AppLocalizations.of(context).address}:',
+              content: new ListBody(
+                children: userData.companyData.map((item){
+                  return new ListTile(
+                    leading: new Checkbox(
+                      value: item.uuid == userData.defAddr,
+                      onChanged: (value){},
+                    ),
+                    title: new Text(item.toAllTitle()),
+                  );
+                }).toList(),
+              )
+            ),
+          ]
+        ) : new CardSettingsSection(),
+        userData.freelancerData != null ? new CardSettingsSection(
+          showMaterialIOS: true,
+          header: new CardSettingsHeader(label: AppLocalizations.of(context).freelancerData, showMaterialIOS: true),
+          children: <Widget> [
             new CardSettingsFieldState(
               label: '${AppLocalizations.of(context).address}:',
               content: new ListTile(
@@ -662,7 +630,7 @@ class UserDetailState extends State<UserDetail> {
               )
             ),
           ]
-        ) : new Container()
+        ) : new CardSettingsSection()
       ],
     );
   }
@@ -725,7 +693,6 @@ class UserPageState extends State<UserPage> {
               return snapshot.data.isNotEmpty ? new ListTile(
                 title: new Text(item?.profile?.displayName ?? AppLocalizations.of(context).unknow),
                 subtitle: new Text(item?.profile?.phoneNumber ?? AppLocalizations.of(context).unknow),
-                trailing: new Text('${item.isEnable ? AppLocalizations.of(context).enable : AppLocalizations.of(context).disable}'),
                 onTap: () {
                   delegate.close(context, null);
                   Routes.instance.navigateTo(context, Routes.instance.userDetail, transition: TransitionType.inFromRight, object: {'userId': item.profile.userId, 'userData': widget.userData});
@@ -784,7 +751,6 @@ class UserPageState extends State<UserPage> {
         return new ListTile(
           title: new Text(list[index]?.profile?.displayName ?? AppLocalizations.of(context).unknow),
           subtitle: new Text(list[index]?.profile?.phoneNumber ?? AppLocalizations.of(context).unknow),
-          trailing: new Text('${list[index].isEnable ? AppLocalizations.of(context).enable : AppLocalizations.of(context).disable}'),
           onTap: () {
             Routes.instance.navigateTo(context, Routes.instance.userDetail, transition: TransitionType.inFromRight, object: {'userId': list[index].profile.userId, 'userData': widget.userData});
           },
@@ -840,7 +806,7 @@ class UserPageStaffStatff extends State<UserPageStaff> {
       },
       clientSidefilters: [
         (user) {
-          return query.isNotEmpty && user.isEnable &&
+          return query.isNotEmpty &&
           ((user?.profile?.displayName?.toLowerCase()?.contains(query) ?? false) 
           || (user?.profile?.phoneNumber?.contains(query) ?? false));
         },
@@ -931,7 +897,7 @@ class UserPageStaffStatff extends State<UserPageStaff> {
       children: ConfigUsers.of(context).staffTabs.map((item){
         return buildList( 
           list.where((_list){
-            return _list?.data['category'] == item.value && _list?.data['isEnable'];
+            return _list?.data['category'] == item.value;
           }).map((value){
             return UserModel.fromJson(json.decode(json.encode(value.data)));
           }).toList()
