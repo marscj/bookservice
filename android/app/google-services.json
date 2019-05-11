@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "921339622887",
+    "firebase_url": "https://bookservice-dubai.firebaseio.com",
+    "project_id": "bookservice-dubai",
+    "storage_bucket": "bookservice-dubai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921339622887:android:cf0050bc04bbf988",
+        "android_client_info": {
+          "package_name": "com.mars.bookservice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921339622887-d5tldcoi2chg326fb4j2tkjm1rnpbboi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp49Ib7WJh3kUesaGZnsGt_ZYiguGtKx0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
