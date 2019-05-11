@@ -182,7 +182,7 @@ class ChooseServiceScheduleState extends State<ChooseServiceSchedule> with Valid
               controller: fromController,
               lableText: AppLocalizations.of(context).from,
               onSaved: (value){
-                widget.onFrom(transformDaateTime(value));
+                widget.onFrom(transformDateTime(value));
               },
               validator: (value) {
                 return validatorFromTime(context, value, toController.value);
@@ -195,7 +195,7 @@ class ChooseServiceScheduleState extends State<ChooseServiceSchedule> with Valid
               controller: toController,
               lableText: AppLocalizations.of(context).to,
               onSaved: (value){
-                widget.onTo(transformDaateTime(value));
+                widget.onTo(transformDateTime(value));
               },
               validator: (value) {
                 return validatorToTime(context, fromController.value, value);
@@ -207,7 +207,7 @@ class ChooseServiceScheduleState extends State<ChooseServiceSchedule> with Valid
     ],
   );
 
-  transformDaateTime(value) {
+  transformDateTime(value) {
     DateTime dateTime = dateTimeController.value.value;
     return new DateTime(dateTime.year, dateTime.month, dateTime.day, value.value.hour, value.value.minute);
   }

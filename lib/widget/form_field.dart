@@ -389,10 +389,10 @@ class AnyFormFieldState extends State<AnyFormField> {
         context: context,
         firstDate: new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
         lastDate: new DateTime.now().add(new Duration(days: 30)),
-        initialDate: widget.initialValue ?? new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
+        initialDate: widget.initialValue != null ? widget.initialValue.value : new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
       ).then((onValue){
         if (onValue != null){
-          controller.value = new AnyItem(value: onValue, valueText: DateFormat.yMMMd().format(onValue));
+          controller.value = new AnyItem(value: onValue, valueText: DateFormat.yMd("en_US").format(onValue));
         }
       });
     }
@@ -409,7 +409,7 @@ class AnyFormFieldState extends State<AnyFormField> {
     onPressed: () {
       showTimePicker(
         context: context,
-        initialTime: widget.initialValue ?? new TimeOfDay(hour: 0, minute: 0)
+        initialTime: widget.initialValue != null ? widget.initialValue.value : new TimeOfDay(hour: 0, minute: 0)
       ).then((onValue){
         if (onValue != null){
           controller.value = new AnyItem(value: onValue, valueText: onValue.format(context));

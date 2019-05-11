@@ -30,7 +30,7 @@ class _CardSettingsField extends StatelessWidget {
           // color: Colors.white,
           border: Border(bottom: BorderSide(width: 1.0, color: Theme.of(context).dividerColor)),
         ),
-        padding: style ? const EdgeInsets.symmetric(vertical: 14) : const EdgeInsets.all(14),
+        padding: style ? const EdgeInsets.symmetric(vertical: 20) : const EdgeInsets.all(14),
         child: contentOnNewLine ? Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

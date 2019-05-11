@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:bookservice/widget/form_field.dart';
+import 'package:bookservice/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firestore_helpers/firestore_helpers.dart';
@@ -26,12 +29,15 @@ class _JobState extends State<JobPage> {
   
   JobModel job;
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  ValueNotifier<AnyItem> dateTimeController;
 
   @override
   void initState() {
     super.initState();
 
     job = widget.job ?? new JobModel();
+
+    dateTimeController = new ValueNotifier(null);
   }
 
   @override
@@ -54,25 +60,28 @@ class _JobState extends State<JobPage> {
 
   Widget get body => new Form(
     key: _formKey,
-    child: new CardSettings(
-      padding: 8.0,
-      children: <Widget>[
-        new CardSettingsHeader(
-          label: 'Job Details',
+    child: new ListView(
+      padding: new EdgeInsets.all(10.0),
+      children: <Widget>[ 
+        new AnyFormField.date(
+          lableText:'Date:',
+          initialValue: job.date != null  ? new AnyItem(
+            value: DateTime.parse(job.date), 
+            valueText: DateFormat.yMd("en_US").format(DateTime.parse(job.date))
+          ) : null,
+          controller: dateTimeController,
+          onSaved: (value) => job.date = formatDate(value.value, [yyyy, '', mm, '', dd, ''])
         ),
-        new CardSettingsDatePicker(
-          label: 'DATE:',
-          validator: validatorDate,
-          initialValue: job.date != null  ? DateTime.parse(job.date) : new DateTime.now(),
-          onSaved: (value) => job.date = formatDate(value, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]),
-        ),
-        new CardSettingsText(
-          label: 'JOB CARD:',
+        new TextFormField(
           initialValue: job.card,
           validator: validator,
           onSaved: (value) => job.card = value,
+          decoration: new InputDecoration(
+            labelText: 'Job Card:'
+          )
         ),
-        new CardSettingsFieldState( 
+        new CardSettingsFieldState(
+          style: true,
           label: '${AppLocalizations.of(context).type}:', 
           contentOnNewLine: false, 
           pickerIcon: new Icon(Icons.arrow_drop_down),
@@ -104,18 +113,23 @@ class _JobState extends State<JobPage> {
             });
           },
         ),
-        new CardSettingsText(
-          label: 'No. of Units:',
+        new TextFormField(
           validator: validator,
           initialValue: job.unit,
           keyboardType: TextInputType.number,
           onSaved: (value) => job.unit = value, 
+          decoration: new InputDecoration(
+            labelText: 'No. of Units:'
+          )
         ),
-        new CardSettingsParagraph(
-          label: 'Notes(Optional):',
+        new TextFormField(
           initialValue: job.notes,
+          maxLines: 3,
           onSaved: (value) => job.notes = value,
-        )
+          decoration: new InputDecoration(
+            labelText: 'Notes(Optional):'
+          )
+        ),
       ],
     ),
   );
@@ -214,10 +228,11 @@ class ContractPageState extends State<ContractPage> {
 
   Widget get body => new Form(
     key: _formKey,
-    child: widget.userData.category == 4 ? new CardSettings(
-      padding: 8.0,
+    child: widget.userData.category == 4 ? new ListView(
+      padding: new EdgeInsets.all(10.0),
       children: <Widget>[
         new CardSettingsFieldState(
+          style: true,
           label: 'Package:',
           contentOnNewLine: false,
           pickerIcon: new Icon(Icons.arrow_drop_down),
@@ -247,19 +262,22 @@ class ContractPageState extends State<ContractPage> {
           },
           validator: (value) => validator(contract.option)
         ),
-        new CardSettingsDatePicker(
-          label: '${AppLocalizations.of(context).dateOfIssue}:',
-          initialValue: contract.dateOfIssue != null ? DateTime.parse(contract.dateOfIssue) : new DateTime.now(),
-          validator: (value) => validator(value),
-          onSaved: (value) => contract.dateOfIssue = formatDate(value, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]),
+        new AnyFormField.date(
+          lableText: '${AppLocalizations.of(context).dateOfIssue}:',
+          initialValue: contract.dateOfIssue != null  ? new AnyItem(
+            value: DateTime.parse(contract.dateOfIssue), 
+            valueText: DateFormat.yMd("en_US").format(DateTime.parse(contract.dateOfIssue))
+          ) : null,
+          onSaved: (value) => contract.dateOfIssue = formatDate(value.value, [yyyy, '', mm, '', dd, ''])
         ),
-        new CardSettingsDatePicker(
-          label: '${AppLocalizations.of(context).dateOfExpiry}:',
-          initialValue: contract.dateOfExpiry != null ? DateTime.parse(contract.dateOfExpiry) : new DateTime.now(),
-          validator: (value) => validator(value),
-          onSaved: (value) => contract.dateOfExpiry = formatDate(value, [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn]),
+        new AnyFormField.date(
+          lableText: '${AppLocalizations.of(context).dateOfExpiry}:',
+          initialValue: contract.dateOfExpiry != null  ? new AnyItem(
+            value: DateTime.parse(contract.dateOfExpiry), 
+            valueText: DateFormat.yMd("en_US").format(DateTime.parse(contract.dateOfExpiry))
+          ) : null,
+          onSaved: (value) => contract.dateOfExpiry = formatDate(value.value, [yyyy, '', mm, '', dd, ''])
         ),
-        
         new Container(
           padding: new EdgeInsets.all(14.0),        
           decoration: BoxDecoration(
@@ -322,8 +340,8 @@ class ContractPageState extends State<ContractPage> {
           content: new ListBody(
             children: jobs.map((f){
               return new ListTile(
-                title: new Text(f.card),
-                subtitle: new Text(f.date),
+                title: new Text(f.card ?? ''),
+                subtitle: new Text(f.date ?? ''),
                 onTap: () {
                   Routes.instance.navigateTo(context, 'job', transition: TransitionType.inFromRight, object: f);
                 },
