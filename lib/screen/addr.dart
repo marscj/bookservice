@@ -422,50 +422,85 @@ class _AddrPageState extends State<AddrPage> {
     ] : null,
   ); 
 
-  Widget get body => _getList() != null && _getList().length > 0 ? new CardSettings(
+  Widget get body => _getList() != null && _getList().length > 0 ? new CardSettings.sectioned(
+    showMaterialIOS: true,
     children: _getList().map((item){
-      return new Padding(
-        padding: new EdgeInsets.all(8.0),
-        child: new Card(
-          child: new ListBody(
-          children: <Widget>[
-            new CardSettingsHeaderEx(
-                label: item.uuid == widget.userData.defAddr ? new Text(AppLocalizations.of(context).defaultText) : new IconButton(
-                  icon: new Icon(Icons.radio_button_unchecked, color:  Colors.white),
-                  onPressed: () {
-                    _defAddress(item);
-                  },
-                ),
-                icon: new IconButton(
-                  icon: new Icon(Icons.delete, color: Colors.white,),
-                  onPressed: () {
-                    _delAddress(item);
-                  },
-                ),
-              ),
-              new CardSettingsField(
-                label: AppLocalizations.of(context).address,
-                contentOnNewLine: true, 
-                content: new Text(item.toAllTitle()),
-              ),
-              new CardSettingsButton(
-                label: AppLocalizations.of(context).clickDetail,
-                bottomSpacing: 4.0,
-                backgroundColor: Theme.of(context).cardColor,
-                textColor: Theme.of(context).accentColor,
-                onPressed: () {
-                  Routes.instance.navigateTo(context, _getRoute(), transition: TransitionType.nativeModal, object: {
-                    'addrType': item.addrType ,'data': item
-                  }).then((onValue){
-                    _updateAddress(onValue);
-                  });
-                }
-              )
-          ]
-        )
+      return new CardSettingsSection(
+        showMaterialIOS: true,
+        header: new CardSettingsHeaderEx(
+          label: item.uuid == widget.userData.defAddr ? new Text(AppLocalizations.of(context).defaultText) : new IconButton(
+            icon: new Icon(Icons.radio_button_unchecked, color:  Colors.white),
+            onPressed: () {
+              _defAddress(item);
+            },
+          ),
+          icon: new IconButton(
+            icon: new Icon(Icons.delete, color: Colors.white,),
+            onPressed: () {
+              _delAddress(item);
+            },
+          ),
         ),
+        children: <Widget> [
+          new CardSettingsField(
+            label: AppLocalizations.of(context).address,
+            contentOnNewLine: true, 
+            content: new Text(item.toAllTitle()),
+          ),
+          new CardSettingsButton(
+            label: AppLocalizations.of(context).clickDetail,
+            bottomSpacing: 4.0,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).accentColor,
+            onPressed: () {
+              Routes.instance.navigateTo(context, _getRoute(), transition: TransitionType.nativeModal, object: {
+                'addrType': item.addrType ,'data': item
+              }).then((onValue){
+                _updateAddress(onValue);
+              });
+            }
+          )
+        ]
       );
     }).toList()
+    // children: _getList().map((item){
+    //   return new ListBody(
+    //       children: <Widget>[
+    //         new CardSettingsHeaderEx(
+    //             label: item.uuid == widget.userData.defAddr ? new Text(AppLocalizations.of(context).defaultText) : new IconButton(
+    //               icon: new Icon(Icons.radio_button_unchecked, color:  Colors.white),
+    //               onPressed: () {
+    //                 _defAddress(item);
+    //               },
+    //             ),
+    //             icon: new IconButton(
+    //               icon: new Icon(Icons.delete, color: Colors.white,),
+    //               onPressed: () {
+    //                 _delAddress(item);
+    //               },
+    //             ),
+    //           ),
+    //           new CardSettingsField(
+    //             label: AppLocalizations.of(context).address,
+    //             contentOnNewLine: true, 
+    //             content: new Text(item.toAllTitle()),
+    //           ),
+    //           new CardSettingsButton(
+    //             label: AppLocalizations.of(context).clickDetail,
+    //             bottomSpacing: 4.0,
+    //             backgroundColor: Theme.of(context).cardColor,
+    //             textColor: Theme.of(context).accentColor,
+    //             onPressed: () {
+    //               Routes.instance.navigateTo(context, _getRoute(), transition: TransitionType.nativeModal, object: {
+    //                 'addrType': item.addrType ,'data': item
+    //               }).then((onValue){
+    //                 _updateAddress(onValue);
+    //               });
+    //             }
+    //           )
+    //       ]
+    //     );
+    // }).toList()
   ) : new Center(child: new Text(AppLocalizations.of(context).noData));
  
   addAddr(type) {
