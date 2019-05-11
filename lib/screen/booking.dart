@@ -353,7 +353,7 @@ class BookingDetailState extends State<BookingDetail> {
   );
 }
 
-class BookingItem extends StatelessWidget {
+class BookingItem {
   
   BookingItem(this.data, this.userData, {this.callback});
 
@@ -361,90 +361,84 @@ class BookingItem extends StatelessWidget {
   final UserModel userData;
   final VoidCallback callback;
 
-  @override
-  Widget build(BuildContext context) {
-    return new CardSettings.sectioned(
-      shrinkWrap: true, 
+  CardSettingsSection build(BuildContext context) {
+    return new CardSettingsSection(
       showMaterialIOS: true,
-      children: <CardSettingsSection> [
-        new CardSettingsSection(
-          children: userData.category == 4 ? <Widget>[
-            new CardSettingsHeaderEx(
-              label: new Text(data.createTime), 
-              icon: data.status != 3 ? 
-                new IconButton(
-                  icon: new Icon(Icons.delete, color: Colors.white),
-                  onPressed: () {
-                    Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
-                  }) : new Container()
-            ),
-            new CardSettingsField( 
-              label: '${AppLocalizations.of(context).bookingInfo}:', 
-              content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
-            ), 
-            new CardSettingsField(
-              label: '${AppLocalizations.of(context).startTime}:',
-              content: new Text(data.fromDate),
-            ),
-            new CardSettingsFieldState(
-              label: '${AppLocalizations.of(context).user}:',
-              contentOnNewLine: false,
-              content: new Text('${data.userName ?? AppLocalizations.of(context).unknow}'),
-            ),
-            new CardSettingsFieldState(
-              label: '${AppLocalizations.of(context).staff}:',
-              contentOnNewLine: false,
-              content: new Text('${data.staffName ?? AppLocalizations.of(context).unknow}'),
-              pickerIcon: new Icon(Icons.arrow_drop_down),
-              onPressed: () {
-                Routes.instance.navigateTo(context, Routes.instance.userPageStaff, transition: TransitionType.inFromRight).then<UserModel>((user){
-                  if (user != null) {
-                    Store.instance.bookingRef.document(data.id).setData({'staffId': user.profile.userId, 'staffName': user.profile.displayName, 'staffNumber': user.profile.phoneNumber, 'staffEmail': user.profile.email}, merge: true);
-                  }
-                });
-              },
-            ),
-            new CardSettingsButton(
-              label: AppLocalizations.of(context).clickDetail,
-              bottomSpacing: 4.0,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).accentColor,
-              onPressed: () {
-                Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
-              }
-            ),
-          ] : <Widget> [ 
-            new CardSettingsHeaderEx(
-              label: new Text(data.createTime), 
-              color: data.status == 2 ? Colors.orange : Theme.of(context).accentColor,
-              icon: data.userId == userData.profile.userId ? new IconButton(
+      children: userData.category == 4 ? <Widget>[
+        new CardSettingsHeaderEx(
+          label: new Text(data.createTime), 
+          icon: data.status != 3 ? 
+            new IconButton(
               icon: new Icon(Icons.delete, color: Colors.white),
               onPressed: () {
                 Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
               }) : new Container()
-            ),
-            new CardSettingsField( 
-              label: '${AppLocalizations.of(context).bookingInfo}:', 
-              content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
-            ),
-            new CardSettingsField(
-              label: '${AppLocalizations.of(context).startTime}:',
-              content: new Text(data.fromDate),
-            ),
-            new CardSettingsButton(
-              label: AppLocalizations.of(context).clickDetail,
-              bottomSpacing: 4.0,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).accentColor,
-              onPressed: () {
-                if (callback != null) {
-                  callback();
-                }
-                Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
+        ),
+        new CardSettingsField( 
+          label: '${AppLocalizations.of(context).bookingInfo}:', 
+          content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
+        ), 
+        new CardSettingsField(
+          label: '${AppLocalizations.of(context).startTime}:',
+          content: new Text(data.fromDate),
+        ),
+        new CardSettingsFieldState(
+          label: '${AppLocalizations.of(context).user}:',
+          contentOnNewLine: false,
+          content: new Text('${data.userName ?? AppLocalizations.of(context).unknow}'),
+        ),
+        new CardSettingsFieldState(
+          label: '${AppLocalizations.of(context).staff}:',
+          contentOnNewLine: false,
+          content: new Text('${data.staffName ?? AppLocalizations.of(context).unknow}'),
+          pickerIcon: new Icon(Icons.arrow_drop_down),
+          onPressed: () {
+            Routes.instance.navigateTo(context, Routes.instance.userPageStaff, transition: TransitionType.inFromRight).then<UserModel>((user){
+              if (user != null) {
+                Store.instance.bookingRef.document(data.id).setData({'staffId': user.profile.userId, 'staffName': user.profile.displayName, 'staffNumber': user.profile.phoneNumber, 'staffEmail': user.profile.email}, merge: true);
               }
-            ),
-          ]
-        )
+            });
+          },
+        ),
+        new CardSettingsButton(
+          label: AppLocalizations.of(context).clickDetail,
+          bottomSpacing: 4.0,
+          backgroundColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).accentColor,
+          onPressed: () {
+            Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
+          }
+        ),
+      ] : <Widget> [ 
+        new CardSettingsHeaderEx(
+          label: new Text(data.createTime), 
+          color: data.status == 2 ? Colors.orange : Theme.of(context).accentColor,
+          icon: data.userId == userData.profile.userId ? new IconButton(
+          icon: new Icon(Icons.delete, color: Colors.white),
+          onPressed: () {
+            Store.instance.bookingRef.document(data.id).setData({'status': 3}, merge: true);
+          }) : new Container()
+        ),
+        new CardSettingsField( 
+          label: '${AppLocalizations.of(context).bookingInfo}:', 
+          content: new Text(ConfigHome.clientCategories(context)[data.cagetory].name) ,
+        ),
+        new CardSettingsField(
+          label: '${AppLocalizations.of(context).startTime}:',
+          content: new Text(data.fromDate),
+        ),
+        new CardSettingsButton(
+          label: AppLocalizations.of(context).clickDetail,
+          bottomSpacing: 4.0,
+          backgroundColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).accentColor,
+          onPressed: () {
+            if (callback != null) {
+              callback();
+            }
+            Routes.instance.navigateTo(context, Routes.instance.bookingDetail, transition: TransitionType.inFromRight, object: {'data': data, 'userData': userData});
+          }
+        ),
       ]
     );
   }
@@ -507,7 +501,7 @@ class _BookingListState extends State<BookingList> {
         collection: getQuery(),
       ),
       mapper: (doc) => BookingModel.fromJson(json.decode(json.encode(doc.data))),
-      clientSidefilters: widget.userData.category != 4 ?[
+      clientSidefilters: widget.userData.category != 4 ? [
         (booking) => booking.status != 3
       ] : null,
       orderComparer: (book1, book2) => book2?.fromDate?.compareTo(book1?.fromDate)
@@ -533,11 +527,11 @@ class _BookingListState extends State<BookingList> {
       if (!snapshot.hasData) return new Center(child: new CircularProgressIndicator());
       final int messageCount = snapshot.data.length;
 
-      return messageCount > 0 ? ListView.builder(
-        itemCount: messageCount,
-        itemBuilder: (_, int index) {
-          return new BookingItem(snapshot.data[index], widget.userData);
-        },
+      return messageCount > 0 ? CardSettings.sectioned(
+        showMaterialIOS: true,
+        children: snapshot.data.map((item){
+          return new BookingItem(item, widget.userData).build(context);
+        }).toList()
       ) : new Center(child: new Text(AppLocalizations.of(context).noData));
     },
   );
@@ -676,12 +670,12 @@ class BookingPageState extends State<BookingPage> {
   );
 
   Widget buildList(List<BookingModel> list) {
-    return list != null && list.isNotEmpty ? new ListView.separated(
-      itemCount: list.length,
-      separatorBuilder: (_, index) => new Divider(),
-      itemBuilder: (_, index){
-        return new BookingItem(list[index], widget.userData);
-      },
+    // return new Container();
+    return list != null && list.isNotEmpty ? new CardSettings.sectioned(
+      showMaterialIOS: true,
+      children: list.map((item){
+        return new BookingItem(item, widget.userData).build(context);
+      }).toList(),
     ) : new Center(child: new Text(AppLocalizations.of(context).noData));
   }
 
