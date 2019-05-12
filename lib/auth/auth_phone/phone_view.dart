@@ -9,6 +9,7 @@ import '../auth_callback.dart';
 import 'phone_signin.dart';
 import 'phone_verify.dart';
 import '../../widgets.dart';
+import '../firebase_user.dart';
 
 class PhoneView extends StatefulWidget {
 
@@ -170,12 +171,16 @@ class _PhoneViewState extends State<PhoneView> {
   Future<void> verifyPhoneNumber() async {
     setErrorText(null);
 
-    final PhoneVerificationCompleted verificationCompleted = (AuthCredential user) {
-      if (user != null) {
-        widget.callback == null ? 
-          Navigator.of(context).pop()
-          :
-          widget.callback(context);
+    final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) {
+      if (phoneAuthCredential != null) {
+        _auth.signInWithCredential(phoneAuthCredential).then((user){
+          UserWithFirebase.instance.reload(user);
+          
+          widget.callback == null ? 
+            Navigator.of(context).pop()
+            :
+            widget.callback(context);
+        });
       }
     };
 
@@ -229,6 +234,7 @@ class _PhoneViewState extends State<PhoneView> {
       }) 
     ).then((user){
       if (user != null) {
+        UserWithFirebase.instance.reload(user);
         widget.callback == null ? 
           Navigator.of(context).pop()
           :
