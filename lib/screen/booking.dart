@@ -385,11 +385,13 @@ class BookingItem {
         new CardSettingsFieldState(
           label: '${AppLocalizations.of(context).user}:',
           contentOnNewLine: false,
+          labelWidth: 190.0,
           content: new Text('${data.userName ?? AppLocalizations.of(context).unknow}'),
         ),
         new CardSettingsFieldState(
           label: '${AppLocalizations.of(context).staff}:',
           contentOnNewLine: false,
+          labelWidth: 190.0,
           content: new Text('${data.staffName ?? AppLocalizations.of(context).unknow}'),
           pickerIcon: new Icon(Icons.arrow_drop_down),
           onPressed: () {
@@ -570,9 +572,10 @@ class BookingPage extends StatefulWidget {
   State<BookingPage> createState() => new BookingPageState();
 }   
 
-class BookingPageState extends State<BookingPage> {
+class BookingPageState extends State<BookingPage> with SingleTickerProviderStateMixin{
 
   Stream<QuerySnapshot> stream;
+  TabController _tabController;
   SearchDelegate delegate;
 
   @override
@@ -580,8 +583,18 @@ class BookingPageState extends State<BookingPage> {
     
     super.initState();
 
+    _tabController = TabController(vsync: this, length: 5)..addListener((){
+      setState(() {});
+    });
+
     stream = getQurey;
     delegate = getSearchDelegate;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Stream<QuerySnapshot> get getQurey => Store.instance.bookingRef.snapshots();
@@ -611,32 +624,68 @@ class BookingPageState extends State<BookingPage> {
   }
 
   @override
-  Widget build(BuildContext context) => new DefaultTabController(
-    length: ConfigBooking.of(context).tabs.length, 
-    child: new Scaffold(
-      appBar: new AppBar(
-        title: new Text(AppLocalizations.of(context).bookings),
-        elevation: elevation,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () async {
-              await showSearch(
-                context: context,
-                delegate: delegate
-              );
-            },
-          ),
-        ],
-        bottom: new TabBar(
-          isScrollable: true,
-          tabs: ConfigBooking.of(context).tabs.map((item){
-            return new Tab(text: item.title);
-          }).toList()
+  Widget build(BuildContext context) => new Scaffold(
+    appBar: new AppBar(
+      title: new Text(AppLocalizations.of(context).bookings),
+      elevation: elevation,
+      actions: <Widget>[
+        new IconButton(
+          icon: new Icon(Icons.search),
+          onPressed: () async {
+            await showSearch(
+              context: context,
+              delegate: delegate
+            );
+          },
         ),
+        _tabController.index == 4 ? new IconButton(
+          icon: new Icon(Icons.delete),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) {
+                return new AlertDialog(
+                  title: new Text('Alert'),
+                  content: new Text('Are you sure you want to permanently delete these deleted data?'),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text('No'),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                    new FlatButton(
+                      child: new Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    )
+                  ],
+                );
+              }
+            ).then((data){
+              if(data != null && data){
+                Store.instance.bookingRef.where('status', isEqualTo: 3).getDocuments().then((document){
+                  if(document != null && document.documents != null) {
+                    document.documents.forEach((doc){
+                      Store.instance.bookingRef.document(doc.documentID).delete();
+                    }); 
+                  }
+                });
+              }
+            });
+          },
+        ) : new Container()
+      ],
+      bottom: new TabBar(
+        isScrollable: true,
+        controller: _tabController,
+        tabs: ConfigBooking.of(context).tabs.map((item){
+          return new Tab(text: item.title);
+        }).toList()
       ),
-      body: streamBody,
-    )
+    ),
+    body: streamBody,
   );
 
   SearchDelegate get getSearchDelegate => new SearchListDelegate(
@@ -646,15 +695,14 @@ class BookingPageState extends State<BookingPage> {
         builder: (_, AsyncSnapshot<List<BookingModel>> snapshot) {
           if (!snapshot.hasData) return new Center(child: new CircularProgressIndicator());
           
-          return new ListView(
-            primary: true,
-            shrinkWrap: false,
+          return snapshot.data != null && snapshot.data.isNotEmpty ? new CardSettings.sectioned(
+            showMaterialIOS: true,
             children: snapshot.data.map((item){
-              return snapshot.data.isNotEmpty ? new BookingItem(item, widget.userData, callback: (){
+              return new BookingItem(item, widget.userData, callback: (){
                 delegate.close(context, null);
-              }) : new Center(child: new Text(AppLocalizations.of(context).noData));
+              }).build(context);
             }).toList()
-          );
+          ) : new Center(child: new Text(AppLocalizations.of(context).noData));
         },
       );
     },
@@ -670,7 +718,6 @@ class BookingPageState extends State<BookingPage> {
   );
 
   Widget buildList(List<BookingModel> list) {
-    // return new Container();
     return list != null && list.isNotEmpty ? new CardSettings.sectioned(
       showMaterialIOS: true,
       children: list.map((item){
@@ -697,6 +744,7 @@ class BookingPageState extends State<BookingPage> {
 
   Widget buildPage(List<DocumentSnapshot> list) {
     return new TabBarView(
+      controller: _tabController,
       children: ConfigBooking.of(context).tabs.map((item){
         return buildList( 
           list.where((_list){
