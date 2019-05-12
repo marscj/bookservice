@@ -98,7 +98,7 @@ class GalleryScreenState extends State<GalleryScreen> {
                     height: 35.0,
                     alignment: Alignment.center,
                     color: Colors.black38,
-                    child: new Text('data', style: new TextStyle(color: Colors.white70)),
+                    child: new Text('${userType[snapshot.data.documents[index].data['use']]} index = ${snapshot.data.documents[index].data['index']}', style: new TextStyle(color: Colors.white70)),
                   ),
                 )
             ),
@@ -126,6 +126,7 @@ class SettingScreenState extends State<SettingScreen> {
   
   DocumentReference document;
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController<void> _bottomSheet;
 
   @override
   void initState() {
@@ -140,13 +141,22 @@ class SettingScreenState extends State<SettingScreen> {
     appBar: new AppBar(
       title: new Text('Setting'),
       centerTitle: true,
+      actions: <Widget>[
+        new IconButton(
+          icon: new Icon(Icons.delete),
+          onPressed: () {
+            Navigator.pop(context);
+            document.delete();
+          },
+        )
+      ],
     ),
     body: new StreamBuilder(
       stream: document.snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
         if (!snapshot.hasData) return new Center(child: new CircularProgressIndicator());
         
-        return new ListView(
+        return snapshot.data != null && snapshot.data.exists ? new ListView(
           children: <Widget>[
             new ListTile(
               title: new Text('Url:'),
@@ -158,7 +168,6 @@ class SettingScreenState extends State<SettingScreen> {
               subtitle: new Text(userType[snapshot.data['use']]),
               trailing:  PopupMenuButton<int>(
                 onSelected: (int result) {
-
                   document.setData({
                     'use': result
                   }, merge: true);
@@ -184,7 +193,10 @@ class SettingScreenState extends State<SettingScreen> {
               title: new Text('Index'),
               subtitle: new Text('${snapshot.data['index'] ?? 0}'),
               onTap: () {
-                _key.currentState.showBottomSheet((_){
+                setState(() {
+                  _bottomSheet = null;
+                });
+                final PersistentBottomSheetController<void> bottomSheet = _key.currentState.showBottomSheet((_){
                   return new Container(
                     padding: new EdgeInsets.all(20.0),
                     child: new TextField(
@@ -200,15 +212,19 @@ class SettingScreenState extends State<SettingScreen> {
                         document.setData({
                           'index': value
                         }, merge: true);
-                        ScaffoldState.
+                        _bottomSheet?.close();
                       },
                     )
                   ); 
                 });
+
+                setState(() {
+                  _bottomSheet = bottomSheet;
+                });
               },
             )
           ],
-        );
+        ) : new Container();
       },
     )
   );
