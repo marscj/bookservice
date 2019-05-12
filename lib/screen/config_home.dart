@@ -41,11 +41,11 @@ class ConfigHome {
   }
 
   static List<Category> operatorCategories(context) {
-    return List<Category>.generate(3, (index){
+    return List<Category>.generate(4, (index){
       return new Category(
-        [5, 6, 7][index],
+        [5, 6, 7, 8][index],
         name: AppLocalizations.of(context).operatorCategories[index],
-        icon: [Icons.list, Icons.person, Icons.featured_play_list].map((item){
+        icon: [Icons.list, Icons.person, Icons.featured_play_list, Icons.image].map((item){
           return new Icon(item, size: 60.0);
         }).toList()[index]
       );

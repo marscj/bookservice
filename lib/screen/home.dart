@@ -308,6 +308,8 @@ class HomePageState extends State<HomePage> {
       case 7:
         Routes.instance.navigateTo(context, Routes.instance.whiteList, transition: TransitionType.inFromRight, object: widget.userData);
       break;
+      case 8:
+        Routes.instance.navigateTo(context, Routes.instance.upload, transition: TransitionType.inFromRight);
     }
   }
 

@@ -2,11 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../storage/storage.dart';
-
-const String kTestString = 'Hello world!';
+import '../store/store.dart';
 
 class UploadPage extends StatefulWidget {
   UploadPage();
@@ -22,56 +21,31 @@ class _UploadPageState extends State<UploadPage> {
 
   FirebaseStorage storage = Storage.instance.firebaseStorage;
 
-  Future<void> _uploadFile() async {
-    final String uuid = Uuid().v1();
-    final Directory systemTempDir = Directory.systemTemp;
-    final File file = await File('${systemTempDir.path}/foo$uuid.txt').create();
-    await file.writeAsString(kTestString);
-    assert(await file.readAsString() == kTestString);
-    final StorageReference ref =
-        storage.ref().child('text').child('foo$uuid.txt');
-    final StorageUploadTask uploadTask = ref.putFile(
-      file,
-      StorageMetadata(
-        contentLanguage: 'en',
-        customMetadata: <String, String>{'activity': 'test'},
+  Future<void> _uploadFile(file) async {
+    String fileName = file.path.substring(file.path.lastIndexOf('/') + 1);
+    String fileType = file.path.substring(file.path.lastIndexOf('.') + 1);
+    final StorageReference ref = storage.ref().child('source').child(fileName);
+    
+    final StorageUploadTask uploadTask = ref.putFile(file, StorageMetadata(
+        contentType: 'image/' + fileType,
       ),
-    );
+    )..events.listen((event){
+      if(event.type == StorageTaskEventType.success) {
+        event.snapshot.ref.getDownloadURL().then((url){
+          Store.instance.sourceRef.document(Uuid().v4()).setData({
+            'url': url,
+          });
+        });
+      }
+    });
 
     setState(() {
       _tasks.add(uploadTask);
     });
   }
 
-  Future<void> _downloadFile(StorageReference ref) async {
-    final String url = await ref.getDownloadURL();
-    final String uuid = Uuid().v1();
-    final http.Response downloadData = await http.get(url);
-    final Directory systemTempDir = Directory.systemTemp;
-    final File tempFile = File('${systemTempDir.path}/tmp$uuid.txt');
-    if (tempFile.existsSync()) {
-      await tempFile.delete();
-    }
-    await tempFile.create();
-    assert(await tempFile.readAsString() == "");
-    final StorageFileDownloadTask task = ref.writeToFile(tempFile);
-    final int byteCount = (await task.future).totalByteCount;
-    final String tempFileContents = await tempFile.readAsString();
-    assert(tempFileContents == kTestString);
-    assert(byteCount == kTestString.length);
-
-    final String fileContents = downloadData.body;
-    final String name = await ref.getName();
-    final String bucket = await ref.getBucket();
-    final String path = await ref.getPath();
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(
-        'Success!\n Downloaded $name \n from url: $url @ bucket: $bucket\n '
-        'at path: $path \n\nFile contents: "$fileContents" \n'
-        'Wrote "$tempFileContents" to tmp.txt',
-        style: const TextStyle(color: Color.fromARGB(255, 0, 155, 0)),
-      ),
-    ));
+  Future<void> _deleteFile(file) async {
+    return storage.ref().child('source').child(file).delete();
   }
 
   @override
@@ -81,28 +55,25 @@ class _UploadPageState extends State<UploadPage> {
       final Widget tile = UploadTaskListTile(
         task: task,
         onDismissed: () => setState(() => _tasks.remove(task)),
-        onDownload: () => _downloadFile(task.lastSnapshot.ref),
       );
       children.add(tile);
     });
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Flutter Storage Example'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.clear_all),
-            onPressed:
-                _tasks.isNotEmpty ? () => setState(() => _tasks.clear()) : null,
-          )
-        ],
+        title: const Text('Upload')
       ),
       body: ListView(
         children: children,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _uploadFile,
-        tooltip: 'Upload',
+        onPressed: () {
+          return ImagePicker.pickImage(source: ImageSource.gallery).then((file){
+            if(file != null){
+              _uploadFile(file);
+            }
+          });
+        },
         child: const Icon(Icons.file_upload),
       ),
     );
@@ -111,12 +82,11 @@ class _UploadPageState extends State<UploadPage> {
 
 class UploadTaskListTile extends StatelessWidget {
   const UploadTaskListTile(
-      {Key key, this.task, this.onDismissed, this.onDownload})
+      {Key key, this.task, this.onDismissed})
       : super(key: key);
 
   final StorageUploadTask task;
   final VoidCallback onDismissed;
-  final VoidCallback onDownload;
 
   String get status {
     String result;
@@ -142,60 +112,54 @@ class UploadTaskListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<StorageTaskEvent>(
-      stream: task.events,
-      builder: (BuildContext context,
-          AsyncSnapshot<StorageTaskEvent> asyncSnapshot) {
-        Widget subtitle;
-        if (asyncSnapshot.hasData) {
-          final StorageTaskEvent event = asyncSnapshot.data;
-          final StorageTaskSnapshot snapshot = event.snapshot;
-          subtitle = Text('$status: ${_bytesTransferred(snapshot)} bytes sent');
-        } else {
-          subtitle = const Text('Starting...');
-        }
-        return Dismissible(
-          key: Key(task.hashCode.toString()),
-          onDismissed: (_) => onDismissed(),
-          child: ListTile(
-            title: Text('Upload Task #${task.hashCode}'),
-            subtitle: subtitle,
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Offstage(
-                  offstage: !task.isInProgress,
-                  child: IconButton(
-                    icon: const Icon(Icons.pause),
-                    onPressed: () => task.pause(),
-                  ),
-                ),
-                Offstage(
-                  offstage: !task.isPaused,
-                  child: IconButton(
-                    icon: const Icon(Icons.file_upload),
-                    onPressed: () => task.resume(),
-                  ),
-                ),
-                Offstage(
-                  offstage: task.isComplete,
-                  child: IconButton(
-                    icon: const Icon(Icons.cancel),
-                    onPressed: () => task.cancel(),
-                  ),
-                ),
-                Offstage(
-                  offstage: !(task.isComplete && task.isSuccessful),
-                  child: IconButton(
-                    icon: const Icon(Icons.file_download),
-                    onPressed: onDownload,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    return buildTask();
   }
+
+  Widget buildTask() => StreamBuilder<StorageTaskEvent>(
+    stream: task.events,
+    builder: (BuildContext context, AsyncSnapshot<StorageTaskEvent> asyncSnapshot) {
+      Widget subtitle;
+      if (asyncSnapshot.hasData) {
+        final StorageTaskEvent event = asyncSnapshot.data;
+        final StorageTaskSnapshot snapshot = event.snapshot;
+        subtitle = Text('$status: ${_bytesTransferred(snapshot)} bytes sent');
+      } else { 
+        subtitle = const Text('Starting...');
+      }
+      return Dismissible(
+        key: Key(task.hashCode.toString()),
+        onDismissed: (_) => onDismissed(),
+        child: ListTile(
+          title: Text('Upload Task #${task.hashCode}'),
+          subtitle: subtitle,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Offstage(
+                offstage: !task.isInProgress,
+                child: IconButton(
+                  icon: const Icon(Icons.pause),
+                  onPressed: () => task.pause(),
+                ),
+              ),
+              Offstage(
+                offstage: !task.isPaused,
+                child: IconButton(
+                  icon: const Icon(Icons.file_upload),
+                  onPressed: () => task.resume(),
+                ),
+              ),
+              Offstage(
+                offstage: task.isComplete,
+                child: IconButton(
+                  icon: const Icon(Icons.cancel),
+                  onPressed: () => task.cancel(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

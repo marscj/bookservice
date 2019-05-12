@@ -28,6 +28,7 @@ class Routes extends Router{
   String map = '/map';
   String contract = '/contract';
   String job = '/job';
+  String upload = '/upload';
 
   static Routes _instance = new Routes._();
 
@@ -62,5 +63,6 @@ class Routes extends Router{
     define(map, handler: mapHandler);
     define(contract, handler: contractHandler);
     define(job, handler: jobHandler);
+    define(upload, handler: uploadHandler);
   }
 }

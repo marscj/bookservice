@@ -130,6 +130,12 @@ Handler jobHandler = new Handler(
   }
 );
 
+Handler uploadHandler = new Handler(
+  handlerFunc: (_, params, [object]){
+    return new UploadPage();
+  } 
+);
+
 Future callback(context) async {
   FirebaseUser user = UserWithFirebase.instance.firebaseUser;
 

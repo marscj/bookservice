@@ -533,7 +533,6 @@ class BookingCreatePageState extends State<BookingCreatePage>{
               if (value != null) {
                 bookingModel.url = value;
               }
-              
             },
             onOther: (value) {
               bookingModel.otherInfo = value;

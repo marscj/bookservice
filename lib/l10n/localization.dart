@@ -518,7 +518,8 @@ class _Bundle_en extends TranslationBundle {
   List<String> get operatorCategories => [
     'Bookings',
     'Users',
-    'WhiteList'
+    'WhiteList',
+    'Upload'
   ];
 
   @override
@@ -1187,7 +1188,8 @@ class _Bundle_ar extends TranslationBundle {
   List<String> get operatorCategories => [
     'حجوزات', 
     'مستخدمين', 
-    'قائمة'  
+    'قائمة',
+    'رفع'
   ];
 
   @override

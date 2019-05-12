@@ -11,3 +11,4 @@ export 'screen/booking.dart';
 export 'screen/white_list.dart';
 export 'screen/users.dart';
 export 'screen/map.dart';
+export 'screen/upload.dart';

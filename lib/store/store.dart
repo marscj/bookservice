@@ -23,4 +23,6 @@ class Store {
   CollectionReference get whiteList => firestore.collection('WhiteList');
 
   CollectionReference get usersRef => firestore.collection('Users');
+
+  CollectionReference get sourceRef => firestore.collection('Source');
 }
