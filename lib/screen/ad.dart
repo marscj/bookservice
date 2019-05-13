@@ -11,13 +11,22 @@ import '../caches.dart';
 import '../store/store.dart';
 
 class DefaultScreen extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) => new Stack(
     children: <Widget>[
-      new Image.asset('assets/title.png', fit: BoxFit.fitHeight),
+      new Container(
+        color: Colors.white,
+      ),
+      new Container(
+        padding: new EdgeInsets.all(20.0),
+        alignment: Alignment.bottomCenter,
+        child: new Image.asset('assets/title.png'),
+      )
     ],
   );
 }
+
 class AdPage extends StatefulWidget {
 
   AdPage(this.callback);
@@ -65,7 +74,11 @@ class _AdPage extends State<AdPage> {
       // }),
       future: _future,
       builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData && snapshot.data.documents.length > 0) {
+        if (!snapshot.hasData) return  new Center(
+          child: new DefaultScreen(),
+        );
+
+        if (snapshot.data.documents != null && snapshot.data.documents.isNotEmpty) {
           return new SafeArea(
             top: true,
             bottom: false,
@@ -79,7 +92,10 @@ class _AdPage extends State<AdPage> {
             )
           );  
         }
-        return new DefaultScreen();
+        
+        return  new Center(
+          child: new Image.asset('assets/ad.jpg', fit: BoxFit.fitHeight),
+        );
       },
     )
   );

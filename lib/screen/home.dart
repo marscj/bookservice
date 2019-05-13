@@ -400,12 +400,18 @@ class Banner extends StatefulWidget {
 class _BannerState extends State<Banner> {
   
   Stream<QuerySnapshot> _stream;
-  List<Widget> source = new List<Widget>();
+
+  final List<Widget> banners = [
+    new Image.asset('assets/slide1.jpg', fit: BoxFit.fill),
+    new Image.asset('assets/slide2.jpg', fit: BoxFit.fill),
+    new Image.asset('assets/slide3.jpg', fit: BoxFit.fill),
+    new Image.asset('assets/slide4.jpg', fit: BoxFit.fill),
+    new Image.asset('assets/slide5.jpg', fit: BoxFit.fill), 
+  ];
   
   @override
   void initState() {
     super.initState();
-
     _stream = Store.instance.sourceRef.where('use', isEqualTo: 2).orderBy('index').snapshots();
   }
 
@@ -414,50 +420,62 @@ class _BannerState extends State<Banner> {
     stream: _stream,
     builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (!snapshot.hasData) return new Container();
-      source.clear();
-      
-      snapshot.data.documents.length > 0 ? snapshot.data.documents.map((doc){
-        source.add(
-          new CachedNetworkImage(
-            imageUrl: doc.data['url'],
+
+      if(snapshot.data != null && snapshot.data.documents != null && snapshot.data.documents.isNotEmpty) {
+        List<Widget> source = snapshot.data.documents.map((f){
+          return new CachedNetworkImage(
+            imageUrl: f.data['url'],
             fit: BoxFit.fill
-          )
+          );
+        }).toList();
+        
+        return new AspectRatio(
+          aspectRatio: 4.0 / 1.7 ,
+          // height: 140.0,
+          child: new BannerViews(source)
         );
-      }).toList() : print('');
+
+      } 
 
       return new AspectRatio(
         aspectRatio: 4.0 / 1.7 ,
         // height: 140.0,
-        child: new BannerView( 
-          source.length > 0 ? source : [
-            new Image.asset('assets/slide1.jpg', fit: BoxFit.fill),
-            new Image.asset('assets/slide2.jpg', fit: BoxFit.fill),
-            new Image.asset('assets/slide3.jpg', fit: BoxFit.fill),
-            new Image.asset('assets/slide4.jpg', fit: BoxFit.fill),
-            new Image.asset('assets/slide5.jpg', fit: BoxFit.fill), 
-          ],
-          log: false,
-          intervalDuration: new Duration(seconds: 3),
-          indicatorBuilder: (BuildContext context, Widget indicatorWidget) {
-            return new Align(
-              alignment: Alignment.bottomRight,
-              child: new Container(
-                height: 40.0,
-                padding: new EdgeInsets.symmetric(horizontal: 16.0),
-                child: indicatorWidget,
-              )
-            );
-          },
-          indicatorSelected: new Container(
-            width: 8.0,
-            height: 8.0,
-            decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).iconTheme.color,
-            ),
-          ),
-        )
+        child: new BannerViews(banners)
       );
     },
   );
+}
+
+class BannerViews extends StatelessWidget {
+
+  const BannerViews(this.widgets, {Key key}) : super(key: key);
+
+  final List<Widget> widgets;
+
+  @override
+  Widget build(BuildContext context) {
+    return new BannerView( 
+      widgets,
+      log: false,
+      intervalDuration: new Duration(seconds: 3),
+      indicatorBuilder: (BuildContext context, Widget indicatorWidget) {
+        return new Align(
+          alignment: Alignment.bottomRight,
+          child: new Container(
+            height: 40.0,
+            padding: new EdgeInsets.symmetric(horizontal: 16.0),
+            child: indicatorWidget,
+          )
+        );
+      },
+      indicatorSelected: new Container(
+        width: 8.0,
+        height: 8.0,
+        decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).iconTheme.color,
+        ),
+      ),
+    );
+  }
 }
