@@ -602,7 +602,7 @@ You can pay for a service by a credit card/ debit card, account transfer or in c
     ),
     new FAQ('How can I leave feedback or raise a complaint?',
 '''
-As a customer, you could rate and write a feedback for a service you received right from the mobile app. Alternately, you could call or write to us on any of our contact details or Support Menu item on the mobile app.
+As a customer, you can evaluate or leave a feedback from the mobile app: Bookings -> Select booked service -> Below you will find Evaluation, select the necessary option from Not Satisfied to Very Satisfied and you can optional write you comment and click Save.
 '''
     ),
   ];

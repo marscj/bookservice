@@ -38,7 +38,7 @@ class HomeState extends State<Home> with AfterLayoutMixin<Home>{
     Messaging.instance.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        Fluttertoast.showToast(msg: 'You have a new booking');
+        Fluttertoast.showToast(msg: message['notification']['body']);
       },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");

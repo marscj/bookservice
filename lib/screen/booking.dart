@@ -106,17 +106,44 @@ class BookingDetailState extends State<BookingDetail> {
 
   dynamic getAction() {
     switch(widget.userData.category) {
-      // case 0:
-      // case 1:
-      // return <Widget>[
-      //   new FlatButton(
-      //     onPressed: () {
-
-      //     },
-      //     textColor: Colors.white,
-      //     child: new Text(AppLocalizations.of(context).cancel),
-      //   ),
-      // ];
+      case 0:
+      case 1:
+      return <Widget>[
+        widget.data.status == 0 ? new FlatButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) {
+                return new AlertDialog(
+                  title: new Text('Alert'),
+                  content: new Text('Are you sure you want to cancel?'),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text('No'),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                    new FlatButton(
+                      child: new Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    )
+                  ],
+                );
+              }
+            ).then((data){
+              if (data != null && data) {
+                Store.instance.bookingRef.document(widget.data.id).setData({'status': 2}, merge: true);
+                Navigator.of(context).pop();
+              }
+            });
+          },
+          textColor: Colors.white,
+          child: new Text(AppLocalizations.of(context).cancel),
+        ) : new Container(),
+      ];
       case 2:
       case 3:
       return status == 0 ? <Widget>[
