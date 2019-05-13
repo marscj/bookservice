@@ -580,14 +580,14 @@ Yes, we have contracts for Annual Maintenance Contracts, which we have 4 options
 For every service we deliver, we offer a 7-day service warranty which means that if what we fixed is reported faulty again within 7 calendar days, we will come back and try to fix it for free. In case the issue is with the parts and materials, any return on that will be dependent on the warranty that comes from the supplier. Generally parts do not come with a warranty when bought standalone. Also, our Service Warranty is for repair and installation jobs only.
 '''
     ),
-    new FAQ('How can I reach my assigned technician after he has been assigned to me?',
+    new FAQ('How can I reach my assigned Technician after he has been assigned to me?',
 '''
 Once a Genie has been assigned to a customer, a customer can call the Supervisor of the by calling the number provided in the mobile app. This avoids the hassle of saving numbers for a professional every time you take a home maintenance service. There is no direct calling enabled between the technician and the customer.
 '''
     ),
     new FAQ('Can I cancel a booking?',
 '''
-To cancel a booking, a customer needs to either call or cancel the booking from the app, by clicking on the cancel button. For details on cancellation policy, please refer our policy.
+To cancel a booking, a customer needs to either call or cancel the booking from the app, by clicking on the delete button. For details on cancellation policy, please refer our policy.
 '''
     ),
     new FAQ('Can I reschedule a booking?',
@@ -682,7 +682,7 @@ As a customer, you could rate and write a feedback for a service you received ri
   String get disable => 'Disable';
 
   @override
-  String get unknow => 'Unknow';
+  String get unknow => 'Unknown';
 
   @override
   String get none => 'None';

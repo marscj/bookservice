@@ -12,7 +12,7 @@ import '../storage/storage.dart';
 import '../store/store.dart';
 
 final List<String> userType = [
-    'unknow',
+    'unknown',
     'welcome',
     'banner'
 ];
@@ -175,7 +175,7 @@ class SettingScreenState extends State<SettingScreen> {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                   const PopupMenuItem<int>(
                     value: 0,
-                    child: Text('unknow'),
+                    child: Text('unknown'),
                   ),
                   const PopupMenuItem<int>(
                     value: 1,
