@@ -4,6 +4,7 @@ import 'package:banner_view/banner_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../widgets.dart';
 import './config_home.dart';
@@ -226,7 +227,7 @@ class HomePageState extends State<HomePage> {
           visible: widget.userData.category < 2,
           child: new Flexible(
             flex: 0, 
-            child: bannerView
+            child: new Banner()
           ),
         ),
         new Flexible(
@@ -239,40 +240,6 @@ class HomePageState extends State<HomePage> {
       ],
     ),
   ) : new Container(); 
-
-  Widget get bannerView => new AspectRatio(
-    aspectRatio: 4.0 / 1.7 ,
-    // height: 140.0,
-    child: new BannerView( 
-      [
-        new Image.asset('assets/slide1.jpg', fit: BoxFit.fill),
-        new Image.asset('assets/slide2.jpg', fit: BoxFit.fill),
-        new Image.asset('assets/slide3.jpg', fit: BoxFit.fill),
-        new Image.asset('assets/slide4.jpg', fit: BoxFit.fill),
-        new Image.asset('assets/slide5.jpg', fit: BoxFit.fill), 
-      ],
-      log: false,
-      intervalDuration: new Duration(seconds: 3),
-      indicatorBuilder: (BuildContext context, Widget indicatorWidget) {
-        return new Align(
-          alignment: Alignment.bottomRight,
-          child: new Container(
-            height: 40.0,
-            padding: new EdgeInsets.symmetric(horizontal: 16.0),
-            child: indicatorWidget,
-          )
-        );
-      },
-      indicatorSelected: new Container(
-        width: 8.0,
-        height: 8.0,
-        decoration: new BoxDecoration(
-            shape: BoxShape.circle,
-            color: Theme.of(context).iconTheme.color,
-        ),
-      ),
-    )
-  );
 
   List<Category> getCategories(UserModel user) {
     switch(user.category){
@@ -421,5 +388,76 @@ class Flag extends StatelessWidget {
         )
       ],
     )
+  );
+}
+
+class Banner extends StatefulWidget {
+  Banner({Key key}) : super(key: key);
+
+  _BannerState createState() => _BannerState();
+}
+
+class _BannerState extends State<Banner> {
+  
+  Stream<QuerySnapshot> _stream;
+  List<Widget> source = new List<Widget>();
+  
+  @override
+  void initState() {
+    super.initState();
+
+    _stream = Store.instance.sourceRef.where('use', isEqualTo: 2).orderBy('index').snapshots();
+  }
+
+  @override
+  Widget build(BuildContext context) => new StreamBuilder(
+    stream: _stream,
+    builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+      if (!snapshot.hasData) return new Container();
+      source.clear();
+      
+      snapshot.data.documents.length > 0 ? snapshot.data.documents.map((doc){
+        source.add(
+          new CachedNetworkImage(
+            imageUrl: doc.data['url'],
+            fit: BoxFit.fill
+          )
+        );
+      }).toList() : print('');
+
+      return new AspectRatio(
+        aspectRatio: 4.0 / 1.7 ,
+        // height: 140.0,
+        child: new BannerView( 
+          source.length > 0 ? source : [
+            new Image.asset('assets/slide1.jpg', fit: BoxFit.fill),
+            new Image.asset('assets/slide2.jpg', fit: BoxFit.fill),
+            new Image.asset('assets/slide3.jpg', fit: BoxFit.fill),
+            new Image.asset('assets/slide4.jpg', fit: BoxFit.fill),
+            new Image.asset('assets/slide5.jpg', fit: BoxFit.fill), 
+          ],
+          log: false,
+          intervalDuration: new Duration(seconds: 3),
+          indicatorBuilder: (BuildContext context, Widget indicatorWidget) {
+            return new Align(
+              alignment: Alignment.bottomRight,
+              child: new Container(
+                height: 40.0,
+                padding: new EdgeInsets.symmetric(horizontal: 16.0),
+                child: indicatorWidget,
+              )
+            );
+          },
+          indicatorSelected: new Container(
+            width: 8.0,
+            height: 8.0,
+            decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).iconTheme.color,
+            ),
+          ),
+        )
+      );
+    },
   );
 }

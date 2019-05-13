@@ -70,7 +70,7 @@ class GalleryScreenState extends State<GalleryScreen> {
   void initState() {
     super.initState();
 
-    _stream = Store.instance.sourceRef.snapshots();
+    _stream = Store.instance.sourceRef.orderBy('use').orderBy('index').snapshots();
   }
 
   @override
@@ -259,7 +259,8 @@ class UploadScreenState extends State<UploadScreen> {
           Store.instance.sourceRef.document(Uuid().v4()).setData({
             'url': url,
             'file': getFileName(url),
-            'use': 0
+            'use': 0,
+            'index': 0,
           });
         });
       }

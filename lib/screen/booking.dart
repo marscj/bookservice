@@ -362,6 +362,20 @@ class BookingDetailState extends State<BookingDetail> {
             contentOnNewLine: true,
             content: new Text('${widget.data.evaluation ?? AppLocalizations.of(context).none}')
           ),
+
+          new CardSettingsField(
+            label: '',
+            contentOnNewLine: true,
+            content: new GestureDetector(
+              child: new Container(
+                child: new Row(
+                  children: <Widget>[
+                    
+                  ],
+                ),
+              ),
+            ),
+          ),
           
           new CardSettingsButton(label: AppLocalizations.of(context).save,
             backgroundColor: Theme.of(context).cardColor,

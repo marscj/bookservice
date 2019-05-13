@@ -86,8 +86,10 @@ flutter:
    - assets/company.jpg
    - assets/customer.jpg
    - assets/freelancer.jpg
-   - assets/arabic.jpg
-   - assets/english.jpg
+   - assets/ad.jpg
+   - assets/smail_0.jpg
+   - assets/smail_1.jpg
+   - assets/smail_2.jpg
 
    - assets/plumbing.svg
    - assets/ac.svg

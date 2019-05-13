@@ -14,14 +14,7 @@ class DefaultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => new Stack(
     children: <Widget>[
-      new Container(
-        color: Colors.white,
-      ),
-      new Container(
-        padding: new EdgeInsets.all(20.0),
-        alignment: Alignment.bottomCenter,
-        child: new Image.asset('assets/title.png'),
-      )
+      new Image.asset('assets/title.png', fit: BoxFit.fitHeight),
     ],
   );
 }
@@ -72,7 +65,7 @@ class _AdPage extends State<AdPage> {
       // }),
       future: _future,
       builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data.documents.length > 0) {
           return new SafeArea(
             top: true,
             bottom: false,
