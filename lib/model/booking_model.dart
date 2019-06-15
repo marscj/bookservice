@@ -34,6 +34,7 @@ class BookingModel{
   String staffEmail;
 
   String evaluation;
+  int evaluation_lv;
 
   PlaceModel place;
 

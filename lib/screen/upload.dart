@@ -241,10 +241,6 @@ class UploadScreenState extends State<UploadScreen> {
   
   FirebaseStorage storage = Storage.instance.firebaseStorage;
 
-  String getFileName(String str) {
-    return str.substring(str.indexOf('image_picker_'), str.lastIndexOf('?'));
-  }
-
   Future<void> _uploadFile(file) async {
     String fileName = file.path.substring(file.path.lastIndexOf('/') + 1);
     String fileType = file.path.substring(file.path.lastIndexOf('.') + 1);
@@ -258,7 +254,6 @@ class UploadScreenState extends State<UploadScreen> {
         event.snapshot.ref.getDownloadURL().then((url){
           Store.instance.sourceRef.document(Uuid().v4()).setData({
             'url': url,
-            'file': getFileName(url),
             'use': 0,
             'index': 0,
           });

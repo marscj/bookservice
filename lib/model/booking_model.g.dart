@@ -28,6 +28,7 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) {
     ..staffNumber = json['staffNumber'] as String
     ..staffEmail = json['staffEmail'] as String
     ..evaluation = json['evaluation'] as String
+    ..evaluation_lv = json['evaluation_lv'] as int
     ..place = json['place'] == null
         ? null
         : PlaceModel.fromJson(json['place'] as Map<String, dynamic>)
@@ -56,6 +57,7 @@ Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
       'staffNumber': instance.staffNumber,
       'staffEmail': instance.staffEmail,
       'evaluation': instance.evaluation,
+      'evaluation_lv': instance.evaluation_lv,
       'place': instance.place,
       'status': instance.status
     };

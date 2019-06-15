@@ -85,6 +85,7 @@ class BookingDetailState extends State<BookingDetail> {
 
   TextEditingController evaluationController;
   String evaluation;
+  int evaluation_lv;
   int status;
 
   @override
@@ -93,6 +94,7 @@ class BookingDetailState extends State<BookingDetail> {
     super.initState();
 
     evaluation = widget.data.evaluation ?? '';
+    evaluation_lv = widget.data.evaluation_lv ?? 2;
     status = widget.data.status ?? 0;
     
     evaluationController = new TextEditingController(text: widget.data.evaluation ?? '')..addListener(()=> setState((){}));
@@ -349,6 +351,52 @@ class BookingDetailState extends State<BookingDetail> {
         showMaterialIOS: true,
         header: new CardSettingsHeader(label: AppLocalizations.of(context).evaluation, showMaterialIOS: true),
         children: <Widget> [
+          new CardSettingsField(
+            label: 'satisfaction:', 
+            contentOnNewLine: true,
+            content: new GestureDetector(
+              child: new Container(
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    new ListMenu(
+                      value: 0,
+                      title: 'assets/smail_0.jpg',
+                    ),
+                    new ListMenu(
+                      value: 1,
+                      title: 'assets/smail_1.jpg',
+                    ),
+                    new ListMenu(
+                      value: 2,
+                      title: 'assets/smail_2.jpg',
+                    ),
+                  ].map((item){
+                    return new GestureDetector(
+                      child: new Container(
+                        child: SizedBox.fromSize(
+                          size: new Size(80.0, 80.0), 
+                          child: new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              new Image.asset(item.title, width: 50.0, height: 50.0,),
+                              evaluation_lv != null && evaluation_lv == item.value ? new Center(
+                                child: new Icon(Icons.check_box, color: Colors.black38,),
+                              ) : new Container()
+                            ],
+                          )
+                        )
+                      ),onTap: () {
+                        setState(() {
+                          evaluation_lv = item.value;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
           widget.data.userId == widget.userData.profile.userId ? new CardSettingsField(
             label: '',
             contentOnNewLine: true,
@@ -362,31 +410,17 @@ class BookingDetailState extends State<BookingDetail> {
             contentOnNewLine: true,
             content: new Text('${widget.data.evaluation ?? AppLocalizations.of(context).none}')
           ),
-
-          new CardSettingsField(
-            label: '',
-            contentOnNewLine: true,
-            content: new GestureDetector(
-              child: new Container(
-                child: new Row(
-                  children: <Widget>[
-                    
-                  ],
-                ),
-              ),
-            ),
-          ),
           
           new CardSettingsButton(label: AppLocalizations.of(context).save,
             backgroundColor: Theme.of(context).cardColor,
-            textColor: evaluationController.text != evaluation ? Theme.of(context).accentColor : Colors.black45,
-            onPressed: evaluationController.text != evaluation ? () {
-                setState(() {
-                  evaluation = evaluationController.text;
-                });
-                Store.instance.bookingRef.document(widget.data.id).setData({'evaluation': evaluationController.text}, merge: true);
-                Navigator.of(context).pop();
-              } : null,
+            textColor: Theme.of(context).accentColor,
+            onPressed: () {
+              setState(() {
+                evaluation = evaluationController.text;
+              });
+              Store.instance.bookingRef.document(widget.data.id).setData({'evaluation': evaluationController.text, 'evaluation_lv': evaluation_lv}, merge: true);
+              Navigator.of(context).pop();
+            },
           )
         ]
       )
