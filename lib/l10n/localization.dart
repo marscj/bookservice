@@ -285,7 +285,6 @@ class _Bundle_en extends TranslationBundle {
       'AC controller repair',
       'AC tripping repair',
       'AC leakage repair',
-      'AC tripping repair',
       'AC service',
       'Other custom job e.g new AC unit installation'
     ],
@@ -351,12 +350,6 @@ class _Bundle_en extends TranslationBundle {
         'Kitchen',
         'Living Room',
         'Bath Room',
-        'Other(Provide in Instruction Box / attached photo)'
-      ],
-      [
-        'One room',
-        'More than one room',
-        'Full power shutdown',
         'Other(Provide in Instruction Box / attached photo)'
       ],
       [
