@@ -8,5 +8,3 @@ abstract class ContractEvent extends Equatable {
 }
 
 class ContractRefreshList extends ContractEvent {}
-
-class ContractLoadList extends ContractEvent {}

@@ -244,6 +244,39 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'id': instance.id,
     };
 
+Address _$AddressFromJson(Map<String, dynamic> json) {
+  return Address()
+    ..id = json['id'] as int
+    ..defAddr = json['defAddr'] as bool
+    ..onMap = json['onMap'] as bool
+    ..model = json['model'] as int
+    ..style = json['style'] as int
+    ..city = json['city'] as String
+    ..community = json['community'] as String
+    ..street = json['street'] as String
+    ..building = json['building'] as String
+    ..roomNo = json['roomNo'] as String
+    ..lat = (json['lat'] as num)?.toDouble()
+    ..lng = (json['lng'] as num)?.toDouble()
+    ..address = json['address'] as String;
+}
+
+Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
+      'id': instance.id,
+      'defAddr': instance.defAddr,
+      'onMap': instance.onMap,
+      'model': instance.model,
+      'style': instance.style,
+      'city': instance.city,
+      'community': instance.community,
+      'street': instance.street,
+      'building': instance.building,
+      'roomNo': instance.roomNo,
+      'lat': instance.lat,
+      'lng': instance.lng,
+      'address': instance.address,
+    };
+
 // **************************************************************************
 // RetrofitGenerator
 // **************************************************************************
@@ -331,7 +364,6 @@ class _RestService implements RestService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(playload ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/users/$id/',
         queryParameters: queryParameters,
@@ -372,8 +404,7 @@ class _RestService implements RestService {
     queryParameters.addAll(query ?? <String, dynamic>{});
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/contracts/',
+    final Response<List<dynamic>> _result = await _dio.request('/contracts/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -381,7 +412,30 @@ class _RestService implements RestService {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = ContractList.fromJson(_result.data);
+    var value = _result.data
+        .map((dynamic i) => Contract.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  getAddress({query}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final Response<List<dynamic>> _result = await _dio.request('/address/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Address.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
@@ -411,7 +465,6 @@ class _RestService implements RestService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(playload ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/auth/phone/generate/',
         queryParameters: queryParameters,
@@ -432,7 +485,6 @@ class _RestService implements RestService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(playload ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/auth/phone/validate/',
         queryParameters: queryParameters,
@@ -453,7 +505,6 @@ class _RestService implements RestService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(playload ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final Response<Map<String, dynamic>> _result = await _dio.request(
         'auth/email/code/generate/',
         queryParameters: queryParameters,
@@ -474,7 +525,6 @@ class _RestService implements RestService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(playload ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final Response<Map<String, dynamic>> _result = await _dio.request(
         'auth/email/code/validate/',
         queryParameters: queryParameters,

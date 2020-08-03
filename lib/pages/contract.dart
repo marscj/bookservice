@@ -47,7 +47,7 @@ class _ContractListPageState extends State<ContractListPage> {
             ContractBloc bloc = BlocProvider.of<ContractBloc>(context);
             return SmartRefresher(
               enablePullDown: true,
-              enablePullUp: state.list.length < state.totalCount,
+              enablePullUp: false,
               header: WaterDropHeader(),
               footer: CustomFooter(
                 builder: (BuildContext context, LoadStatus mode) {
@@ -71,7 +71,6 @@ class _ContractListPageState extends State<ContractListPage> {
               ),
               controller: bloc.refreshController,
               onRefresh: () => bloc.add(ContractRefreshList()),
-              onLoading: () => bloc.add(ContractLoadList()),
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 itemBuilder: (c, i) => ContractItem(

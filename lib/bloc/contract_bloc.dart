@@ -21,39 +21,14 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     ContractEvent event,
   ) async* {
     if (event is ContractRefreshList) {
-      yield await RestService.instance.getContracts(query: {
-        'pageNo': 1,
-        'pageSize': state.pageSize,
-        'sorter': '-id'
-      }).then<ContractState>((value) {
+      yield await RestService.instance
+          .getContracts(query: {'sorter': '-id'}).then<ContractState>((value) {
         refreshController.refreshCompleted();
-        return state.copyWith(
-            list: value.data, pageNo: 2, totalCount: value.totalCount);
+        return state.copyWith(list: value);
       }).catchError((onError) {
         refreshController.refreshFailed();
-        return state.copyWith(list: [], pageNo: 1, totalCount: 0);
+        return state.copyWith(list: []);
       });
-    }
-
-    if (event is ContractLoadList) {
-      if (state.list.length < state.totalCount) {
-        yield await RestService.instance.getContracts(query: {
-          'pageNo': state.pageNo,
-          'pageSize': state.pageSize,
-          'sorter': '-id'
-        }).then<ContractState>((value) {
-          refreshController.loadComplete();
-          return state.copyWith(
-              list: state.list + value.data,
-              pageNo: state.pageNo + 1,
-              totalCount: value.totalCount);
-        }).catchError((onError) {
-          refreshController.refreshFailed();
-          return state;
-        });
-      } else {
-        refreshController.loadComplete();
-      }
     }
   }
 

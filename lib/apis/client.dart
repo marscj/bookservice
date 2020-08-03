@@ -15,6 +15,7 @@ part 'order.dart';
 part 'user.dart';
 part 'contract.dart';
 part 'job.dart';
+part 'address.dart';
 
 part 'client.g.dart';
 
@@ -117,7 +118,10 @@ abstract class RestService {
   Future<OrderList> getOrders({@Queries() Map<String, dynamic> query});
 
   @GET('/contracts/')
-  Future<ContractList> getContracts({@Queries() Map<String, dynamic> query});
+  Future<List<Contract>> getContracts({@Queries() Map<String, dynamic> query});
+
+  @GET('/address/')
+  Future<List<Address>> getAddress({@Queries() Map<String, dynamic> query});
 
   @GET('/orders/{id}/')
   Future<Order> getOrder(@Path("id") String id);

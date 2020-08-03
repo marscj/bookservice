@@ -1,10 +1,15 @@
 part of 'address_bloc.dart';
 
-abstract class AddressState extends Equatable {
-  const AddressState();
-}
+class AddressState extends Equatable {
+  final List<Address> list;
 
-class AddressInitial extends AddressState {
+  const AddressState({this.list});
+
+  factory AddressState.initial() => AddressState(list: List<Address>());
+
+  AddressState copyWith({List<Address> list}) =>
+      AddressState(list: list ?? this.list);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [list];
 }

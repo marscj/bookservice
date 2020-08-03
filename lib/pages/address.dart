@@ -35,7 +35,9 @@ class _AddressListPageState extends State<AddressListPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () {
+              context.navigator.push('${null}/post');
+            },
           )
         ],
       ),
@@ -54,9 +56,6 @@ class _AddressPostPageState extends State<AddressPostPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(Localization.of(context).address),
-        leading: BackButton(onPressed: () {
-          context.navigator.root.pop();
-        }),
       ),
     );
   }
