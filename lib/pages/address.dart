@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/address_bloc.dart';
+import 'package:bookservice/constanc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/dialog.dart';
 import 'package:card_settings/card_settings.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // ignore_for_file: close_sinks
@@ -303,6 +305,18 @@ class _AddressPostPageState extends State<AddressPostPage> {
                             decoration: InputDecoration(
                                 labelText: 'RoomNo',
                                 border: OutlineInputBorder())),
+                        FlatButton(
+                          child: Text('Select on map'),
+                          onPressed: () async {
+                            LocationResult result = await showLocationPicker(
+                                context, Constant.ApiKey,
+                                myLocationButtonEnabled: true,
+                                layersButtonEnabled: true,
+                                automaticallyAnimateToCurrentLocation: true);
+                            print("result = $result");
+                            // showLocationPicker(context, Constant.ApiKey);
+                          },
+                        )
                       ],
                     );
                   })))),
