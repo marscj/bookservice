@@ -6,7 +6,8 @@ class AddressState extends Equatable {
 
   const AddressState({this.list, this.isLoading});
 
-  factory AddressState.initial() => AddressState(list: List<Address>());
+  factory AddressState.initial() =>
+      AddressState(list: List<Address>(), isLoading: false);
 
   AddressState copyWith({List<Address> list, bool isLoading}) => AddressState(
       list: list ?? this.list, isLoading: isLoading ?? this.isLoading);

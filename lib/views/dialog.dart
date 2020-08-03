@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animations/loading_animations.dart';
 
-class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key key}) => showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(key: key),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+bool _isDialogShowing = false;
 
-  static void hide(BuildContext context) => Navigator.pop(context);
+class LoadingDialog extends StatelessWidget {
+  static void show(BuildContext context, {Key key}) {
+    _isDialogShowing = true;
+    showDialog<void>(
+      context: context,
+      useRootNavigator: false,
+      barrierDismissible: false,
+      builder: (_) => LoadingDialog(key: key),
+    ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+  }
+
+  static void hide(BuildContext context) {
+    if (_isDialogShowing) {
+      _isDialogShowing = false;
+      Navigator.pop(context);
+    }
+  }
 
   LoadingDialog({Key key}) : super(key: key);
 

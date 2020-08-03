@@ -21,10 +21,20 @@ class _AddressPageState extends State<AddressPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => AddressBloc(this.context),
-        child: ExtendedNavigator(
-          name: 'address',
-          initialRoute: AddressPageRoutes.addressListPage,
-        ));
+        child: BlocListener<AddressBloc, AddressState>(
+            listener: (context, state) {
+              if (state.isLoading) {
+                print('show');
+                LoadingDialog.show(context);
+              } else {
+                print('hide');
+                LoadingDialog.hide(context);
+              }
+            },
+            child: ExtendedNavigator(
+              name: 'address',
+              initialRoute: AddressPageRoutes.addressListPage,
+            )));
   }
 }
 
@@ -131,76 +141,67 @@ class AddressItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ))),
         child: Builder(builder: (context) {
-          return BlocListener<AddressBloc, AddressState>(
-              listener: (_, state) {
-                if (state.isLoading) {
-                  // LoadingDialog.show(context);
-                } else {
-                  // LoadingDialog.hide(context);
-                }
-              },
-              child: CardSettings.sectioned(
-                showMaterialonIOS: true,
-                labelWidth: 100,
-                fieldPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                children: [
-                  CardSettingsSection(
-                    header: CardSettingsHeader(
-                        child: Container(
-                      color: Colors.blue,
-                      margin: EdgeInsets.all(0.0),
-                      padding: EdgeInsets.only(
-                          left: 14.0, top: 8.0, right: 14.0, bottom: 8.0),
-                      height: 50,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          data.defAddr
-                              ? Expanded(
-                                  child: Text(
-                                    'Default',
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                )
-                              : Container(
-                                  alignment: Alignment.topCenter,
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.radio_button_unchecked,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      BlocProvider.of<AddressBloc>(context).add(
-                                          AddressUpdateList(
-                                              data.id, {'defAddr': true}));
-                                    },
-                                  ),
+          return CardSettings.sectioned(
+            showMaterialonIOS: true,
+            labelWidth: 100,
+            fieldPadding:
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            children: [
+              CardSettingsSection(
+                header: CardSettingsHeader(
+                    child: Container(
+                  color: Colors.blue,
+                  margin: EdgeInsets.all(0.0),
+                  padding: EdgeInsets.only(
+                      left: 14.0, top: 8.0, right: 14.0, bottom: 8.0),
+                  height: 50,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      data.defAddr
+                          ? Expanded(
+                              child: Text(
+                                'Default',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            )
+                          : Container(
+                              alignment: Alignment.topCenter,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.white,
                                 ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.white),
-                            onPressed: () {
-                              BlocProvider.of<AddressBloc>(context)
-                                  .add(AddressDelList(data.id));
-                            },
-                          )
-                        ],
-                      ),
-                    )),
-                    children: [
-                      CardSettingsField(
-                        fieldPadding: null,
-                        labelAlign: null,
-                        requiredIndicator: null,
-                        label: 'Address',
-                        content: Text(data.toTitle),
-                      ),
+                                onPressed: () {
+                                  BlocProvider.of<AddressBloc>(context).add(
+                                      AddressUpdateList(
+                                          data.id, {'defAddr': true}));
+                                },
+                              ),
+                            ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.white),
+                        onPressed: () {
+                          BlocProvider.of<AddressBloc>(context)
+                              .add(AddressDelList(data.id));
+                        },
+                      )
                     ],
-                  )
+                  ),
+                )),
+                children: [
+                  CardSettingsField(
+                    fieldPadding: null,
+                    labelAlign: null,
+                    requiredIndicator: null,
+                    label: 'Address',
+                    content: Text(data.toTitle),
+                  ),
                 ],
-              ));
+              )
+            ],
+          );
         }));
   }
 }

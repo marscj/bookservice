@@ -20,6 +20,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapEventToState(
     AddressEvent event,
   ) async* {
+    print(event);
     if (event is AddressRefreshList) {
       yield await RestService.instance.getAddress().then<AddressState>((value) {
         refreshController.refreshCompleted();
@@ -48,10 +49,13 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance.deleteAddress(event.id).then((value) {
+        print('333');
         return RestService.instance.getAddress();
       }).then<AddressState>((value) {
+        print('444');
         return state.copyWith(list: value ?? [], isLoading: false);
       }).catchError((onError) {
+        print(onError);
         return state.copyWith(isLoading: false);
       });
     }

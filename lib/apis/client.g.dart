@@ -466,7 +466,7 @@ class _RestService implements RestService {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final Response<String> _result = await _dio.request('/address/$id/',
+    await _dio.request<void>('/address/$id/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'DELETE',
@@ -474,8 +474,7 @@ class _RestService implements RestService {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    final value = _result.data;
-    return value;
+    return null;
   }
 
   @override

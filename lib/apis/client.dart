@@ -79,11 +79,12 @@ abstract class RestService {
           options.headers['Authorization'] = token;
           return options;
         }, onResponse: (Response response) {
-          response.data = response.data['result'];
+          if (response?.data is Map) {
+            response.data = response?.data['result'];
+          }
           return response;
         }, onError: (DioError e) async {
           if (e?.response?.statusCode == 400) {
-            // e?.response?.data = e?.response?.data['result'];
             var data = e?.response?.data['result'];
             if (data != null) {
               data.forEach((k, v) {
@@ -128,10 +129,10 @@ abstract class RestService {
       @Path() int id, @Body() Map<String, dynamic> playload);
 
   @DELETE('/address/{id}/')
-  Future<String> deleteAddress(@Path() int id);
+  Future<void> deleteAddress(@Path() int id);
 
   @GET('/orders/{id}/')
-  Future<Order> getOrder(@Path("id") String id);
+  Future<Order> getOrder(@Path() int id);
 
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);
