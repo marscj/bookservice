@@ -7,4 +7,4 @@ abstract class AddressEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddressEventRefreshList extends AddressEvent {}
+class AddressRefreshList extends AddressEvent {}

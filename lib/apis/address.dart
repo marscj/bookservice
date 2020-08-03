@@ -22,6 +22,10 @@ class Address extends Equatable {
   static Address fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$AddressToJson(this);
 
+  String get toTitle => onMap
+      ? address
+      : '${roomNo + ' / ' + building + ' / ' + street + ' / ' + community + ' / ' + city}';
+
   @override
   List<Object> get props => [
         id,

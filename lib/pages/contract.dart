@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:bookservice/views/ifnone_widget.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
@@ -84,16 +85,11 @@ class _ContractListPageState extends State<ContractListPage> {
   }
 }
 
-class ContractItem extends StatefulWidget {
+class ContractItem extends StatelessWidget {
   final Contract data;
 
   const ContractItem({Key key, this.data}) : super(key: key);
 
-  @override
-  _ContractItemState createState() => _ContractItemState();
-}
-
-class _ContractItemState extends State<ContractItem> {
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -130,56 +126,72 @@ class _ContractItemState extends State<ContractItem> {
         children: [
           CardSettingsSection(
             header: CardSettingsHeader(
-              label: '${widget.data.contractID}',
+              label: '${data.contractID}',
             ),
             children: [
-              CardSettingsText(
-                label: 'Option',
-                initialValue:
-                    '${Localization.of(context).contractOption[widget.data.option]}',
-                enabled: false,
-              ),
-              CardSettingsText(
-                label: 'Issue Date',
-                initialValue: '${widget.data.issue_date}',
-                enabled: false,
-              ),
-              CardSettingsText(
-                label: 'Expiry Date',
-                initialValue: '${widget.data.expiry_date}',
-                enabled: false,
-              ),
-              CardSettingsText(
-                label: 'Expiry Date',
-                initialValue: '${widget.data.expiry_date}',
-                enabled: false,
-              ),
-              CardSettingsParagraph(
-                  label: 'Address',
-                  initialValue: widget.data.address != null
-                      ? '${widget.data.address}'
-                      : '',
-                  enabled: false,
-                  numberOfLines: 3),
-              CardSettingsParagraph(
-                  label: 'Remark',
-                  initialValue:
-                      widget.data.remark != null ? '${widget.data.remark}' : '',
-                  enabled: false,
-                  numberOfLines: 3),
               CardSettingsField(
                 fieldPadding: null,
                 labelAlign: null,
                 requiredIndicator: null,
-                enabled: false,
+                label: 'Option',
+                content: Text(
+                    '${Localization.of(context).contractOption[data.option]}'),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Issue Date',
+                content: Text('${data.issue_date}'),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Expiry Date',
+                content: Text('${data.expiry_date}'),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Expiry Date',
+                content: Text('${data.expiry_date}'),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Address',
+                contentOnNewLine: true,
+                content: IfNoneWidget(
+                  basis: data?.address != null,
+                  builder: (context) => Text('${data.address}', maxLines: 3),
+                ),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Remark',
+                contentOnNewLine: true,
+                content: IfNoneWidget(
+                  basis: data?.remark != null,
+                  builder: (context) => Text('${data.remark}', maxLines: 3),
+                ),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
                 contentOnNewLine: true,
                 label: 'Visit',
                 content: Container(
                     alignment: Alignment.topLeft,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: widget.data.visits != null
-                          ? widget.data.visits
+                      children: data.visits != null
+                          ? data.visits
                               .map((e) => ListTile(
                                     title: Text(
                                         '${Localization.of(context).serviceType[e.service]} : ${e.count}'),
