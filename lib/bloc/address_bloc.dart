@@ -4,10 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'address_event.dart';
 part 'address_state.dart';
+
+// ignore_for_file: close_sinks
 
 class AddressBloc extends Bloc<AddressEvent, AddressState> {
   final BuildContext context;
@@ -49,10 +52,8 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance.deleteAddress(event.id).then((value) {
-        print('333');
         return RestService.instance.getAddress();
       }).then<AddressState>((value) {
-        print('444');
         return state.copyWith(list: value ?? [], isLoading: false);
       }).catchError((onError) {
         print(onError);
@@ -60,4 +61,38 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       });
     }
   }
+}
+
+class AddressFormBloc extends FormBloc<String, String> {
+  final SelectFieldBloc model = SelectFieldBloc(
+    items: ['Option 1', 'Option 2'],
+    initialValue: 'Option 1',
+  );
+
+  final SelectFieldBloc style = SelectFieldBloc(
+    items: ['Option 1', 'Option 2'],
+    initialValue: 'Option 1',
+  );
+
+  final TextFieldBloc city = TextFieldBloc();
+  final TextFieldBloc community = TextFieldBloc();
+  final TextFieldBloc street = TextFieldBloc();
+  final TextFieldBloc building = TextFieldBloc();
+  final TextFieldBloc roomNo = TextFieldBloc();
+
+  AddressFormBloc() {
+    addFieldBlocs(
+        fieldBlocs: [model, style, city, community, street, building, roomNo]);
+  }
+
+  void addErrors(Map<String, dynamic> errors) {
+    if (errors == null) {
+      return;
+    }
+
+    model.addFieldError(errors['model'] ?? errors['non_field_errors']);
+  }
+
+  @override
+  void onSubmitting() {}
 }

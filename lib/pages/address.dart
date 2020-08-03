@@ -9,6 +9,7 @@ import 'package:card_settings/interfaces/minimum_field_properties.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // ignore_for_file: close_sinks
@@ -106,9 +107,8 @@ class _AddressListPageState extends State<AddressListPage> {
 
 class AddressItem extends StatelessWidget {
   final Address data;
-  final Builder builder;
 
-  const AddressItem({Key key, this.data, this.builder}) : super(key: key);
+  const AddressItem({Key key, this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +197,9 @@ class AddressItem extends StatelessWidget {
                     isDestructive: true,
                     backgroundColor: Theme.of(context).cardColor,
                     textColor: Theme.of(context).buttonColor,
-                    onPressed: () {},
+                    onPressed: () {
+                      context.navigator.push('${data.id}/post');
+                    },
                   )
                 ],
               )
@@ -208,6 +210,10 @@ class AddressItem extends StatelessWidget {
 }
 
 class AddressPostPage extends StatefulWidget {
+  final Address data;
+
+  const AddressPostPage({Key key, this.data}) : super(key: key);
+
   @override
   _AddressPostPageState createState() => _AddressPostPageState();
 }
@@ -219,6 +225,87 @@ class _AddressPostPageState extends State<AddressPostPage> {
       appBar: AppBar(
         title: Text(Localization.of(context).address),
       ),
+      body: BlocProvider<AddressFormBloc>(
+          create: (context) => AddressFormBloc(),
+          child: FormBlocListener<AddressFormBloc, String, String>(
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      secondaryHeaderColor:
+                          Colors.blue, // card header background
+                      cardColor: Colors.white, // card field background
+                      buttonColor: Colors.blue, // button background color
+                      textTheme: Theme.of(context).textTheme.copyWith(
+                            button: Theme.of(context)
+                                .textTheme
+                                .button
+                                .copyWith(color: Colors.white), // button text
+                            subtitle1: Theme.of(context)
+                                .textTheme
+                                .subtitle1
+                                .copyWith(color: Colors.black87), // input text
+                            headline6: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .copyWith(
+                                    color: Colors.white), // card header text
+                          ),
+                      inputDecorationTheme: InputDecorationTheme(
+                        labelStyle: TextStyle(
+                            color: Colors.black87), // style for labels
+                      ),
+                      cardTheme: CardTheme(
+                          shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                      ))),
+                  child: Builder(builder: (context) {
+                    AddressFormBloc formBloc =
+                        BlocProvider.of<AddressFormBloc>(context);
+                    return ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      children: <Widget>[
+                        DropdownFieldBlocBuilder(
+                          showEmptyItem: false,
+                          decoration: InputDecoration(
+                              labelText: 'Model', border: OutlineInputBorder()),
+                          itemBuilder: (context, value) => value,
+                          selectFieldBloc: formBloc.model,
+                        ),
+                        DropdownFieldBlocBuilder(
+                          showEmptyItem: false,
+                          decoration: InputDecoration(
+                              labelText: 'Style', border: OutlineInputBorder()),
+                          itemBuilder: (context, value) => value,
+                          selectFieldBloc: formBloc.style,
+                        ),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.city,
+                            decoration: InputDecoration(
+                                labelText: 'City',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.community,
+                            decoration: InputDecoration(
+                                labelText: 'Community',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.street,
+                            decoration: InputDecoration(
+                                labelText: 'Street',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.building,
+                            decoration: InputDecoration(
+                                labelText: 'Building',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.roomNo,
+                            decoration: InputDecoration(
+                                labelText: 'RoomNo',
+                                border: OutlineInputBorder())),
+                      ],
+                    );
+                  })))),
     );
   }
 }
