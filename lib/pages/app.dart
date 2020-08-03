@@ -60,9 +60,11 @@ class _EletecAppState extends State<EletecApp> {
                   ),
                   brightness: Brightness.light),
               dividerColor: Colors.grey,
-              textTheme: GoogleFonts.righteousTextTheme(
-                Theme.of(context).textTheme,
-              ),
+              // textTheme: GoogleFonts.righteousTextTheme(
+              //   Theme.of(context).textTheme,
+              // ),
+              // fontFamily: GoogleFonts.getFont('Paprika').fontFamily,
+              fontFamily: GoogleFonts.getFont('Righteous').fontFamily,
               highlightColor: Colors.blueAccent,
               hoverColor: Colors.blueAccent.withOpacity(0.04),
               splashColor: Colors.blueAccent),

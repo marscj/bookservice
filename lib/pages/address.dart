@@ -5,6 +5,7 @@ import 'package:bookservice/bloc/address_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/dialog.dart';
 import 'package:card_settings/card_settings.dart';
+import 'package:card_settings/interfaces/minimum_field_properties.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,10 +25,8 @@ class _AddressPageState extends State<AddressPage> {
         child: BlocListener<AddressBloc, AddressState>(
             listener: (context, state) {
               if (state.isLoading) {
-                print('show');
                 LoadingDialog.show(context);
               } else {
-                print('hide');
                 LoadingDialog.hide(context);
               }
             },
@@ -143,42 +142,37 @@ class AddressItem extends StatelessWidget {
         child: Builder(builder: (context) {
           return CardSettings.sectioned(
             showMaterialonIOS: true,
-            labelWidth: 100,
             fieldPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            margin: const EdgeInsets.all(0),
+            divider: Divider(),
             children: [
               CardSettingsSection(
                 header: CardSettingsHeader(
                     child: Container(
                   color: Colors.blue,
-                  margin: EdgeInsets.all(0.0),
-                  padding: EdgeInsets.only(
-                      left: 14.0, top: 8.0, right: 14.0, bottom: 8.0),
-                  height: 50,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       data.defAddr
-                          ? Expanded(
-                              child: Text(
-                                'Default',
-                                style: Theme.of(context).textTheme.headline6,
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.radio_button_checked,
+                                color: Colors.white,
                               ),
+                              onPressed: () {},
                             )
-                          : Container(
-                              alignment: Alignment.topCenter,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.radio_button_unchecked,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  BlocProvider.of<AddressBloc>(context).add(
-                                      AddressUpdateList(
-                                          data.id, {'defAddr': true}));
-                                },
+                          : IconButton(
+                              icon: Icon(
+                                Icons.radio_button_unchecked,
+                                color: Colors.white,
                               ),
+                              onPressed: () {
+                                BlocProvider.of<AddressBloc>(context).add(
+                                    AddressUpdateList(
+                                        data.id, {'defAddr': true}));
+                              },
                             ),
                       IconButton(
                         icon: Icon(Icons.delete, color: Colors.white),
@@ -198,6 +192,13 @@ class AddressItem extends StatelessWidget {
                     label: 'Address',
                     content: Text(data.toTitle),
                   ),
+                  CardSettingsButtonEx(
+                    label: 'View Detail',
+                    isDestructive: false,
+                    backgroundColor: Theme.of(context).cardColor,
+                    textColor: Theme.of(context).buttonColor,
+                    onPressed: () {},
+                  )
                 ],
               )
             ],
@@ -220,4 +221,75 @@ class _AddressPostPageState extends State<AddressPostPage> {
       ),
     );
   }
+}
+
+class CardSettingsButtonEx extends StatelessWidget
+    implements IMinimumFieldSettings {
+  CardSettingsButtonEx({
+    this.label: 'Label',
+    @required this.onPressed,
+    this.visible: true,
+    this.backgroundColor,
+    this.textColor,
+    this.enabled = true,
+    this.bottomSpacing: 0.0,
+    this.isDestructive = false,
+  });
+
+  final String label;
+
+  final bool isDestructive;
+  final Color backgroundColor;
+  final Color textColor;
+  final double bottomSpacing;
+  final bool enabled;
+  @override
+  final bool visible;
+
+  // Events
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle buttonStyle =
+        Theme.of(context).textTheme.button.copyWith(color: textColor);
+
+    if (visible) {
+      return showMaterialButton(context, buttonStyle);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget showMaterialButton(BuildContext context, TextStyle buttonStyle) {
+    var fillColor = backgroundColor ?? Theme.of(context).buttonColor;
+    if (!enabled) fillColor = Colors.grey;
+
+    return Container(
+      // margin: EdgeInsets.only(
+      //     top: 4.0, bottom: bottomSpacing, left: 4.0, right: 4.0),
+      padding: EdgeInsets.all(0.0),
+      color: fillColor,
+      child: RawMaterialButton(
+        padding: EdgeInsets.all(0.0),
+        elevation: 0.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              label,
+              style: buttonStyle,
+            ),
+          ],
+        ),
+        fillColor: fillColor,
+        onPressed: (enabled)
+            ? onPressed
+            : null, // to disable, we need to not provide an onPressed function
+      ),
+    );
+  }
+
+  @override
+  bool get showMaterialonIOS => true;
 }

@@ -121,8 +121,8 @@ class ContractItem extends StatelessWidget {
           ))),
       child: CardSettings.sectioned(
         showMaterialonIOS: true,
-        labelWidth: 100,
         fieldPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        margin: const EdgeInsets.all(0),
         children: [
           CardSettingsSection(
             header: CardSettingsHeader(
