@@ -161,7 +161,11 @@ class AddressItem extends StatelessWidget {
                                 Icons.radio_button_unchecked,
                                 color: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                BlocProvider.of<AddressBloc>(context).add(
+                                    AddressUpdateList(
+                                        data.id, {'defAddr': true}));
+                              },
                             ),
                           ),
                     IconButton(

@@ -20,12 +20,24 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapEventToState(
     AddressEvent event,
   ) async* {
-    yield await RestService.instance.getAddress().then<AddressState>((value) {
-      refreshController.refreshCompleted();
-      return state.copyWith(list: value);
-    }).catchError((onError) {
-      refreshController.refreshFailed();
-      return state.copyWith(list: []);
-    });
+    if (event is AddressRefreshList) {
+      yield await RestService.instance.getAddress().then<AddressState>((value) {
+        refreshController.refreshCompleted();
+        return state.copyWith(list: value);
+      }).catchError((onError) {
+        refreshController.refreshFailed();
+        return state.copyWith(list: []);
+      });
+    }
+
+    if (event is AddressUpdateList) {
+      yield await RestService.instance
+          .updateAddress(event.id, event.playload)
+          .then((value) {
+        return RestService.instance.getAddress();
+      }).then<AddressState>((value) {
+        return state.copyWith(list: value);
+      }).catchError((onError) {});
+    }
   }
 }

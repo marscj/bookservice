@@ -123,6 +123,13 @@ abstract class RestService {
   @GET('/address/')
   Future<List<Address>> getAddress({@Queries() Map<String, dynamic> query});
 
+  @PATCH('/address/{id}/')
+  Future<Address> updateAddress(
+      @Path() int id, @Body() Map<String, dynamic> playload);
+
+  @DELETE('/address/{id}/')
+  Future<Address> deleteAddress(@Path() int id);
+
   @GET('/orders/{id}/')
   Future<Order> getOrder(@Path("id") String id);
 

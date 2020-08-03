@@ -8,3 +8,13 @@ abstract class AddressEvent extends Equatable {
 }
 
 class AddressRefreshList extends AddressEvent {}
+
+class AddressUpdateList extends AddressEvent {
+  final int id;
+  final Map<String, dynamic> playload;
+
+  AddressUpdateList(this.id, this.playload);
+
+  @override
+  List<Object> get props => [id, playload];
+}
