@@ -48,5 +48,9 @@
 	<string>Used to capture audio for image picker</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to image picker</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to location picker</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
