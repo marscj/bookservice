@@ -23,7 +23,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     if (event is AddressRefreshList) {
       yield await RestService.instance.getAddress().then<AddressState>((value) {
         refreshController.refreshCompleted();
-        return state.copyWith(list: value);
+        return state.copyWith(list: value ?? []);
       }).catchError((onError) {
         refreshController.refreshFailed();
         return state.copyWith(list: []);
@@ -31,13 +31,29 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
     }
 
     if (event is AddressUpdateList) {
+      yield state.copyWith(isLoading: true);
+
       yield await RestService.instance
           .updateAddress(event.id, event.playload)
           .then((value) {
         return RestService.instance.getAddress();
       }).then<AddressState>((value) {
-        return state.copyWith(list: value);
-      }).catchError((onError) {});
+        return state.copyWith(list: value ?? [], isLoading: false);
+      }).catchError((onError) {
+        return state.copyWith(isLoading: false);
+      });
+    }
+
+    if (event is AddressDelList) {
+      yield state.copyWith(isLoading: true);
+
+      yield await RestService.instance.deleteAddress(event.id).then((value) {
+        return RestService.instance.getAddress();
+      }).then<AddressState>((value) {
+        return state.copyWith(list: value ?? [], isLoading: false);
+      }).catchError((onError) {
+        return state.copyWith(isLoading: false);
+      });
     }
   }
 }

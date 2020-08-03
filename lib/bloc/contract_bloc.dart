@@ -24,7 +24,7 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
       yield await RestService.instance
           .getContracts(query: {'sorter': '-id'}).then<ContractState>((value) {
         refreshController.refreshCompleted();
-        return state.copyWith(list: value);
+        return state.copyWith(list: value ?? []);
       }).catchError((onError) {
         refreshController.refreshFailed();
         return state.copyWith(list: []);

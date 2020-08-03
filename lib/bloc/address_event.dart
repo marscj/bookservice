@@ -18,3 +18,12 @@ class AddressUpdateList extends AddressEvent {
   @override
   List<Object> get props => [id, playload];
 }
+
+class AddressDelList extends AddressEvent {
+  final int id;
+
+  AddressDelList(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

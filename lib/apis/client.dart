@@ -128,7 +128,7 @@ abstract class RestService {
       @Path() int id, @Body() Map<String, dynamic> playload);
 
   @DELETE('/address/{id}/')
-  Future<Address> deleteAddress(@Path() int id);
+  Future<String> deleteAddress(@Path() int id);
 
   @GET('/orders/{id}/')
   Future<Order> getOrder(@Path("id") String id);

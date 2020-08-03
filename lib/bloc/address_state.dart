@@ -12,5 +12,5 @@ class AddressState extends Equatable {
       list: list ?? this.list, isLoading: isLoading ?? this.isLoading);
 
   @override
-  List<Object> get props => [list];
+  List<Object> get props => [list, isLoading];
 }
