@@ -3,7 +3,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/bloc/app_bloc.dart';
 import 'package:bookservice/bloc/login_bloc.dart';
-import 'package:bookservice/views/loading_dialog.dart';
+import 'package:bookservice/views/dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

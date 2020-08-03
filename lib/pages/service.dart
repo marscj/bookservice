@@ -106,7 +106,7 @@ class _GridPhotoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bgColor = Colors.blueAccent[100];
+    final Color bgColor = Colors.blue[100];
 
     final Widget image = Image.asset(
       photo.assetName,

@@ -7,7 +7,7 @@ import 'package:bookservice/bloc/email_form_bloc.dart';
 import 'package:bookservice/bloc/user_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/ifnone_widget.dart';
-import 'package:bookservice/views/loading_dialog.dart';
+import 'package:bookservice/views/dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
