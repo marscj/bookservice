@@ -1,117 +1,309 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bookservice/bloc/app_bloc.dart';
+import 'package:bookservice/pages/app.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(BlocProvider<AppBloc>(
+    create: (_) => AppBloc()..add(AppInitial()),
+    child: EletecApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+// void main() {
+//   runApp(App());
+// }
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+// class App extends StatelessWidget {
+//   const App({Key key}) : super(key: key);
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: AllFieldsForm(),
+//     );
+//   }
+// }
 
-  final String title;
+// class AllFieldsFormBloc extends FormBloc<String, String> {
+//   final text1 = TextFieldBloc();
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
+//   final boolean1 = BooleanFieldBloc();
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+//   final boolean2 = BooleanFieldBloc();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+//   final select1 = SelectFieldBloc(
+//     items: ['Option 1', 'Option 2'],
+//   );
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
+//   final select2 = SelectFieldBloc(
+//     items: ['Option 1', 'Option 2'],
+//   );
+
+//   final multiSelect1 = MultiSelectFieldBloc<String, dynamic>(
+//     items: [
+//       'Option 1',
+//       'Option 2',
+//     ],
+//   );
+
+//   final date1 = InputFieldBloc<DateTime, Object>();
+
+//   final dateAndTime1 = InputFieldBloc<DateTime, Object>();
+
+//   final time1 = InputFieldBloc<TimeOfDay, Object>();
+
+//   AllFieldsFormBloc() {
+//     addFieldBlocs(fieldBlocs: [
+//       text1,
+//       boolean1,
+//       boolean2,
+//       select1,
+//       select2,
+//       multiSelect1,
+//       date1,
+//       dateAndTime1,
+//       time1,
+//     ]);
+//   }
+
+//   void addErrors() {
+//     text1.addFieldError('Awesome Error!');
+//     boolean1.addFieldError('Awesome Error!');
+//     boolean2.addFieldError('Awesome Error!');
+//     select1.addFieldError('Awesome Error!');
+//     select2.addFieldError('Awesome Error!');
+//     multiSelect1.addFieldError('Awesome Error!');
+//     date1.addFieldError('Awesome Error!');
+//     dateAndTime1.addFieldError('Awesome Error!');
+//     time1.addFieldError('Awesome Error!');
+//   }
+
+//   @override
+//   void onSubmitting() async {
+//     try {
+//       await Future<void>.delayed(Duration(milliseconds: 500));
+
+//       emitSuccess(canSubmitAgain: true);
+//     } catch (e) {
+//       emitFailure();
+//     }
+//   }
+// }
+
+// class AllFieldsForm extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocProvider(
+//       create: (context) => AllFieldsFormBloc(),
+//       child: Builder(
+//         builder: (context) {
+//           final AllFieldsFormBloc formBloc =
+//               BlocProvider.of<AllFieldsFormBloc>(context);
+
+//           return Theme(
+//             data: Theme.of(context).copyWith(
+//               inputDecorationTheme: InputDecorationTheme(
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(5),
+//                 ),
+//               ),
+//             ),
+//             child: Scaffold(
+//               appBar: AppBar(title: Text('Built-in Widgets')),
+//               floatingActionButton: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: <Widget>[
+//                   FloatingActionButton.extended(
+//                     heroTag: null,
+//                     onPressed: formBloc.addErrors,
+//                     icon: Icon(Icons.error_outline),
+//                     label: Text('ADD ERRORS'),
+//                   ),
+//                   SizedBox(height: 12),
+//                   FloatingActionButton.extended(
+//                     heroTag: null,
+//                     onPressed: formBloc.submit,
+//                     icon: Icon(Icons.send),
+//                     label: Text('SUBMIT'),
+//                   ),
+//                 ],
+//               ),
+//               body: FormBlocListener<AllFieldsFormBloc, String, String>(
+//                 onSubmitting: (context, state) {
+//                   LoadingDialog.show(context);
+//                 },
+//                 onSuccess: (context, state) {
+//                   LoadingDialog.hide(context);
+
+//                   Navigator.of(context).pushReplacement(
+//                       MaterialPageRoute(builder: (_) => SuccessScreen()));
+//                 },
+//                 onFailure: (context, state) {
+//                   LoadingDialog.hide(context);
+
+//                   Scaffold.of(context).showSnackBar(
+//                       SnackBar(content: Text(state.failureResponse)));
+//                 },
+//                 child: SingleChildScrollView(
+//                   physics: ClampingScrollPhysics(),
+//                   child: Padding(
+//                     padding: const EdgeInsets.all(24.0),
+//                     child: Column(
+//                       children: <Widget>[
+//                         TextFieldBlocBuilder(
+//                           textFieldBloc: formBloc.text1,
+//                           decoration: InputDecoration(
+//                             labelText: 'TextFieldBlocBuilder',
+//                             prefixIcon: Icon(Icons.text_fields),
+//                           ),
+//                         ),
+//                         DropdownFieldBlocBuilder<String>(
+//                           selectFieldBloc: formBloc.select1,
+//                           decoration: InputDecoration(
+//                             labelText: 'DropdownFieldBlocBuilder',
+//                             prefixIcon: Icon(Icons.sentiment_satisfied),
+//                           ),
+//                           itemBuilder: (context, value) => value,
+//                         ),
+//                         RadioButtonGroupFieldBlocBuilder<String>(
+//                           selectFieldBloc: formBloc.select2,
+//                           decoration: InputDecoration(
+//                             labelText: 'RadioButtonGroupFieldBlocBuilder',
+//                             prefixIcon: SizedBox(),
+//                           ),
+//                           itemBuilder: (context, item) => item,
+//                         ),
+//                         CheckboxGroupFieldBlocBuilder<String>(
+//                           multiSelectFieldBloc: formBloc.multiSelect1,
+//                           itemBuilder: (context, item) => item,
+//                           decoration: InputDecoration(
+//                             labelText: 'CheckboxGroupFieldBlocBuilder',
+//                             prefixIcon: SizedBox(),
+//                           ),
+//                         ),
+//                         DateTimeFieldBlocBuilder(
+//                           dateTimeFieldBloc: formBloc.date1,
+//                           format: DateFormat('dd-mm-yyyy'),
+//                           initialDate: DateTime.now(),
+//                           firstDate: DateTime(1900),
+//                           lastDate: DateTime(2100),
+//                           decoration: InputDecoration(
+//                             labelText: 'DateTimeFieldBlocBuilder',
+//                             prefixIcon: Icon(Icons.calendar_today),
+//                             helperText: 'Date',
+//                           ),
+//                         ),
+//                         DateTimeFieldBlocBuilder(
+//                           dateTimeFieldBloc: formBloc.dateAndTime1,
+//                           canSelectTime: true,
+//                           format: DateFormat('dd-mm-yyyy  hh:mm'),
+//                           initialDate: DateTime.now(),
+//                           firstDate: DateTime(1900),
+//                           lastDate: DateTime(2100),
+//                           decoration: InputDecoration(
+//                             labelText: 'DateTimeFieldBlocBuilder',
+//                             prefixIcon: Icon(Icons.date_range),
+//                             helperText: 'Date and Time',
+//                           ),
+//                         ),
+//                         TimeFieldBlocBuilder(
+//                           timeFieldBloc: formBloc.time1,
+//                           format: DateFormat('hh:mm a'),
+//                           initialTime: TimeOfDay.now(),
+//                           decoration: InputDecoration(
+//                             labelText: 'TimeFieldBlocBuilder',
+//                             prefixIcon: Icon(Icons.access_time),
+//                           ),
+//                         ),
+//                         SwitchFieldBlocBuilder(
+//                           booleanFieldBloc: formBloc.boolean2,
+//                           body: Container(
+//                             alignment: Alignment.centerLeft,
+//                             child: Text('CheckboxFieldBlocBuilder'),
+//                           ),
+//                         ),
+//                         CheckboxFieldBlocBuilder(
+//                           booleanFieldBloc: formBloc.boolean1,
+//                           body: Container(
+//                             alignment: Alignment.centerLeft,
+//                             child: Text('CheckboxFieldBlocBuilder'),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
+// class LoadingDialog extends StatelessWidget {
+//   static void show(BuildContext context, {Key key}) => showDialog<void>(
+//         context: context,
+//         useRootNavigator: false,
+//         barrierDismissible: false,
+//         builder: (_) => LoadingDialog(key: key),
+//       ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+
+//   static void hide(BuildContext context) => Navigator.pop(context);
+
+//   LoadingDialog({Key key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () async => false,
+//       child: Center(
+//         child: Card(
+//           child: Container(
+//             width: 80,
+//             height: 80,
+//             padding: EdgeInsets.all(12.0),
+//             child: CircularProgressIndicator(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class SuccessScreen extends StatelessWidget {
+//   SuccessScreen({Key key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Icon(Icons.tag_faces, size: 100),
+//             SizedBox(height: 10),
+//             Text(
+//               'Success',
+//               style: TextStyle(fontSize: 54, color: Colors.black),
+//               textAlign: TextAlign.center,
+//             ),
+//             SizedBox(height: 10),
+//             RaisedButton.icon(
+//               onPressed: () => Navigator.of(context).pushReplacement(
+//                   MaterialPageRoute(builder: (_) => AllFieldsForm())),
+//               icon: Icon(Icons.replay),
+//               label: Text('AGAIN'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
