@@ -37,7 +37,6 @@ class _ServicePageState extends State<ServicePage> {
                     ['assets/images/eletectrical.png', 'Eletectrical Works'],
                     ['assets/images/plumbing.png', 'Plumbing Works'],
                     ['assets/images/house.png', 'House Cleaning'],
-                    // ['assets/images/duct.png', 'Duct Cleaning']
                   ].map((item) {
                     return GestureDetector(
                       child: _GridPhotoItem(
@@ -107,13 +106,13 @@ class _GridPhotoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bgColor = Colors.blue[200];
+    final Color bgColor = Colors.blueAccent[100];
 
     final Widget image = Image.asset(
       photo.assetName,
       fit: BoxFit.contain,
-      color: bgColor,
-      colorBlendMode: BlendMode.overlay,
+      // color: bgColor,
+      // colorBlendMode: BlendMode.overlay,
     );
 
     return GridTile(
@@ -170,7 +169,7 @@ class CallMeView extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
                   shape: BoxShape.rectangle,
-                  color: bgColor[400],
+                  color: bgColor,
                 ),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
