@@ -1,6 +1,6 @@
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
-import 'package:bookservice/bloc/order_list_bloc.dart';
+import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,11 +16,11 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<OrderListBloc>(
-      create: (context) => OrderListBloc(context),
-      child: BlocBuilder<OrderListBloc, OrderListState>(
+    return BlocProvider<OrderBloc>(
+      create: (context) => OrderBloc(context),
+      child: BlocBuilder<OrderBloc, OrderState>(
         builder: (context, state) {
-          OrderListBloc bloc = BlocProvider.of<OrderListBloc>(context);
+          OrderBloc bloc = BlocProvider.of<OrderBloc>(context);
 
           return SmartRefresher(
             enablePullDown: true,

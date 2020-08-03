@@ -4,9 +4,9 @@ import 'package:loading_animations/loading_animations.dart';
 bool _isDialogShowing = false;
 
 class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key key}) {
+  static Future<void> show(BuildContext context, {Key key}) {
     _isDialogShowing = true;
-    showDialog<void>(
+    return showDialog<void>(
       context: context,
       useRootNavigator: false,
       barrierDismissible: false,
