@@ -109,11 +109,11 @@ abstract class RestService {
   Future<User> getInfo({@Queries() Map<String, dynamic> query});
 
   @PATCH('/users/{id}/')
-  Future<User> uploadPhoto(@Path() int id, @Part() File photo);
+  Future<User> uploadPhoto(@Path() String id, @Part() File photo);
 
   @PATCH('/users/{id}/')
   Future<User> updateUser(
-      @Path() int id, @Body() Map<String, dynamic> playload);
+      @Path() String id, @Body() Map<String, dynamic> playload);
 
   @GET('/orders/')
   Future<OrderList> getOrders({@Queries() Map<String, dynamic> query});
@@ -125,19 +125,19 @@ abstract class RestService {
   Future<List<Address>> getAddressList({@Queries() Map<String, dynamic> query});
 
   @GET('/address/{id}/')
-  Future<Address> getAddress(@Path() int id);
+  Future<Address> getAddress(@Path() String id);
 
   @PATCH('/address/{id}/')
-  Future<Address> updateAddress(@Path() int id, @Body() Address data);
+  Future<Address> updateAddress(@Path() String id, @Body() Address data);
 
   @POST('/address/')
   Future<Address> postAddress(@Body() Address data);
 
   @DELETE('/address/{id}/')
-  Future<void> deleteAddress(@Path() int id);
+  Future<void> deleteAddress(@Path() String id);
 
   @GET('/orders/{id}/')
-  Future<Order> getOrder(@Path() int id);
+  Future<Order> getOrder(@Path() String id);
 
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);

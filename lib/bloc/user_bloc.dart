@@ -30,7 +30,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield UserState(isLoading: true);
 
       yield await RestService.instance
-          .uploadPhoto(appBloc.state.user.id, event.file)
+          .uploadPhoto('${appBloc.state.user.id}', event.file)
           .then((user) {
         appBloc.add(UpdateAppUser(user));
         return UserState(isLoading: false);
@@ -73,7 +73,7 @@ class UserFormBloc extends FormBloc<String, String> {
 
     if (fieldName != 'email') {
       RestService.instance.updateUser(
-          appBloc.state.user.id, {'$fieldName': field.value}).then((user) {
+          '${appBloc.state.user.id}', {'$fieldName': field.value}).then((user) {
         return RestService.instance.getInfo();
       }).then((user) {
         appBloc.add(UpdateAppUser(user));
