@@ -30,7 +30,7 @@ class _AddressPageState extends State<AddressPage> {
         create: (context) => AddressBloc(this.context),
         child: ExtendedNavigator(
           name: 'address',
-          initialRoute: AddressPageRoutes.addressListPage,
+          initialRoute: AddressPageRoutes.list,
         ));
   }
 }
@@ -53,7 +53,7 @@ class _AddressListPageState extends State<AddressListPage> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              context.navigator.push('${null}/post');
+              context.navigator.push('/post');
             },
           )
         ],
@@ -145,9 +145,6 @@ class AddressItem extends StatelessWidget {
             divider: Divider(),
             children: [
               CardSettingsSection(
-                // header: CardSettingsHeader(
-                //   label: data.defAddr ? 'Default' : '',
-                // ),
                 children: [
                   CardSettingsField(
                     fieldPadding: null,
@@ -162,7 +159,7 @@ class AddressItem extends StatelessWidget {
                     backgroundColor: Theme.of(context).cardColor,
                     textColor: Theme.of(context).buttonColor,
                     onPressed: () {
-                      context.navigator.push('${data.id}/post');
+                      context.navigator.push('/put');
                     },
                   )
                 ],

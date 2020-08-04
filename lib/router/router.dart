@@ -6,32 +6,33 @@ import 'package:flutter/material.dart';
 @MaterialAutoRouter(
   // generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
-    CupertinoRoute(page: Authentication, initial: true),
-    CupertinoRoute<Widget>(
+    AdaptiveRoute(page: Authentication, initial: true),
+    AdaptiveRoute<Widget>(
       path: '/users/:id',
       page: UserPage,
       children: [
-        CupertinoRoute(path: '/', page: UserProfilePage),
-        CupertinoRoute(path: '/photo', page: UserPhotoPage),
-        CupertinoRoute(
+        AdaptiveRoute(path: '/', page: UserProfilePage),
+        AdaptiveRoute(path: '/photo', page: UserPhotoPage),
+        AdaptiveRoute(
           path: '/post/:field?',
           page: UserPostPage,
         ),
-        CupertinoRoute(path: '/emailvalidate/:email?', page: EmailValidatePage),
-        CupertinoRoute(path: '/join', page: JoinPage)
+        AdaptiveRoute(path: '/emailvalidate/:email?', page: EmailValidatePage),
+        AdaptiveRoute(path: '/join', page: JoinPage)
       ],
     ),
-    CupertinoRoute(
+    AdaptiveRoute(
       path: '/faqs',
       page: FaqPage,
     ),
-    CupertinoRoute(path: '/contract', page: ContractPage, children: [
-      CupertinoRoute(path: '/', page: ContractListPage),
-      CupertinoRoute(path: '/:id/post', page: ContractPost),
+    AdaptiveRoute(path: '/contract', page: ContractPage, children: [
+      AdaptiveRoute(path: '/', page: ContractListPage),
+      AdaptiveRoute(path: '/:id/post', page: ContractPost),
     ]),
-    CupertinoRoute(path: '/address', page: AddressPage, children: [
-      CupertinoRoute(path: '/', page: AddressListPage),
-      CupertinoRoute(path: '/:id/post', page: AddressPostPage)
+    AdaptiveRoute(path: '/address', page: AddressPage, children: [
+      AdaptiveRoute(name: 'list', path: '/', page: AddressListPage),
+      AdaptiveRoute(name: 'post', path: '/post', page: AddressPostPage),
+      AdaptiveRoute(name: 'put', path: '/put', page: AddressPostPage)
     ])
   ],
 )
