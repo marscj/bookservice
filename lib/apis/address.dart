@@ -18,22 +18,23 @@ class Address extends Equatable {
   double lat;
   double lng;
   String address;
+  int user_id;
 
-  Address({
-    this.id,
-    this.defAddr,
-    this.onMap,
-    this.model,
-    this.style,
-    this.city,
-    this.community,
-    this.street,
-    this.building,
-    this.roomNo,
-    this.lat,
-    this.lng,
-    this.address,
-  });
+  Address(
+      {this.id,
+      this.defAddr,
+      this.onMap,
+      this.model,
+      this.style,
+      this.city,
+      this.community,
+      this.street,
+      this.building,
+      this.roomNo,
+      this.lat,
+      this.lng,
+      this.address,
+      this.user_id});
 
   Address copyWidth(
           {int id,
@@ -48,7 +49,8 @@ class Address extends Equatable {
           String roomNo,
           double lat,
           double lng,
-          String address}) =>
+          String address,
+          int user_id}) =>
       Address(
           id: id ?? this.id,
           defAddr: defAddr ?? this.defAddr,
@@ -62,7 +64,8 @@ class Address extends Equatable {
           roomNo: roomNo ?? this.roomNo,
           lat: lat ?? this.lat,
           lng: lng ?? this.lng,
-          address: address ?? this.address);
+          address: address ?? this.address,
+          user_id: user_id ?? this.user_id);
 
   static Address fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$AddressToJson(this);
@@ -85,6 +88,7 @@ class Address extends Equatable {
         roomNo,
         lat,
         lng,
-        address
+        address,
+        user_id
       ];
 }

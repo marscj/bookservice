@@ -259,6 +259,7 @@ Address _$AddressFromJson(Map<String, dynamic> json) {
     lat: (json['lat'] as num)?.toDouble(),
     lng: (json['lng'] as num)?.toDouble(),
     address: json['address'] as String,
+    user_id: json['user_id'] as int,
   );
 }
 
@@ -276,6 +277,7 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
       'lat': instance.lat,
       'lng': instance.lng,
       'address': instance.address,
+      'user_id': instance.user_id,
     };
 
 // **************************************************************************
@@ -488,10 +490,10 @@ class _RestService implements RestService {
     final _data = <String, dynamic>{};
     _data.addAll(data?.toJson() ?? <String, dynamic>{});
     final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/address/{id}/',
+        '/address/',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'PATCH',
+            method: 'POST',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),

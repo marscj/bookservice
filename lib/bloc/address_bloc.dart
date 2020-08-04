@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bookservice/apis/client.dart';
+import 'package:bookservice/bloc/app_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -70,16 +72,12 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
 }
 
 class AddressFormBloc extends FormBloc<String, String> {
-  final SelectFieldBloc model = SelectFieldBloc(
-    items: ['Option 1', 'Option 2'],
-    initialValue: 'Option 1',
-  );
+  final BuildContext context;
 
-  final SelectFieldBloc style = SelectFieldBloc(
-    items: ['Option 1', 'Option 2'],
-    initialValue: 'Option 1',
-  );
-
+  final BooleanFieldBloc defAddr = BooleanFieldBloc(initialValue: false);
+  final BooleanFieldBloc onMap = BooleanFieldBloc(initialValue: false);
+  final SelectFieldBloc model = SelectFieldBloc(items: [0, 1], initialValue: 0);
+  final SelectFieldBloc style = SelectFieldBloc(items: [0, 1], initialValue: 0);
   final TextFieldBloc city = TextFieldBloc();
   final TextFieldBloc community = TextFieldBloc();
   final TextFieldBloc street = TextFieldBloc();
@@ -89,8 +87,9 @@ class AddressFormBloc extends FormBloc<String, String> {
   final TextFieldBloc lng = TextFieldBloc();
   final TextFieldBloc address = TextFieldBloc();
 
-  AddressFormBloc() {
+  AddressFormBloc(this.context) {
     addFieldBlocs(fieldBlocs: [
+      onMap,
       model,
       style,
       city,
@@ -113,5 +112,33 @@ class AddressFormBloc extends FormBloc<String, String> {
   }
 
   @override
-  void onSubmitting() {}
+  void onSubmitting() {
+    String id = RouteData.of(context).pathParams['id'].value;
+    int userId = BlocProvider.of<AppBloc>(context).state.user.id;
+
+    if (id != 'null') {
+    } else {
+      RestService.instance
+          .postAddress(Address(
+              defAddr: defAddr.value,
+              onMap: onMap.value,
+              model: model.value,
+              style: style.value,
+              city: city.value,
+              community: community.value,
+              street: street.value,
+              building: building.value,
+              roomNo: roomNo.value,
+              lat: lat.valueToDouble,
+              lng: lng.valueToDouble,
+              address: address.value,
+              user_id: userId))
+          .then((value) {
+        emitSuccess(canSubmitAgain: true);
+      }).catchError((onError) {
+        emitFailure();
+        addErrors(onError?.response?.data);
+      });
+    }
+  }
 }

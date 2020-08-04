@@ -130,7 +130,7 @@ abstract class RestService {
   @PATCH('/address/{id}/')
   Future<Address> updateAddress(@Path() int id, @Body() Address data);
 
-  @PATCH('/address/{id}/')
+  @POST('/address/')
   Future<Address> postAddress(@Body() Address data);
 
   @DELETE('/address/{id}/')
