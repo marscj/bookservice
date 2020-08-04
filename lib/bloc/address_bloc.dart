@@ -43,32 +43,16 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
 }
 
 class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
-  AddressPostBloc() : super(AddressPostState.initial());
+  AddressPostBloc(AddressPostState initialState) : super(initialState);
 
   @override
   Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
-    // if (event is AddressPost) {
-    //   if (event.id == null) {
-    //     yield await RestService.instance
-    //         .postAddress(event.data)
-    //         .then((value) => AddressPostState(data: value))
-    //         .catchError((onError) {});
-    //   } else {
-    //     yield await RestService.instance
-    //         .updateAddress(event.id, event.data)
-    //         .then((value) => AddressPostState(data: value))
-    //         .catchError((onError) {});
-    //   }
-    // }
+    if (event is AddressFormEvent) {
+      yield AddressFormState();
+    }
 
-    // if (event is AddressDelete) {
-    //   yield await RestService.instance.deleteAddress(event.id).then((value) {
-    //     return state;
-    //   }).catchError((onError) {});
-    // }
-
-    if (event is AddressUpdate) {
-      yield state.copyWith(data: event.data);
+    if (event is AddressMapEvent) {
+      yield AddressMapState();
     }
   }
 }
@@ -76,15 +60,23 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
 class AddressFormBloc extends FormBloc<String, String> {
   final BuildContext context;
 
-  final SelectFieldBloc model = SelectFieldBloc(items: [0, 1], initialValue: 0);
-  final SelectFieldBloc style = SelectFieldBloc(items: [0, 1], initialValue: 0);
-  final TextFieldBloc city = TextFieldBloc();
-  final TextFieldBloc community = TextFieldBloc();
-  final TextFieldBloc street = TextFieldBloc();
-  final TextFieldBloc building = TextFieldBloc();
-  final TextFieldBloc roomNo = TextFieldBloc();
+  SelectFieldBloc model;
+  SelectFieldBloc style;
+  TextFieldBloc city;
+  TextFieldBloc community;
+  TextFieldBloc street;
+  TextFieldBloc building;
+  TextFieldBloc roomNo;
 
-  AddressFormBloc(this.context) {
+  AddressFormBloc(this.context, Address data) {
+    model = SelectFieldBloc(items: [0, 1], initialValue: 0);
+    style = SelectFieldBloc(items: [0, 1], initialValue: 0);
+    city = TextFieldBloc();
+    community = TextFieldBloc();
+    street = TextFieldBloc();
+    building = TextFieldBloc();
+    roomNo = TextFieldBloc();
+
     addFieldBlocs(fieldBlocs: [
       model,
       style,
@@ -180,13 +172,19 @@ class AddressFormBloc extends FormBloc<String, String> {
 class AddressMapBloc extends FormBloc<String, String> {
   final BuildContext context;
 
-  final SelectFieldBloc model = SelectFieldBloc(items: [0, 1], initialValue: 0);
-  final SelectFieldBloc style = SelectFieldBloc(items: [0, 1], initialValue: 0);
-  final TextFieldBloc lat = TextFieldBloc();
-  final TextFieldBloc lng = TextFieldBloc();
-  final TextFieldBloc address = TextFieldBloc();
+  SelectFieldBloc model;
+  SelectFieldBloc style;
+  TextFieldBloc lat;
+  TextFieldBloc lng;
+  TextFieldBloc address;
 
-  AddressMapBloc(this.context) {
+  AddressMapBloc(this.context, Address data) {
+    model = SelectFieldBloc(items: [0, 1], initialValue: data.model);
+    style = SelectFieldBloc(items: [0, 1], initialValue: data.style);
+    lat = TextFieldBloc(initialValue: '${data.lat}');
+    lng = TextFieldBloc(initialValue: '${data.lng}');
+    address = TextFieldBloc(initialValue: data.street);
+
     addFieldBlocs(fieldBlocs: [model, style, lat, lng, address]);
 
     addValidators();

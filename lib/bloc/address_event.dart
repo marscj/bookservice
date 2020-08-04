@@ -9,30 +9,6 @@ abstract class AddressEvent extends Equatable {
 
 class AddressRefreshList extends AddressEvent {}
 
-class AddressUpdate extends AddressEvent {
-  final Address data;
+class AddressFormEvent extends AddressEvent {}
 
-  AddressUpdate(this.data);
-
-  @override
-  List<Object> get props => [data];
-}
-
-class AddressPost extends AddressEvent {
-  final int id;
-  final Address data;
-
-  AddressPost(this.id, this.data);
-
-  @override
-  List<Object> get props => [id, data];
-}
-
-class AddressDelete extends AddressEvent {
-  final int id;
-
-  AddressDelete(this.id);
-
-  @override
-  List<Object> get props => [id];
-}
+class AddressMapEvent extends AddressEvent {}
