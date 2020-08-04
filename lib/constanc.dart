@@ -5,6 +5,6 @@ class Constant {
 
   static const String Host = LocalHost;
 
-  // static const ApiKey = 'AIzaSyDVkaBmZrvpSkIlUhyQnCyl0hFXvLyVzIk';
-  static const ApiKey = 'AIzaSyAQtZFm8pLdG2kWiv72-RPnMHm1cyb5oos';
+  static const ApiKey = 'AIzaSyDVkaBmZrvpSkIlUhyQnCyl0hFXvLyVzIk';
+  // static const ApiKey = 'AIzaSyAQtZFm8pLdG2kWiv72-RPnMHm1cyb5oos';
 }

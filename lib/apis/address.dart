@@ -35,6 +35,35 @@ class Address extends Equatable {
     this.address,
   });
 
+  Address copyWidth(
+          {int id,
+          bool defAddr,
+          bool onMap,
+          int model,
+          int style,
+          String city,
+          String community,
+          String street,
+          String building,
+          String roomNo,
+          double lat,
+          double lng,
+          String address}) =>
+      Address(
+          id: id ?? this.id,
+          defAddr: defAddr ?? this.defAddr,
+          onMap: onMap ?? this.onMap,
+          model: model ?? this.model,
+          style: style ?? this.style,
+          city: city ?? this.city,
+          community: community ?? this.community,
+          street: street ?? this.street,
+          building: building ?? this.building,
+          roomNo: roomNo ?? this.roomNo,
+          lat: lat ?? this.lat,
+          lng: lng ?? this.lng,
+          address: address ?? this.address);
+
   static Address fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$AddressToJson(this);
 

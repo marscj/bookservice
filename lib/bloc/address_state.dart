@@ -21,8 +21,19 @@ class AddressPostState extends Equatable {
 
   const AddressPostState({this.data});
 
-  factory AddressPostState.initial() =>
-      AddressPostState(data: Address(onMap: true));
+  factory AddressPostState.initial() => AddressPostState(
+          data: Address(
+        defAddr: false,
+        onMap: false,
+        model: 0,
+        style: 0,
+        city: '',
+        community: '',
+        street: '',
+        building: '',
+        roomNo: '',
+        address: '',
+      ));
 
   AddressPostState copyWith({Address data}) =>
       AddressPostState(data: data ?? this.data);

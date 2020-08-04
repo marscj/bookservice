@@ -35,33 +35,6 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
         return state.copyWith(list: []);
       });
     }
-
-    if (event is AddressUpdate) {
-      yield state.copyWith(isLoading: true);
-
-      yield await RestService.instance
-          .updateAddress(event.id, event.payload)
-          .then((value) {
-        return RestService.instance.getAddressList();
-      }).then<AddressState>((value) {
-        return state.copyWith(list: value ?? [], isLoading: false);
-      }).catchError((onError) {
-        return state.copyWith(isLoading: false);
-      });
-    }
-
-    if (event is AddressUpdate) {
-      yield state.copyWith(isLoading: true);
-
-      yield await RestService.instance.deleteAddress(event.id).then((value) {
-        return RestService.instance.getAddressList();
-      }).then<AddressState>((value) {
-        return state.copyWith(list: value ?? [], isLoading: false);
-      }).catchError((onError) {
-        print(onError);
-        return state.copyWith(isLoading: false);
-      });
-    }
   }
 }
 
@@ -70,11 +43,21 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
 
   @override
   Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
-    if (event is AddressUpdate) {
+    if (event is AddressPost) {
       yield await RestService.instance
           .updateAddress(event.id, event.payload)
           .then((value) => AddressPostState(data: value))
           .catchError((onError) {});
+    }
+
+    if (event is AddressDelete) {
+      yield await RestService.instance.deleteAddress(event.id).then((value) {
+        return state;
+      }).catchError((onError) {});
+    }
+
+    if (event is AddressUpdate) {
+      yield state.copyWith(data: event.data);
     }
   }
 }
