@@ -28,18 +28,10 @@ class _AddressPageState extends State<AddressPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => AddressBloc(this.context),
-        child: BlocListener<AddressBloc, AddressState>(
-            listener: (context, state) {
-              if (state.isLoading) {
-                LoadingDialog.show(context);
-              } else {
-                LoadingDialog.hide(context);
-              }
-            },
-            child: ExtendedNavigator(
-              name: 'address',
-              initialRoute: AddressPageRoutes.addressListPage,
-            )));
+        child: ExtendedNavigator(
+          name: 'address',
+          initialRoute: AddressPageRoutes.addressListPage,
+        ));
   }
 }
 

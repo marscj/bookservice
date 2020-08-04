@@ -44,10 +44,17 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
   @override
   Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
     if (event is AddressPost) {
-      yield await RestService.instance
-          .updateAddress(event.id, event.payload)
-          .then((value) => AddressPostState(data: value))
-          .catchError((onError) {});
+      if (event.id == null) {
+        yield await RestService.instance
+            .postAddress(event.data)
+            .then((value) => AddressPostState(data: value))
+            .catchError((onError) {});
+      } else {
+        yield await RestService.instance
+            .updateAddress(event.id, event.data)
+            .then((value) => AddressPostState(data: value))
+            .catchError((onError) {});
+      }
     }
 
     if (event is AddressDelete) {
