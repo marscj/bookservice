@@ -259,6 +259,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                   textFieldBloc: formBloc.address
                                     ..updateInitialValue(state.data.address),
                                   isEnabled: false,
+                                  maxLines: 3,
                                   decoration: InputDecoration(
                                       labelText: 'Address',
                                       border: OutlineInputBorder()),
