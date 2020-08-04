@@ -5,8 +5,8 @@ import 'package:bookservice/bloc/address_bloc.dart';
 import 'package:bookservice/constanc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/dialog.dart';
+import 'package:bookservice/views/load_page.dart';
 import 'package:card_settings/card_settings.dart';
-import 'package:card_settings/interfaces/minimum_field_properties.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -212,10 +212,6 @@ class AddressItem extends StatelessWidget {
 }
 
 class AddressPostPage extends StatefulWidget {
-  final Address data;
-
-  const AddressPostPage({Key key, this.data}) : super(key: key);
-
   @override
   _AddressPostPageState createState() => _AddressPostPageState();
 }
@@ -223,88 +219,128 @@ class AddressPostPage extends StatefulWidget {
 class _AddressPostPageState extends State<AddressPostPage> {
   @override
   Widget build(BuildContext context) {
+    int id = RouteData.of(context).pathParams['id'].intValue;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(Localization.of(context).address),
       ),
-      body: BlocProvider<AddressFormBloc>(
-          create: (context) => AddressFormBloc(),
-          child: FormBlocListener<AddressFormBloc, String, String>(
-              child: Theme(
-                  data: Theme.of(context).copyWith(
-                      secondaryHeaderColor:
-                          Colors.blue, // card header background
-                      cardColor: Colors.white, // card field background
-                      buttonColor: Colors.blue, // button background color
-                      textTheme: Theme.of(context).textTheme.copyWith(
-                            button: Theme.of(context)
-                                .textTheme
-                                .button
-                                .copyWith(color: Colors.white), // button text
-                            subtitle1: Theme.of(context)
-                                .textTheme
-                                .subtitle1
-                                .copyWith(color: Colors.black87), // input text
-                            headline6: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                .copyWith(
-                                    color: Colors.white), // card header text
-                          ),
-                      inputDecorationTheme: InputDecorationTheme(
-                        labelStyle: TextStyle(
-                            color: Colors.black87), // style for labels
-                      ),
-                      cardTheme: CardTheme(
-                          shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
-                      ))),
-                  child: Builder(builder: (context) {
+      body: LoadPage(
+        listener: (context, state) {
+          if (state is LoadingPageState) {
+            RestService.instance.getAddress(id).then((value) {
+              BlocProvider.of<LoadPageBloc>(context)
+                  .add(LoadPageComplete(value));
+            }).catchError((onError) {
+              BlocProvider.of<LoadPageBloc>(context)
+                  .add(LoadPageComplete(null));
+            });
+          }
+        },
+        builder: (context) {
+          return BlocBuilder<LoadPageBloc, LoadPageState>(
+            builder: (context, state) {
+              return BlocProvider<AddressFormBloc>(
+                  create: (context) => AddressFormBloc(),
+                  child: FormBlocListener<AddressFormBloc, String, String>(
+                      child: Builder(builder: (context) {
                     AddressFormBloc formBloc =
                         BlocProvider.of<AddressFormBloc>(context);
                     return ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       children: <Widget>[
-                        DropdownFieldBlocBuilder(
-                          showEmptyItem: false,
-                          decoration: InputDecoration(
-                              labelText: 'Model', border: OutlineInputBorder()),
-                          itemBuilder: (context, value) => value,
-                          selectFieldBloc: formBloc.model,
-                        ),
-                        DropdownFieldBlocBuilder(
-                          showEmptyItem: false,
-                          decoration: InputDecoration(
-                              labelText: 'Style', border: OutlineInputBorder()),
-                          itemBuilder: (context, value) => value,
-                          selectFieldBloc: formBloc.style,
-                        ),
-                        TextFieldBlocBuilder(
-                            textFieldBloc: formBloc.city,
-                            decoration: InputDecoration(
-                                labelText: 'City',
-                                border: OutlineInputBorder())),
-                        TextFieldBlocBuilder(
-                            textFieldBloc: formBloc.community,
-                            decoration: InputDecoration(
-                                labelText: 'Community',
-                                border: OutlineInputBorder())),
-                        TextFieldBlocBuilder(
-                            textFieldBloc: formBloc.street,
-                            decoration: InputDecoration(
-                                labelText: 'Street',
-                                border: OutlineInputBorder())),
-                        TextFieldBlocBuilder(
-                            textFieldBloc: formBloc.building,
-                            decoration: InputDecoration(
-                                labelText: 'Building',
-                                border: OutlineInputBorder())),
-                        TextFieldBlocBuilder(
-                            textFieldBloc: formBloc.roomNo,
-                            decoration: InputDecoration(
-                                labelText: 'RoomNo',
-                                border: OutlineInputBorder())),
+                        state.data.onMap
+                            ? ListBody(children: <Widget>[
+                                DropdownFieldBlocBuilder(
+                                  showEmptyItem: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Model',
+                                      border: OutlineInputBorder()),
+                                  itemBuilder: (context, value) => value,
+                                  selectFieldBloc: formBloc.model,
+                                ),
+                                DropdownFieldBlocBuilder(
+                                  showEmptyItem: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Style',
+                                      border: OutlineInputBorder()),
+                                  itemBuilder: (context, value) => value,
+                                  selectFieldBloc: formBloc.style,
+                                ),
+                                TextFieldBlocBuilder(
+                                  textFieldBloc: formBloc.lat
+                                    ..updateInitialValue(state.data.lat),
+                                  isEnabled: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Latitude',
+                                      border: OutlineInputBorder()),
+                                ),
+                                TextFieldBlocBuilder(
+                                  textFieldBloc: formBloc.lng
+                                    ..updateInitialValue(state.data.lng),
+                                  isEnabled: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Longitude',
+                                      border: OutlineInputBorder()),
+                                ),
+                                TextFieldBlocBuilder(
+                                  textFieldBloc: formBloc.address
+                                    ..updateInitialValue(state.data.address),
+                                  isEnabled: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Address',
+                                      border: OutlineInputBorder()),
+                                )
+                              ])
+                            : ListBody(children: <Widget>[
+                                DropdownFieldBlocBuilder(
+                                  showEmptyItem: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Model',
+                                      border: OutlineInputBorder()),
+                                  itemBuilder: (context, value) => value,
+                                  selectFieldBloc: formBloc.model,
+                                ),
+                                DropdownFieldBlocBuilder(
+                                  showEmptyItem: false,
+                                  decoration: InputDecoration(
+                                      labelText: 'Style',
+                                      border: OutlineInputBorder()),
+                                  itemBuilder: (context, value) => value,
+                                  selectFieldBloc: formBloc.style,
+                                ),
+                                TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.city
+                                      ..updateInitialValue(state.data.city),
+                                    decoration: InputDecoration(
+                                        labelText: 'City',
+                                        border: OutlineInputBorder())),
+                                TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.community
+                                      ..updateInitialValue(
+                                          state.data.community),
+                                    decoration: InputDecoration(
+                                        labelText: 'Community',
+                                        border: OutlineInputBorder())),
+                                TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.street
+                                      ..updateInitialValue(state.data.street),
+                                    decoration: InputDecoration(
+                                        labelText: 'Street',
+                                        border: OutlineInputBorder())),
+                                TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.building
+                                      ..updateInitialValue(state.data.building),
+                                    decoration: InputDecoration(
+                                        labelText: 'Building',
+                                        border: OutlineInputBorder())),
+                                TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.roomNo
+                                      ..updateInitialValue(state.data.roomNo),
+                                    decoration: InputDecoration(
+                                        labelText: 'RoomNo',
+                                        border: OutlineInputBorder()))
+                              ]),
                         FlatButton(
                           child: Text('Select on map'),
                           onPressed: () async {
@@ -313,13 +349,15 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                 myLocationButtonEnabled: true,
                                 layersButtonEnabled: true,
                                 automaticallyAnimateToCurrentLocation: true);
-                            print("result = $result");
-                            // showLocationPicker(context, Constant.ApiKey);
                           },
                         )
                       ],
                     );
-                  })))),
+                  })));
+            },
+          );
+        },
+      ),
     );
   }
 }

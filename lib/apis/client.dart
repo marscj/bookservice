@@ -122,7 +122,10 @@ abstract class RestService {
   Future<List<Contract>> getContracts({@Queries() Map<String, dynamic> query});
 
   @GET('/address/')
-  Future<List<Address>> getAddress({@Queries() Map<String, dynamic> query});
+  Future<List<Address>> getAddressList({@Queries() Map<String, dynamic> query});
+
+  @GET('/address/{id}/')
+  Future<Address> getAddress(@Path() int id);
 
   @PATCH('/address/{id}/')
   Future<Address> updateAddress(

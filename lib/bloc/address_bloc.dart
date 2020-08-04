@@ -25,7 +25,9 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   ) async* {
     print(event);
     if (event is AddressRefreshList) {
-      yield await RestService.instance.getAddress().then<AddressState>((value) {
+      yield await RestService.instance
+          .getAddressList()
+          .then<AddressState>((value) {
         refreshController.refreshCompleted();
         return state.copyWith(list: value ?? []);
       }).catchError((onError) {
@@ -40,7 +42,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield await RestService.instance
           .updateAddress(event.id, event.playload)
           .then((value) {
-        return RestService.instance.getAddress();
+        return RestService.instance.getAddressList();
       }).then<AddressState>((value) {
         return state.copyWith(list: value ?? [], isLoading: false);
       }).catchError((onError) {
@@ -52,7 +54,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance.deleteAddress(event.id).then((value) {
-        return RestService.instance.getAddress();
+        return RestService.instance.getAddressList();
       }).then<AddressState>((value) {
         return state.copyWith(list: value ?? [], isLoading: false);
       }).catchError((onError) {
@@ -79,10 +81,23 @@ class AddressFormBloc extends FormBloc<String, String> {
   final TextFieldBloc street = TextFieldBloc();
   final TextFieldBloc building = TextFieldBloc();
   final TextFieldBloc roomNo = TextFieldBloc();
+  final TextFieldBloc lat = TextFieldBloc();
+  final TextFieldBloc lng = TextFieldBloc();
+  final TextFieldBloc address = TextFieldBloc();
 
   AddressFormBloc() {
-    addFieldBlocs(
-        fieldBlocs: [model, style, city, community, street, building, roomNo]);
+    addFieldBlocs(fieldBlocs: [
+      model,
+      style,
+      city,
+      community,
+      street,
+      building,
+      roomNo,
+      lat,
+      lng,
+      address
+    ]);
   }
 
   void addErrors(Map<String, dynamic> errors) {
