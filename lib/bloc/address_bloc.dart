@@ -36,11 +36,11 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       });
     }
 
-    if (event is AddressUpdateList) {
+    if (event is AddressUpdate) {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance
-          .updateAddress(event.id, event.playload)
+          .updateAddress(event.id, event.data)
           .then((value) {
         return RestService.instance.getAddressList();
       }).then<AddressState>((value) {
@@ -50,7 +50,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       });
     }
 
-    if (event is AddressDelList) {
+    if (event is AddressUpdate) {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance.deleteAddress(event.id).then((value) {
@@ -61,6 +61,20 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
         print(onError);
         return state.copyWith(isLoading: false);
       });
+    }
+  }
+}
+
+class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
+  AddressPostBloc(AddressPostState initialState) : super(initialState);
+
+  @override
+  Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
+    if (event is AddressUpdate) {
+      yield await RestService.instance
+          .updateAddress(event.id, event.data)
+          .then((value) => AddressPostState(data: event.data))
+          .catchError((onError) {});
     }
   }
 }

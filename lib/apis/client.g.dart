@@ -245,20 +245,21 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
     };
 
 Address _$AddressFromJson(Map<String, dynamic> json) {
-  return Address()
-    ..id = json['id'] as int
-    ..defAddr = json['defAddr'] as bool
-    ..onMap = json['onMap'] as bool
-    ..model = json['model'] as int
-    ..style = json['style'] as int
-    ..city = json['city'] as String
-    ..community = json['community'] as String
-    ..street = json['street'] as String
-    ..building = json['building'] as String
-    ..roomNo = json['roomNo'] as String
-    ..lat = (json['lat'] as num)?.toDouble()
-    ..lng = (json['lng'] as num)?.toDouble()
-    ..address = json['address'] as String;
+  return Address(
+    id: json['id'] as int,
+    defAddr: json['defAddr'] as bool,
+    onMap: json['onMap'] as bool,
+    model: json['model'] as int,
+    style: json['style'] as int,
+    city: json['city'] as String,
+    community: json['community'] as String,
+    street: json['street'] as String,
+    building: json['building'] as String,
+    roomNo: json['roomNo'] as String,
+    lat: (json['lat'] as num)?.toDouble(),
+    lng: (json['lng'] as num)?.toDouble(),
+    address: json['address'] as String,
+  );
 }
 
 Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
@@ -459,13 +460,13 @@ class _RestService implements RestService {
   }
 
   @override
-  updateAddress(id, playload) async {
+  updateAddress(id, data) async {
     ArgumentError.checkNotNull(id, 'id');
-    ArgumentError.checkNotNull(playload, 'playload');
+    ArgumentError.checkNotNull(data, 'data');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(playload ?? <String, dynamic>{});
+    _data.addAll(data?.toJson() ?? <String, dynamic>{});
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/address/$id/',
         queryParameters: queryParameters,

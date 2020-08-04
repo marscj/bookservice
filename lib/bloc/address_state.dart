@@ -15,3 +15,18 @@ class AddressState extends Equatable {
   @override
   List<Object> get props => [list, isLoading];
 }
+
+class AddressPostState extends Equatable {
+  final Address data;
+
+  const AddressPostState({this.data});
+
+  factory AddressPostState.initial() =>
+      AddressPostState(data: Address(onMap: true));
+
+  AddressPostState copyWith({Address data}) =>
+      AddressPostState(data: data ?? this.data);
+
+  @override
+  List<Object> get props => [data];
+}

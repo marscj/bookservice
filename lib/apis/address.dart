@@ -19,6 +19,22 @@ class Address extends Equatable {
   double lng;
   String address;
 
+  Address({
+    this.id,
+    this.defAddr,
+    this.onMap,
+    this.model,
+    this.style,
+    this.city,
+    this.community,
+    this.street,
+    this.building,
+    this.roomNo,
+    this.lat,
+    this.lng,
+    this.address,
+  });
+
   static Address fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
   Map<String, dynamic> toJson() => _$AddressToJson(this);
 

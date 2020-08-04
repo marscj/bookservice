@@ -9,20 +9,20 @@ abstract class AddressEvent extends Equatable {
 
 class AddressRefreshList extends AddressEvent {}
 
-class AddressUpdateList extends AddressEvent {
+class AddressUpdate extends AddressEvent {
   final int id;
-  final Map<String, dynamic> playload;
+  final Address data;
 
-  AddressUpdateList(this.id, this.playload);
+  AddressUpdate(this.id, this.data);
 
   @override
-  List<Object> get props => [id, playload];
+  List<Object> get props => [id, data];
 }
 
-class AddressDelList extends AddressEvent {
+class AddressDelete extends AddressEvent {
   final int id;
 
-  AddressDelList(this.id);
+  AddressDelete(this.id);
 
   @override
   List<Object> get props => [id];
