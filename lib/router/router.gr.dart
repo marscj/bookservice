@@ -10,6 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../apis/client.dart';
 import '../pages/address.dart';
 import '../pages/pages.dart';
 
@@ -213,10 +214,27 @@ class AddressPageRouter extends RouterBase {
       );
     },
     AddressPostPage: (data) {
+      final args = data.getArgs<AddressPostPageArguments>(
+        orElse: () => AddressPostPageArguments(),
+      );
       return CupertinoPageRoute<dynamic>(
-        builder: (context) => AddressPostPage(),
+        builder: (context) => AddressPostPage(
+          key: args.key,
+          data: args.data,
+        ),
         settings: data,
       );
     },
   };
+}
+
+/// ************************************************************************
+/// Arguments holder classes
+/// *************************************************************************
+
+/// AddressPostPage arguments holder class
+class AddressPostPageArguments {
+  final Key key;
+  final Address data;
+  AddressPostPageArguments({this.key, this.data});
 }

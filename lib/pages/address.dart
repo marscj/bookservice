@@ -174,6 +174,10 @@ class AddressItem extends StatelessWidget {
 }
 
 class AddressPostPage extends StatefulWidget {
+  final Address data;
+
+  const AddressPostPage({Key key, this.data}) : super(key: key);
+
   @override
   _AddressPostPageState createState() => _AddressPostPageState();
 }
@@ -199,6 +203,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
             builder: (context, state) {
           AddressPostBloc postBloc = BlocProvider.of<AddressPostBloc>(context);
           AddressMapBloc mapBloc = BlocProvider.of<AddressMapBloc>(context);
+          AddressFormBloc formBloc = BlocProvider.of<AddressFormBloc>(context);
           return LoadPage(
             loading: id != null,
             builder: (context) {
@@ -285,7 +290,8 @@ class _AddressPostPageState extends State<AddressPostPage> {
                             },
                           ),
                         ]))
-                      : ListBody(children: <Widget>[
+                      : FormBlocListener<AddressFormBloc, String, String>(
+                          child: ListBody(children: <Widget>[
                           DropdownFieldBlocBuilder(
                             showEmptyItem: false,
                             decoration: InputDecoration(
@@ -345,7 +351,6 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                           true)
                                   .then((value) {
                                 if (value != null) {
-                                  formBloc.onMap.updateValue(true);
                                   postBloc.add(AddressUpdate(state.data
                                       .copyWidth(
                                           onMap: true,
@@ -363,7 +368,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                               formBloc.submit();
                             },
                           ),
-                        ])
+                        ]))
                 ],
               );
             },
