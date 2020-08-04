@@ -59,6 +59,7 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
 
 class AddressFormBloc extends FormBloc<String, String> {
   final BuildContext context;
+  final Address data;
 
   SelectFieldBloc model;
   SelectFieldBloc style;
@@ -68,14 +69,14 @@ class AddressFormBloc extends FormBloc<String, String> {
   TextFieldBloc building;
   TextFieldBloc roomNo;
 
-  AddressFormBloc(this.context, Address data) {
+  AddressFormBloc(this.context, this.data) {
     model = SelectFieldBloc(items: [0, 1], initialValue: 0);
     style = SelectFieldBloc(items: [0, 1], initialValue: 0);
-    city = TextFieldBloc();
-    community = TextFieldBloc();
-    street = TextFieldBloc();
-    building = TextFieldBloc();
-    roomNo = TextFieldBloc();
+    city = TextFieldBloc(initialValue: data.city);
+    community = TextFieldBloc(initialValue: data.community);
+    street = TextFieldBloc(initialValue: data.street);
+    building = TextFieldBloc(initialValue: data.building);
+    roomNo = TextFieldBloc(initialValue: data.roomNo);
 
     addFieldBlocs(fieldBlocs: [
       model,
@@ -122,13 +123,13 @@ class AddressFormBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() {
-    String id = RouteData.of(context).pathParams['id'].value;
+    String path = RouteData.of(context).path;
     int userId = BlocProvider.of<AppBloc>(context).state.user.id;
 
-    if (id != 'null') {
+    if (path == '/put') {
       RestService.instance
           .updateAddress(
-              id,
+              '${data.id}',
               Address(
                   defAddr: false,
                   onMap: false,
@@ -171,6 +172,7 @@ class AddressFormBloc extends FormBloc<String, String> {
 
 class AddressMapBloc extends FormBloc<String, String> {
   final BuildContext context;
+  final Address data;
 
   SelectFieldBloc model;
   SelectFieldBloc style;
@@ -178,12 +180,12 @@ class AddressMapBloc extends FormBloc<String, String> {
   TextFieldBloc lng;
   TextFieldBloc address;
 
-  AddressMapBloc(this.context, Address data) {
+  AddressMapBloc(this.context, this.data) {
     model = SelectFieldBloc(items: [0, 1], initialValue: data.model);
     style = SelectFieldBloc(items: [0, 1], initialValue: data.style);
-    lat = TextFieldBloc(initialValue: '${data.lat}');
-    lng = TextFieldBloc(initialValue: '${data.lng}');
-    address = TextFieldBloc(initialValue: data.street);
+    lat = TextFieldBloc(initialValue: '${data.lat ?? ''}');
+    lng = TextFieldBloc(initialValue: '${data.lng ?? ''}');
+    address = TextFieldBloc(initialValue: data.address);
 
     addFieldBlocs(fieldBlocs: [model, style, lat, lng, address]);
 
@@ -211,13 +213,13 @@ class AddressMapBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() {
-    String id = RouteData.of(context).pathParams['id'].value;
+    String path = RouteData.of(context).path;
     int userId = BlocProvider.of<AppBloc>(context).state.user.id;
 
-    if (id != 'null') {
+    if (path == '/put') {
       RestService.instance
           .updateAddress(
-              id,
+              '${data.id}',
               Address(
                   defAddr: false,
                   onMap: true,
