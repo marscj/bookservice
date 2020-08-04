@@ -11,12 +11,12 @@ class AddressRefreshList extends AddressEvent {}
 
 class AddressUpdate extends AddressEvent {
   final int id;
-  final Address data;
+  final Map<String, dynamic> payload;
 
-  AddressUpdate(this.id, this.data);
+  AddressUpdate(this.id, this.payload);
 
   @override
-  List<Object> get props => [id, data];
+  List<Object> get props => [id, payload];
 }
 
 class AddressDelete extends AddressEvent {

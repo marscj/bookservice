@@ -460,13 +460,13 @@ class _RestService implements RestService {
   }
 
   @override
-  updateAddress(id, data) async {
+  updateAddress(id, playload) async {
     ArgumentError.checkNotNull(id, 'id');
-    ArgumentError.checkNotNull(data, 'data');
+    ArgumentError.checkNotNull(playload, 'playload');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(data?.toJson() ?? <String, dynamic>{});
+    _data.addAll(playload ?? <String, dynamic>{});
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/address/$id/',
         queryParameters: queryParameters,

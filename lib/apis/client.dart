@@ -128,7 +128,8 @@ abstract class RestService {
   Future<Address> getAddress(@Path() int id);
 
   @PATCH('/address/{id}/')
-  Future<Address> updateAddress(@Path() int id, @Body() Address data);
+  Future<Address> updateAddress(
+      @Path() int id, @Body() Map<String, dynamic> playload);
 
   @DELETE('/address/{id}/')
   Future<void> deleteAddress(@Path() int id);

@@ -16,24 +16,26 @@ class _LoadPageState extends State<LoadPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoadBloc>(
-      create: (context) => LoadBloc(),
-      child: BlocBuilder<LoadBloc, LoadState>(
-        builder: (context, state) {
-          if (state is LoadingState) {
-            return Center(child: CupertinoActivityIndicator());
-          }
+      create: (context) => LoadBloc()..add(Loading()),
+      child: BlocListener(
+          listener: (context, state) {},
+          child: BlocBuilder<LoadBloc, LoadState>(
+            builder: (context, state) {
+              if (state is LoadingState) {
+                return Center(child: CupertinoActivityIndicator());
+              }
 
-          if (state is CompleteState) {
-            return widget.builder(context);
-          }
+              if (state is CompleteState) {
+                return widget.builder(context);
+              }
 
-          if (state is FailureState) {
-            return Center(child: Text('Failure'));
-          }
+              if (state is FailureState) {
+                return Center(child: Text('Failure'));
+              }
 
-          return Container();
-        },
-      ),
+              return Container();
+            },
+          )),
     );
   }
 }

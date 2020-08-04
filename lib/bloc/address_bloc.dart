@@ -40,7 +40,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       yield state.copyWith(isLoading: true);
 
       yield await RestService.instance
-          .updateAddress(event.id, event.data)
+          .updateAddress(event.id, event.payload)
           .then((value) {
         return RestService.instance.getAddressList();
       }).then<AddressState>((value) {
@@ -72,8 +72,8 @@ class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
   Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
     if (event is AddressUpdate) {
       yield await RestService.instance
-          .updateAddress(event.id, event.data)
-          .then((value) => AddressPostState(data: event.data))
+          .updateAddress(event.id, event.payload)
+          .then((value) => AddressPostState(data: value))
           .catchError((onError) {});
     }
   }
