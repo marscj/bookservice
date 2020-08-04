@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoadPage extends StatefulWidget {
   final WidgetBuilder builder;
+  final bool loading;
 
-  const LoadPage({Key key, @required this.builder}) : super(key: key);
+  const LoadPage({Key key, @required this.builder, this.loading = true})
+      : super(key: key);
 
   @override
   _LoadPageState createState() => _LoadPageState();
@@ -16,8 +18,8 @@ class _LoadPageState extends State<LoadPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoadBloc>(
-      create: (context) => LoadBloc()..add(Loading()),
-      child: BlocListener(
+      create: (_) => LoadBloc()..add(widget.loading ? Loading() : Complete()),
+      child: BlocListener<LoadBloc, LoadState>(
           listener: (context, state) {},
           child: BlocBuilder<LoadBloc, LoadState>(
             builder: (context, state) {

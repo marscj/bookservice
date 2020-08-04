@@ -227,12 +227,20 @@ class _AddressPostPageState extends State<AddressPostPage> {
         title: Text(Localization.of(context).address),
       ),
       body: LoadPage(
+        loading: id != null,
         builder: (context) {
-          return BlocBuilder<AddressPostBloc, AddressPostState>(
-            builder: (context, state) {
-              return BlocProvider<AddressFormBloc>(
+          return MultiBlocProvider(
+              providers: [
+                BlocProvider<AddressPostBloc>(
+                  create: (context) => AddressPostBloc(),
+                ),
+                BlocProvider<AddressFormBloc>(
                   create: (context) => AddressFormBloc(),
-                  child: FormBlocListener<AddressFormBloc, String, String>(
+                ),
+              ],
+              child: BlocBuilder<AddressPostBloc, AddressPostState>(
+                builder: (context, state) {
+                  return FormBlocListener<AddressFormBloc, String, String>(
                       child: Builder(builder: (context) {
                     AddressFormBloc formBloc =
                         BlocProvider.of<AddressFormBloc>(context);
@@ -261,7 +269,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                       TextFieldBlocBuilder(
                                         textFieldBloc: formBloc.lat
                                           ..updateInitialValue(
-                                              '${state.data.lat}'),
+                                              '${state.data.lat ?? ''}'),
                                         isEnabled: false,
                                         decoration: InputDecoration(
                                             labelText: 'Latitude',
@@ -270,7 +278,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                       TextFieldBlocBuilder(
                                         textFieldBloc: formBloc.lng
                                           ..updateInitialValue(
-                                              '${state.data.lng}'),
+                                              '${state.data.lng ?? ''}'),
                                         isEnabled: false,
                                         decoration: InputDecoration(
                                             labelText: 'Longitude',
@@ -354,9 +362,9 @@ class _AddressPostPageState extends State<AddressPostPage> {
                             ],
                           )
                         : Container();
-                  })));
-            },
-          );
+                  }));
+                },
+              ));
         },
       ),
     );

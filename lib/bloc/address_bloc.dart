@@ -66,7 +66,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
 }
 
 class AddressPostBloc extends Bloc<AddressEvent, AddressPostState> {
-  AddressPostBloc(AddressPostState initialState) : super(initialState);
+  AddressPostBloc() : super(AddressPostState.initial());
 
   @override
   Stream<AddressPostState> mapEventToState(AddressEvent event) async* {
