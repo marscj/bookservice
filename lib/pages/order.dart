@@ -6,6 +6,7 @@ import 'package:bookservice/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -160,10 +161,62 @@ class OrderPostPage extends StatefulWidget {
 class _OrderPostPageState extends State<OrderPostPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('${widget.data.orderID}'),
-      ),
-    );
+    return BlocProvider<OrderFormBloc>(
+        create: (_) => OrderFormBloc(context, widget.data),
+        child: FormBlocListener<OrderFormBloc, String, String>(
+            child: Scaffold(
+          appBar: AppBar(
+            title: Text('Order Detail'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(Localization.of(context).submit),
+                onPressed: () {},
+              )
+            ],
+          ),
+          body: Builder(
+            builder: (context) {
+              OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
+              return ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                children: <Widget>[
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    // isEnabled: false,
+                    decoration: InputDecoration(
+                        labelText: 'Status', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) =>
+                        Localization.of(context).orderStatus[value],
+                    selectFieldBloc: formBloc.status,
+                  ),
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    decoration: InputDecoration(
+                        labelText: 'Service', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) =>
+                        Localization.of(context).serviceType[value],
+                    selectFieldBloc: formBloc.service,
+                  ),
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    decoration: InputDecoration(
+                        labelText: 'Main Info', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) => Localization.of(context)
+                        .mainInfo[value.service][value.main],
+                    selectFieldBloc: formBloc.main_info,
+                  ),
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    decoration: InputDecoration(
+                        labelText: 'Sub Info', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) => Localization.of(context)
+                        .subInfo[value.service][value.main][value.sub],
+                    selectFieldBloc: formBloc.sub_info,
+                  ),
+                ],
+              );
+            },
+          ),
+        )));
   }
 }

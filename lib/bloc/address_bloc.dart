@@ -113,11 +113,11 @@ class AddressFormBloc extends FormBloc<String, String> {
       return;
     }
 
-    model.addFieldError(errors['city']);
-    model.addFieldError(errors['community']);
-    model.addFieldError(errors['street']);
-    model.addFieldError(errors['building']);
-    model.addFieldError(errors['roomNo'] ?? errors['non_field_errors']);
+    city.addFieldError(errors['city']);
+    community.addFieldError(errors['community']);
+    street.addFieldError(errors['street']);
+    building.addFieldError(errors['building']);
+    roomNo.addFieldError(errors['roomNo'] ?? errors['non_field_errors']);
   }
 
   @override
@@ -214,9 +214,9 @@ class AddressMapBloc extends FormBloc<String, String> {
       return;
     }
 
-    model.addFieldError(errors['lat']);
-    model.addFieldError(errors['lng']);
-    model.addFieldError(errors['address'] ?? errors['non_field_errors']);
+    lat.addFieldError(errors['lat']);
+    lng.addFieldError(errors['lng']);
+    address.addFieldError(errors['address'] ?? errors['non_field_errors']);
   }
 
   @override
