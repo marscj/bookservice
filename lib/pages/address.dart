@@ -1,9 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/address_bloc.dart';
-import 'package:bookservice/bloc/load_bloc.dart';
 import 'package:bookservice/constanc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/dialog.dart';
@@ -16,8 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'load.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 // ignore_for_file: close_sinks
 class AddressPage extends StatefulWidget {
@@ -173,8 +170,16 @@ class AddressItem extends StatelessWidget {
                     backgroundColor: Theme.of(context).cardColor,
                     textColor: Theme.of(context).buttonColor,
                     onPressed: () {
-                      context.navigator.push('/put',
-                          arguments: AddressPostPageArguments(data: data));
+                      context.navigator
+                          .push('/put',
+                              arguments: AddressPostPageArguments(data: data))
+                          .then((value) {
+                        if (value != null && value) {
+                          AddressBloc bloc =
+                              BlocProvider.of<AddressBloc>(context);
+                          bloc.refreshController.requestRefresh();
+                        }
+                      });
                     },
                   )
                 ],
@@ -225,7 +230,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                 },
                 onSuccess: (context, state) {
                   LoadingDialog.hide(context);
-                  context.navigator.pop();
+                  context.navigator.pop(true);
                 },
                 onFailure: (context, state) {
                   LoadingDialog.hide(context);
@@ -273,6 +278,8 @@ class _AddressPostPageState extends State<AddressPostPage> {
                       child: Text('Select again on the map'),
                       onPressed: () {
                         showLocationPicker(context, Constant.ApiKey,
+                                initialCenter: LatLng(mapBloc.lat.valueToDouble,
+                                    mapBloc.lng.valueToDouble),
                                 myLocationButtonEnabled: true,
                                 layersButtonEnabled: true,
                                 automaticallyAnimateToCurrentLocation: true)
@@ -319,7 +326,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                 },
                 onSuccess: (context, state) {
                   LoadingDialog.hide(context);
-                  context.navigator.pop();
+                  context.navigator.pop(true);
                 },
                 onFailure: (context, state) {
                   LoadingDialog.hide(context);
@@ -385,6 +392,9 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                 child: Text('I want to use the map to locate'),
                                 onPressed: () async {
                                   showLocationPicker(context, Constant.ApiKey,
+                                          initialCenter: LatLng(
+                                              25.108220955794977,
+                                              55.21488390862942),
                                           myLocationButtonEnabled: true,
                                           layersButtonEnabled: true,
                                           automaticallyAnimateToCurrentLocation:

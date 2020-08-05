@@ -120,6 +120,7 @@ class _SettingPageState extends State<SettingPage> {
                   elevation: 3,
                   child: ListBody(
                     children: <Widget>[
+                      SizedBox(height: 10),
                       ListTile(
                         leading: FaIcon(FontAwesomeIcons.addressCard),
                         title: Text(Localization.of(context).address),

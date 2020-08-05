@@ -27,7 +27,6 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   Stream<AddressState> mapEventToState(
     AddressEvent event,
   ) async* {
-    print(event);
     if (event is AddressRefreshList) {
       yield await RestService.instance
           .getAddressList()
