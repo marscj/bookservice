@@ -102,8 +102,9 @@ class OrderFormBloc extends FormBloc<String, String> {
   SelectFieldBloc main_info;
   SelectFieldBloc sub_info;
 
-  TextFieldBloc from_date;
-  TextFieldBloc to_date;
+  InputFieldBloc<DateTime, Object> from_date;
+  InputFieldBloc<DateTime, Object> to_date;
+
   TextFieldBloc code;
   TextFieldBloc address;
   TextFieldBloc lat;
@@ -129,8 +130,8 @@ class OrderFormBloc extends FormBloc<String, String> {
         initialValue: DropDownData(
             service: data.service, main: data.main_info, sub: data.sub_info));
 
-    from_date = TextFieldBloc(initialValue: '${data.from_date ?? ''}');
-    to_date = TextFieldBloc(initialValue: '${data.to_date ?? ''}');
+    from_date = InputFieldBloc<DateTime, Object>();
+    to_date = InputFieldBloc<DateTime, Object>();
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
     address = TextFieldBloc(initialValue: '${data.address ?? ''}');
     lat = TextFieldBloc(initialValue: '${data.lat ?? ''}');
@@ -190,13 +191,13 @@ class OrderFormBloc extends FormBloc<String, String> {
 
   void addValidators() {
     from_date.addValidators([
-      RequiredValidator(errorText: Localization.of(context).requiredString)
+      // RequiredValidator(errorText: Localization.of(context).requiredString)
     ]);
     to_date.addValidators([
-      RequiredValidator(errorText: Localization.of(context).requiredString)
+      // RequiredValidator(errorText: Localization.of(context).requiredString)
     ]);
     address.addValidators([
-      RequiredValidator(errorText: Localization.of(context).requiredString)
+      // RequiredValidator(errorText: Localization.of(context).requiredString)
     ]);
   }
 
