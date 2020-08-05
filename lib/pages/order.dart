@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/order_bloc.dart';
+import 'package:bookservice/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +18,7 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return OrderListPage();
   }
 }
 
@@ -138,6 +140,10 @@ class OrderListItem extends StatelessWidget {
 }
 
 class OrderPostPage extends StatefulWidget {
+  final Order data;
+
+  const OrderPostPage({Key key, this.data}) : super(key: key);
+
   @override
   _OrderPostPageState createState() => _OrderPostPageState();
 }

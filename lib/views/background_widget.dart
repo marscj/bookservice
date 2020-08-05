@@ -17,7 +17,6 @@ class BackgroundWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => new SafeArea(
         top: true,
-        bottom: true,
         child: new Stack(
           children: <Widget>[
             new Opacity(
