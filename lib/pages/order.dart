@@ -51,7 +51,9 @@ class _OrderPageState extends State<OrderPage> {
             onLoading: () => bloc.add(LoadOrderList()),
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              separatorBuilder: (_, index) => new Divider(),
+              separatorBuilder: (_, index) => SizedBox(
+                height: 20,
+              ),
               itemBuilder: (c, i) => OrderListItem(order: state.list[i]),
               itemCount: state.list.length,
             ),
@@ -82,10 +84,14 @@ class OrderListItem extends StatelessWidget {
         style: TextStyle(color: Colors.white),
         child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              shape: BoxShape.rectangle,
-              color: bgColor[200],
-            ),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                border: Border.all(color: Colors.blue, width: 1),
+                shape: BoxShape.rectangle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(color: Colors.grey[300], offset: Offset(0, 0)),
+                  BoxShadow(color: Colors.grey[400], offset: Offset(1.5, 3)),
+                ]),
             child: Column(
               children: <Widget>[
                 Container(
