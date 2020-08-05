@@ -52,20 +52,27 @@ class _AddressListPageState extends State<AddressListPage> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              context.navigator.push('/post',
-                  arguments: AddressPostPageArguments(
-                      data: Address(
-                    defAddr: false,
-                    onMap: false,
-                    model: 0,
-                    style: 0,
-                    city: '',
-                    community: '',
-                    street: '',
-                    building: '',
-                    roomNo: '',
-                    address: '',
-                  )));
+              context.navigator
+                  .push('/post',
+                      arguments: AddressPostPageArguments(
+                          data: Address(
+                        defAddr: false,
+                        onMap: false,
+                        model: 0,
+                        style: 0,
+                        city: '',
+                        community: '',
+                        street: '',
+                        building: '',
+                        roomNo: '',
+                        address: '',
+                      )))
+                  .then((value) {
+                if (value != null && value) {
+                  AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
+                  bloc.refreshController.requestRefresh();
+                }
+              });
             },
           )
         ],
@@ -223,115 +230,29 @@ class _AddressPostPageState extends State<AddressPostPage> {
           AddressMapBloc mapBloc = BlocProvider.of<AddressMapBloc>(context);
           AddressFormBloc formBloc = BlocProvider.of<AddressFormBloc>(context);
 
-          if (state is AddressMapState) {
-            return FormBlocListener<AddressMapBloc, String, String>(
-                onSubmitting: (context, state) {
-                  LoadingDialog.show(context);
-                },
-                onSuccess: (context, state) {
-                  LoadingDialog.hide(context);
-                  context.navigator.pop(true);
-                },
-                onFailure: (context, state) {
-                  LoadingDialog.hide(context);
-                },
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  children: <Widget>[
-                    DropdownFieldBlocBuilder(
-                      showEmptyItem: false,
-                      decoration: InputDecoration(
-                          labelText: 'Model', border: OutlineInputBorder()),
-                      itemBuilder: (context, value) =>
-                          ['Personal', 'Company'][value],
-                      selectFieldBloc: mapBloc.model,
-                    ),
-                    DropdownFieldBlocBuilder(
-                      showEmptyItem: false,
-                      decoration: InputDecoration(
-                          labelText: 'Style', border: OutlineInputBorder()),
-                      itemBuilder: (context, value) =>
-                          ['Apartment', 'Villa'][value],
-                      selectFieldBloc: mapBloc.style,
-                    ),
-                    TextFieldBlocBuilder(
-                      textFieldBloc: mapBloc.lat,
-                      isEnabled: false,
-                      decoration: InputDecoration(
-                          labelText: 'Latitude', border: OutlineInputBorder()),
-                    ),
-                    TextFieldBlocBuilder(
-                      textFieldBloc: mapBloc.lng,
-                      isEnabled: false,
-                      focusNode: FocusNode(),
-                      decoration: InputDecoration(
-                          labelText: 'Longitude', border: OutlineInputBorder()),
-                    ),
-                    TextFieldBlocBuilder(
-                      textFieldBloc: mapBloc.address,
-                      isEnabled: false,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                          labelText: 'Address', border: OutlineInputBorder()),
-                    ),
-                    FlatButton(
-                      child: Text('Select again on the map'),
-                      onPressed: () {
-                        showLocationPicker(context, Constant.ApiKey,
-                                initialCenter: LatLng(mapBloc.lat.valueToDouble,
-                                    mapBloc.lng.valueToDouble),
-                                myLocationButtonEnabled: true,
-                                layersButtonEnabled: true,
-                                automaticallyAnimateToCurrentLocation: true)
-                            .then((value) {
-                          if (value != null) {
-                            mapBloc.lat.updateValue('${value.latLng.latitude}');
-                            mapBloc.lng
-                                .updateValue('${value.latLng.longitude}');
-                            mapBloc.address.updateValue('${value.address}');
-                          }
-                        });
-                      },
-                    ),
-                    IfNoneWidget(
-                      basis: path == '/post',
-                      builder: (context) {
-                        return ListBody(
-                          children: <Widget>[
-                            RaisedButton(
-                              child: Text('I want to fill in manually'),
-                              onPressed: () async {
-                                postBloc.add(AddressFormEvent());
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    RaisedButton(
-                      child: Text(Localization.of(context).submit),
-                      onPressed: () async {
-                        mapBloc.submit();
-                      },
-                    )
-                  ],
-                ));
-          }
-
-          if (state is AddressFormState) {
-            return FormBlocListener<AddressFormBloc, String, String>(
-                onSubmitting: (context, state) {
-                  LoadingDialog.show(context);
-                },
-                onSuccess: (context, state) {
-                  LoadingDialog.hide(context);
-                  context.navigator.pop(true);
-                },
-                onFailure: (context, state) {
-                  LoadingDialog.hide(context);
-                },
-                child: ListView(
+          final Widget mapbody =
+              FormBlocListener<AddressMapBloc, String, String>(
+                  onSubmitting: (context, state) {
+                    LoadingDialog.show(context);
+                  },
+                  onSuccess: (context, state) {
+                    LoadingDialog.hide(context);
+                    context.navigator.pop(true);
+                  },
+                  onFailure: (context, state) {
+                    LoadingDialog.hide(context);
+                  },
+                  onDeleting: (context, state) {
+                    LoadingDialog.show(context);
+                  },
+                  onDeleteSuccessful: (context, state) {
+                    LoadingDialog.hide(context);
+                    context.navigator.pop(true);
+                  },
+                  onDeleteFailed: (context, state) {
+                    LoadingDialog.hide(context);
+                  },
+                  child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     children: <Widget>[
                       DropdownFieldBlocBuilder(
@@ -340,7 +261,7 @@ class _AddressPostPageState extends State<AddressPostPage> {
                             labelText: 'Model', border: OutlineInputBorder()),
                         itemBuilder: (context, value) =>
                             ['Personal', 'Company'][value],
-                        selectFieldBloc: formBloc.model,
+                        selectFieldBloc: mapBloc.model,
                       ),
                       DropdownFieldBlocBuilder(
                         showEmptyItem: false,
@@ -348,91 +269,347 @@ class _AddressPostPageState extends State<AddressPostPage> {
                             labelText: 'Style', border: OutlineInputBorder()),
                         itemBuilder: (context, value) =>
                             ['Apartment', 'Villa'][value],
-                        selectFieldBloc: formBloc.style,
+                        selectFieldBloc: mapBloc.style,
                       ),
                       TextFieldBlocBuilder(
-                          textFieldBloc: formBloc.city,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              labelText: 'City', border: OutlineInputBorder())),
+                        textFieldBloc: mapBloc.lat,
+                        isEnabled: false,
+                        decoration: InputDecoration(
+                            labelText: 'Latitude',
+                            border: OutlineInputBorder()),
+                      ),
                       TextFieldBlocBuilder(
-                          textFieldBloc: formBloc.community,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              labelText: 'Community',
-                              border: OutlineInputBorder())),
+                        textFieldBloc: mapBloc.lng,
+                        isEnabled: false,
+                        focusNode: FocusNode(),
+                        decoration: InputDecoration(
+                            labelText: 'Longitude',
+                            border: OutlineInputBorder()),
+                      ),
                       TextFieldBlocBuilder(
-                          textFieldBloc: formBloc.street,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              labelText: 'Street',
-                              border: OutlineInputBorder())),
-                      TextFieldBlocBuilder(
-                          textFieldBloc: formBloc.building,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              labelText: 'Building',
-                              border: OutlineInputBorder())),
-                      TextFieldBlocBuilder(
-                          onSubmitted: (value) {
-                            formBloc.submit();
-                          },
-                          textFieldBloc: formBloc.roomNo,
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                              labelText: 'RoomNo',
-                              border: OutlineInputBorder())),
+                        textFieldBloc: mapBloc.address,
+                        isEnabled: false,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                            labelText: 'Address', border: OutlineInputBorder()),
+                      ),
+                      FlatButton(
+                        child: Text('Select again on the map'),
+                        onPressed: () {
+                          showLocationPicker(context, Constant.ApiKey,
+                                  initialCenter: LatLng(
+                                      mapBloc.lat.valueToDouble,
+                                      mapBloc.lng.valueToDouble),
+                                  myLocationButtonEnabled: true,
+                                  layersButtonEnabled: true,
+                                  automaticallyAnimateToCurrentLocation: true)
+                              .then((value) {
+                            if (value != null) {
+                              mapBloc.lat
+                                  .updateValue('${value.latLng.latitude}');
+                              mapBloc.lng
+                                  .updateValue('${value.latLng.longitude}');
+                              mapBloc.address.updateValue('${value.address}');
+                            }
+                          });
+                        },
+                      ),
                       IfNoneWidget(
                         basis: path == '/post',
                         builder: (context) {
                           return ListBody(
                             children: <Widget>[
-                              SizedBox(height: 10),
                               RaisedButton(
-                                child: Text('I want to use the map to locate'),
+                                child: Text('I want to fill in manually'),
                                 onPressed: () async {
-                                  showLocationPicker(context, Constant.ApiKey,
-                                          initialCenter: LatLng(
-                                              25.108220955794977,
-                                              55.21488390862942),
-                                          myLocationButtonEnabled: true,
-                                          layersButtonEnabled: true,
-                                          automaticallyAnimateToCurrentLocation:
-                                              true)
-                                      .then((value) {
-                                    if (value != null) {
-                                      mapBloc.lat.updateValue(
-                                          '${value.latLng.latitude}');
-                                      mapBloc.lng.updateValue(
-                                          '${value.latLng.longitude}');
-                                      mapBloc.address
-                                          .updateValue('${value.address}');
-                                      postBloc.add(AddressMapEvent());
-                                    }
-                                  });
+                                  postBloc.add(AddressFormEvent());
                                 },
                               ),
                             ],
                           );
                         },
                       ),
-                      SizedBox(height: 10),
-                      RaisedButton(
-                        child: Text(Localization.of(context).submit),
-                        onPressed: () async {
-                          formBloc.submit();
-                        },
-                      ),
-                    ]));
-          }
+                    ],
+                  ));
 
-          return Container();
+          final Widget formbody =
+              FormBlocListener<AddressFormBloc, String, String>(
+                  onSubmitting: (context, state) {
+                    LoadingDialog.show(context);
+                  },
+                  onSuccess: (context, state) {
+                    LoadingDialog.hide(context);
+                    context.navigator.pop(true);
+                  },
+                  onFailure: (context, state) {
+                    LoadingDialog.hide(context);
+                  },
+                  onDeleting: (context, state) {
+                    LoadingDialog.show(context);
+                  },
+                  onDeleteSuccessful: (context, state) {
+                    LoadingDialog.hide(context);
+                    context.navigator.pop(true);
+                  },
+                  onDeleteFailed: (context, state) {
+                    LoadingDialog.hide(context);
+                  },
+                  child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      children: <Widget>[
+                        DropdownFieldBlocBuilder(
+                          showEmptyItem: false,
+                          decoration: InputDecoration(
+                              labelText: 'Model', border: OutlineInputBorder()),
+                          itemBuilder: (context, value) =>
+                              ['Personal', 'Company'][value],
+                          selectFieldBloc: formBloc.model,
+                        ),
+                        DropdownFieldBlocBuilder(
+                          showEmptyItem: false,
+                          decoration: InputDecoration(
+                              labelText: 'Style', border: OutlineInputBorder()),
+                          itemBuilder: (context, value) =>
+                              ['Apartment', 'Villa'][value],
+                          selectFieldBloc: formBloc.style,
+                        ),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.city,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                labelText: 'City',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.community,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                labelText: 'Community',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.street,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                labelText: 'Street',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.building,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                labelText: 'Building',
+                                border: OutlineInputBorder())),
+                        TextFieldBlocBuilder(
+                            onSubmitted: (value) {
+                              formBloc.submit();
+                            },
+                            textFieldBloc: formBloc.roomNo,
+                            textInputAction: TextInputAction.done,
+                            decoration: InputDecoration(
+                                labelText: 'RoomNo',
+                                border: OutlineInputBorder())),
+                        IfNoneWidget(
+                          basis: path == '/post',
+                          builder: (context) {
+                            return ListBody(
+                              children: <Widget>[
+                                SizedBox(height: 10),
+                                RaisedButton(
+                                  child:
+                                      Text('I want to use the map to locate'),
+                                  onPressed: () async {
+                                    showLocationPicker(context, Constant.ApiKey,
+                                            initialCenter: LatLng(
+                                                25.108220955794977,
+                                                55.21488390862942),
+                                            myLocationButtonEnabled: true,
+                                            layersButtonEnabled: true,
+                                            automaticallyAnimateToCurrentLocation:
+                                                true)
+                                        .then((value) {
+                                      if (value != null) {
+                                        mapBloc.lat.updateValue(
+                                            '${value.latLng.latitude}');
+                                        mapBloc.lng.updateValue(
+                                            '${value.latLng.longitude}');
+                                        mapBloc.address
+                                            .updateValue('${value.address}');
+                                        postBloc.add(AddressMapEvent());
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ]));
+
+          return Scaffold(
+              appBar: AppBar(
+                title: Text(Localization.of(context).address +
+                    '${path == '/put' ? ' Detail' : ' New'}'),
+                actions: <Widget>[
+                  IfNoneWidget(
+                      basis: path == '/put',
+                      builder: (context) {
+                        return IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            if (state is AddressMapState) {
+                              mapBloc.delete();
+                            } else {
+                              formBloc.delete();
+                            }
+                          },
+                        );
+                      }),
+                  FlatButton(
+                    child: Text(Localization.of(context).submit),
+                    onPressed: () {
+                      if (state is AddressMapState) {
+                        mapBloc.submit();
+                      } else {
+                        formBloc.submit();
+                      }
+                    },
+                  )
+                ],
+              ),
+              body: state is AddressMapState ? mapbody : formbody);
         }));
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(Localization.of(context).address),
-        ),
-        body: body);
+    return body;
   }
 }
+
+// class BottomAppBarDemo extends StatefulWidget {
+//   const BottomAppBarDemo();
+
+//   @override
+//   State createState() => _BottomAppBarDemoState();
+// }
+
+// class _BottomAppBarDemoState extends State<BottomAppBarDemo> {
+//   var _showFab = true;
+//   var _showNotch = true;
+//   var _fabLocation = FloatingActionButtonLocation.endDocked;
+
+//   void _onShowNotchChanged(bool value) {
+//     setState(() {
+//       _showNotch = value;
+//     });
+//   }
+
+//   void _onShowFabChanged(bool value) {
+//     setState(() {
+//       _showFab = value;
+//     });
+//   }
+
+//   void _onFabLocationChanged(FloatingActionButtonLocation value) {
+//     setState(() {
+//       _fabLocation = value;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     Widget body = Scaffold(
+//       appBar: AppBar(
+//         automaticallyImplyLeading: false,
+//         title: Text('Title'),
+//       ),
+//       body: ListView(
+//         padding: const EdgeInsets.only(bottom: 88),
+//         children: [
+//           SwitchListTile(
+//             title: Text(
+//               'Title',
+//             ),
+//             value: _showFab,
+//             onChanged: _onShowFabChanged,
+//           ),
+//           SwitchListTile(
+//             title: Text('Notch'),
+//             value: _showNotch,
+//             onChanged: _onShowNotchChanged,
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(16),
+//             child: Text('Position'),
+//           ),
+//           RadioListTile<FloatingActionButtonLocation>(
+//             title: Text('DockedEnd'),
+//             value: FloatingActionButtonLocation.endDocked,
+//             groupValue: _fabLocation,
+//             onChanged: _onFabLocationChanged,
+//           ),
+//           RadioListTile<FloatingActionButtonLocation>(
+//             title: Text('DockedCenter'),
+//             value: FloatingActionButtonLocation.centerDocked,
+//             groupValue: _fabLocation,
+//             onChanged: _onFabLocationChanged,
+//           ),
+//           RadioListTile<FloatingActionButtonLocation>(
+//             title: Text('FloatingEnd'),
+//             value: FloatingActionButtonLocation.endFloat,
+//             groupValue: _fabLocation,
+//             onChanged: _onFabLocationChanged,
+//           ),
+//           RadioListTile<FloatingActionButtonLocation>(
+//             title: Text(
+//               'FloatingCenter',
+//             ),
+//             value: FloatingActionButtonLocation.centerFloat,
+//             groupValue: _fabLocation,
+//             onChanged: _onFabLocationChanged,
+//           ),
+//         ],
+//       ),
+//     );
+
+//     return body;
+//   }
+// }
+
+// class _BottomAppBar extends StatelessWidget {
+//   const _BottomAppBar({
+//     this.fabLocation,
+//     this.shape,
+//   });
+
+//   final FloatingActionButtonLocation fabLocation;
+//   final NotchedShape shape;
+
+//   static final centerLocations = <FloatingActionButtonLocation>[
+//     FloatingActionButtonLocation.centerDocked,
+//     FloatingActionButtonLocation.centerFloat,
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return BottomAppBar(
+//       shape: shape,
+//       child: IconTheme(
+//         data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+//         child: Row(
+//           children: [
+//             IconButton(
+//               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+//               icon: const Icon(Icons.menu),
+//               onPressed: () {},
+//             ),
+//             if (centerLocations.contains(fabLocation)) const Spacer(),
+//             IconButton(
+//               icon: const Icon(Icons.search),
+//               onPressed: () {},
+//             ),
+//             IconButton(
+//               icon: const Icon(Icons.favorite),
+//               onPressed: () {},
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

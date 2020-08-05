@@ -47,6 +47,7 @@ class _EletecAppState extends State<EletecApp> {
               accentColor: Colors.blueAccent,
               scaffoldBackgroundColor: Colors.grey[200],
               buttonColor: Colors.blue,
+              bottomAppBarColor: Colors.blue,
               buttonTheme: ButtonThemeData(
                   buttonColor: Colors.blue,
                   hoverColor: Colors.blueAccent,

@@ -121,6 +121,15 @@ class AddressFormBloc extends FormBloc<String, String> {
   }
 
   @override
+  void onDeleting() {
+    RestService.instance.deleteAddress('${data.id}').then((value) {
+      emitDeleteSuccessful();
+    }).catchError((onError) {
+      emitDeleteFailed();
+    });
+  }
+
+  @override
   void onSubmitting() {
     String path = RouteData.of(context).path;
     int userId = BlocProvider.of<AppBloc>(context).state.user.id;
@@ -208,6 +217,15 @@ class AddressMapBloc extends FormBloc<String, String> {
     model.addFieldError(errors['lat']);
     model.addFieldError(errors['lng']);
     model.addFieldError(errors['address'] ?? errors['non_field_errors']);
+  }
+
+  @override
+  void onDeleting() {
+    RestService.instance.deleteAddress('${data.id}').then((value) {
+      emitDeleteSuccessful();
+    }).catchError((onError) {
+      emitDeleteFailed();
+    });
   }
 
   @override
