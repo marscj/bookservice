@@ -381,26 +381,6 @@ class _RestService implements RestService {
   }
 
   @override
-  getOrders({query}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(query ?? <String, dynamic>{});
-    queryParameters.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/orders/',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = OrderList.fromJson(_result.data);
-    return value;
-  }
-
-  @override
   getContracts({query}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -520,6 +500,26 @@ class _RestService implements RestService {
   }
 
   @override
+  getOrders({query}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final Response<Map<String, dynamic>> _result = await _dio.request(
+        '/orders/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = OrderList.fromJson(_result.data);
+    return value;
+  }
+
+  @override
   getOrder(id) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
@@ -535,6 +535,27 @@ class _RestService implements RestService {
             baseUrl: baseUrl),
         data: _data);
     final value = Order.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  updateOrder(id, data) async {
+    ArgumentError.checkNotNull(id, 'id');
+    ArgumentError.checkNotNull(data, 'data');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(data?.toJson() ?? <String, dynamic>{});
+    final Response<Map<String, dynamic>> _result = await _dio.request(
+        '/orders/$id/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PATCH',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = Address.fromJson(_result.data);
     return value;
   }
 

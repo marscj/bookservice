@@ -16,6 +16,18 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class OrderListPage extends StatefulWidget {
+  @override
+  _OrderListPageState createState() => _OrderListPageState();
+}
+
+class _OrderListPageState extends State<OrderListPage> {
+  @override
+  Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
       create: (context) => OrderBloc(context),
       child: BlocBuilder<OrderBloc, OrderState>(
@@ -122,5 +134,17 @@ class OrderListItem extends StatelessWidget {
                     ))
               ],
             )));
+  }
+}
+
+class OrderPostPage extends StatefulWidget {
+  @override
+  _OrderPostPageState createState() => _OrderPostPageState();
+}
+
+class _OrderPostPageState extends State<OrderPostPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

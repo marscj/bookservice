@@ -115,9 +115,6 @@ abstract class RestService {
   Future<User> updateUser(
       @Path() String id, @Body() Map<String, dynamic> playload);
 
-  @GET('/orders/')
-  Future<OrderList> getOrders({@Queries() Map<String, dynamic> query});
-
   @GET('/contracts/')
   Future<List<Contract>> getContracts({@Queries() Map<String, dynamic> query});
 
@@ -136,8 +133,14 @@ abstract class RestService {
   @DELETE('/address/{id}/')
   Future<void> deleteAddress(@Path() String id);
 
+  @GET('/orders/')
+  Future<OrderList> getOrders({@Queries() Map<String, dynamic> query});
+
   @GET('/orders/{id}/')
   Future<Order> getOrder(@Path() String id);
+
+  @PATCH('/orders/{id}/')
+  Future<Address> updateOrder(@Path() String id, @Body() Order data);
 
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);

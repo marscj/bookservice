@@ -10,7 +10,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import '../apis/client.dart';
-import '../pages/address.dart';
 import '../pages/pages.dart';
 
 class Routes {
@@ -20,12 +19,14 @@ class Routes {
   static const String faqPage = '/faqs';
   static const String contractPage = '/contract';
   static const String addressPage = '/address';
+  static const String orderPage = '/order';
   static const all = <String>{
     authentication,
     _userPage,
     faqPage,
     contractPage,
     addressPage,
+    orderPage,
   };
 }
 
@@ -49,6 +50,11 @@ class Router extends RouterBase {
       Routes.addressPage,
       page: AddressPage,
       generator: AddressPageRouter(),
+    ),
+    RouteDef(
+      Routes.orderPage,
+      page: OrderPage,
+      generator: OrderPageRouter(),
     ),
   ];
   @override
@@ -81,6 +87,12 @@ class Router extends RouterBase {
     AddressPage: (data) {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => AddressPage(),
+        settings: data,
+      );
+    },
+    OrderPage: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderPage(),
         settings: data,
       );
     },
@@ -223,6 +235,43 @@ class AddressPageRouter extends RouterBase {
           key: args.key,
           data: args.data,
         ),
+        settings: data,
+      );
+    },
+  };
+}
+
+class OrderPageRoutes {
+  static const String list = '/';
+  static const String post = '/post';
+  static const String put = '/put';
+  static const all = <String>{
+    list,
+    post,
+    put,
+  };
+}
+
+class OrderPageRouter extends RouterBase {
+  @override
+  List<RouteDef> get routes => _routes;
+  final _routes = <RouteDef>[
+    RouteDef(OrderPageRoutes.list, page: OrderListPage),
+    RouteDef(OrderPageRoutes.post, page: OrderPostPage),
+    RouteDef(OrderPageRoutes.put, page: OrderPostPage),
+  ];
+  @override
+  Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
+  final _pagesMap = <Type, AutoRouteFactory>{
+    OrderListPage: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderListPage(),
+        settings: data,
+      );
+    },
+    OrderPostPage: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderPostPage(),
         settings: data,
       );
     },
