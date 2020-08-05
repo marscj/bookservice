@@ -6,6 +6,7 @@ import 'package:bookservice/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // ignore_for_file: close_sinks
@@ -94,48 +95,56 @@ class OrderListItem extends StatelessWidget {
       'assets/images/house.png'
     ];
 
-    return DefaultTextStyle(
-        style: TextStyle(color: Colors.white),
-        child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                border: Border.all(color: Colors.blue, width: 1),
-                shape: BoxShape.rectangle,
+    return InkWell(
+        onTap: () {
+          ExtendedNavigator.of(context).push('/order/put',
+              arguments: OrderPostPageArguments(data: order));
+        },
+        child: DefaultTextStyle(
+            style: TextStyle(
                 color: Colors.white,
-                boxShadow: [
-                  BoxShadow(color: Colors.grey[300], offset: Offset(0, 0)),
-                  BoxShadow(color: Colors.grey[400], offset: Offset(1.5, 3)),
-                ]),
-            child: Column(
-              children: <Widget>[
-                Container(
-                    height: 45,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(8)),
-                      shape: BoxShape.rectangle,
-                      color: bgColor[400],
-                    ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('${order.orderID}'),
-                          Text(
-                              '${Localization.of(context).orderStatus[order.status]}')
-                        ])),
-                Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                    child: ListTile(
-                      trailing: Image.asset(images[order.service]),
-                      title: Text(
-                          '${Localization.of(context).mainInfo[order.service][order.main_info]}'),
-                      subtitle: Text(
-                          '${Localization.of(context).subInfo[order.service][order.main_info][order.sub_info]} \n${order.create_at}'),
-                    ))
-              ],
-            )));
+                fontFamily: GoogleFonts.getFont('Righteous').fontFamily),
+            child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(color: Colors.blue, width: 1),
+                    shape: BoxShape.rectangle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(color: Colors.grey[300], offset: Offset(0, 0)),
+                      BoxShadow(
+                          color: Colors.grey[400], offset: Offset(1.5, 3)),
+                    ]),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        height: 45,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(8)),
+                          shape: BoxShape.rectangle,
+                          color: bgColor[400],
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('${order.orderID}'),
+                              Text(
+                                  '${Localization.of(context).orderStatus[order.status]}')
+                            ])),
+                    Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 10),
+                        child: ListTile(
+                          trailing: Image.asset(images[order.service]),
+                          title: Text(
+                              '${Localization.of(context).mainInfo[order.service][order.main_info]}'),
+                          subtitle: Text(
+                              '${Localization.of(context).subInfo[order.service][order.main_info][order.sub_info]} \n${order.create_at}'),
+                        ))
+                  ],
+                ))));
   }
 }
 
@@ -151,6 +160,10 @@ class OrderPostPage extends StatefulWidget {
 class _OrderPostPageState extends State<OrderPostPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Center(
+        child: Text('${widget.data.orderID}'),
+      ),
+    );
   }
 }

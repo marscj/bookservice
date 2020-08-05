@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage>
       create: (context) => HomeBloc(),
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          return SafeArea(top: true, child: CustomerPage());
+          return SafeArea(top: true, bottom: false, child: CustomerPage());
         },
       ),
     );

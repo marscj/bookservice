@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ServicePage extends StatefulWidget {
@@ -204,32 +205,42 @@ class CallMeView extends StatelessWidget {
   }
 }
 
-class BannerView extends StatelessWidget {
+class BannerView extends StatefulWidget {
+  @override
+  _BannerViewState createState() => _BannerViewState();
+}
+
+class _BannerViewState extends State<BannerView> {
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
-      options: CarouselOptions(
-        autoPlay: true,
-        aspectRatio: 2.0,
-        enlargeCenterPage: true,
-        enlargeStrategy: CenterPageEnlargeStrategy.height,
-      ),
-      items: [
-        'assets/images/slider-1.jpg',
-        'assets/images/slider-2.jpg',
-        'assets/images/slider-3.jpg',
-        'assets/images/slider-4.jpg',
-        // 'assets/images/slider-5.jpg',
-      ].map((item) {
-        return Container(
-          margin: EdgeInsets.all(5.0),
-          child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              child: Image.asset(item,
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width * 0.8)),
-        );
-      }).toList(),
+    return Column(
+      children: <Widget>[
+        CarouselSlider(
+          options: CarouselOptions(
+            autoPlay: true,
+            aspectRatio: 2.0,
+            enlargeCenterPage: true,
+            initialPage: 0,
+            enlargeStrategy: CenterPageEnlargeStrategy.height,
+          ),
+          items: [
+            'assets/images/slider-1.jpg',
+            'assets/images/slider-2.jpg',
+            'assets/images/slider-3.jpg',
+            'assets/images/slider-4.jpg',
+            // 'assets/images/slider-5.jpg',
+          ].map((item) {
+            return Container(
+              margin: EdgeInsets.all(5.0),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  child: Image.asset(item,
+                      fit: BoxFit.cover,
+                      width: MediaQuery.of(context).size.width * 0.8)),
+            );
+          }).toList(),
+        )
+      ],
     );
   }
 }
