@@ -129,16 +129,12 @@ class _DateTimeFieldBlocBuilderBaseState<T>
     FocusScope.of(context).requestFocus(FocusNode());
     var result;
     if (widget.type == DateTimeFieldBlocBuilderBaseType.date) {
-      result = await _showDatePicker(context);
+      result = await _showDatePicker(context, CupertinoDatePickerMode.date);
     } else if (widget.type == DateTimeFieldBlocBuilderBaseType.both) {
-      final date = await _showDatePicker(context);
-
-      if (date != null) {
-        final time = await _showTimePicker(context);
-        result = _combine(date, time);
-      }
+      result =
+          await _showDatePicker(context, CupertinoDatePickerMode.dateAndTime);
     } else if (widget.type == DateTimeFieldBlocBuilderBaseType.time) {
-      result = await _showTimePicker(context);
+      result = await _showDatePicker(context, CupertinoDatePickerMode.time);
     }
     if (result != null) {
       fieldBlocBuilderOnChange<T>(
@@ -219,7 +215,8 @@ class _DateTimeFieldBlocBuilderBaseState<T>
     );
   }
 
-  Future<DateTime> _showDatePicker(BuildContext context) async {
+  Future<DateTime> _showDatePicker(
+      BuildContext context, CupertinoDatePickerMode mode) async {
     // return await showDatePicker(
     //   context: context,
     //   initialDate: widget.dateTimeFieldBloc.state.value ?? widget.initialDate,
@@ -240,7 +237,7 @@ class _DateTimeFieldBlocBuilderBaseState<T>
             child: CupertinoDatePicker(
           backgroundColor:
               CupertinoColors.systemBackground.resolveFrom(context),
-          mode: CupertinoDatePickerMode.dateAndTime,
+          mode: mode,
           use24hFormat: true,
           minimumDate: widget.firstDate,
           maximumDate: widget.lastDate,
@@ -256,20 +253,20 @@ class _DateTimeFieldBlocBuilderBaseState<T>
     );
   }
 
-  Future<TimeOfDay> _showTimePicker(BuildContext context) async {
-    return await showTimePicker(
-      context: context,
-      useRootNavigator: widget.useRootNavigator,
-      initialTime: widget.type == DateTimeFieldBlocBuilderBaseType.time
-          ? widget.dateTimeFieldBloc.state.value ?? widget.initialTime
-          : widget.dateTimeFieldBloc.state.value == null
-              ? TimeOfDay.fromDateTime(
-                  widget.dateTimeFieldBloc.state.value ?? DateTime.now(),
-                )
-              : widget.initialTime,
-      builder: widget.builder,
-    );
-  }
+  // Future<TimeOfDay> _showTimePicker(BuildContext context) async {
+  //   return await showTimePicker(
+  //     context: context,
+  //     useRootNavigator: widget.useRootNavigator,
+  //     initialTime: widget.type == DateTimeFieldBlocBuilderBaseType.time
+  //         ? widget.dateTimeFieldBloc.state.value ?? widget.initialTime
+  //         : widget.dateTimeFieldBloc.state.value == null
+  //             ? TimeOfDay.fromDateTime(
+  //                 widget.dateTimeFieldBloc.state.value ?? DateTime.now(),
+  //               )
+  //             : widget.initialTime,
+  //     builder: widget.builder,
+  //   );
+  // }
 
   DateTime _combine(DateTime date, TimeOfDay time) {
     if (date != null && time != null) {
