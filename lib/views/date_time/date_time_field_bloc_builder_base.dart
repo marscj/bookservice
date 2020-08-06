@@ -106,6 +106,8 @@ class _DateTimeFieldBlocBuilderBaseState<T>
 
   FocusNode get _effectiveFocusNode => widget.focusNode ?? _focusNode;
 
+  DateTime _dateTime;
+
   @override
   void initState() {
     _effectiveFocusNode.addListener(_onFocusRequest);
@@ -163,7 +165,7 @@ class _DateTimeFieldBlocBuilderBaseState<T>
         builder: (_, __) {
           return BlocBuilder<InputFieldBloc<T, Object>,
               InputFieldBlocState<T, Object>>(
-            bloc: widget.dateTimeFieldBloc,
+            cubit: widget.dateTimeFieldBloc,
             builder: (context, state) {
               final isEnabled = fieldBlocIsEnabled(
                 isEnabled: this.widget.isEnabled,
@@ -230,6 +232,7 @@ class _DateTimeFieldBlocBuilderBaseState<T>
     //   // routeSettings: routeSettings, /* Use it in flutter >= 1.15.0   */
     //   textDirection: widget.textDirection,
     // );
+    _dateTime = widget.initialDate;
     return showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
@@ -241,16 +244,16 @@ class _DateTimeFieldBlocBuilderBaseState<T>
           use24hFormat: true,
           minimumDate: widget.firstDate,
           maximumDate: widget.lastDate,
-          minimumYear: widget.firstDate.year,
-          maximumYear: widget.firstDate.year,
           initialDateTime:
               widget.dateTimeFieldBloc.state.value ?? widget.initialDate,
           onDateTimeChanged: (newDateTime) {
-            print(newDateTime);
+            _dateTime = newDateTime;
           },
         ));
       },
-    );
+    ).then((value) {
+      return _dateTime;
+    });
   }
 
   // Future<TimeOfDay> _showTimePicker(BuildContext context) async {
@@ -336,8 +339,8 @@ class _BottomPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 216,
-      padding: const EdgeInsets.only(top: 6),
+      height: 220,
+      padding: const EdgeInsets.only(top: 4),
       margin: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
@@ -347,13 +350,8 @@ class _BottomPicker extends StatelessWidget {
           color: CupertinoColors.label.resolveFrom(context),
           fontSize: 22,
         ),
-        child: GestureDetector(
-          // Blocks taps from propagating to the modal sheet and popping.
-          onTap: () {},
-          child: SafeArea(
-            top: false,
-            child: child,
-          ),
+        child: Column(
+          children: [Expanded(child: child)],
         ),
       ),
     );

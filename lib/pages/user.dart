@@ -536,7 +536,8 @@ class _EmailValidatePageState extends State<EmailValidatePage> {
                           },
                         ),
                         BlocBuilder<TextFieldBloc, TextFieldBlocState>(
-                            bloc: BlocProvider.of<EmailFormBloc>(context).field,
+                            cubit:
+                                BlocProvider.of<EmailFormBloc>(context).field,
                             builder: (context, state) {
                               return Container(
                                 alignment: Alignment.center,

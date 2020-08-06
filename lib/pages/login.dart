@@ -93,7 +93,7 @@ class SendView extends StatelessWidget {
             prefixIcon: Container(
                 padding: const EdgeInsets.all(8),
                 child: BlocBuilder<TextFieldBloc, TextFieldBlocState>(
-                  bloc: formBloc.dialCode,
+                  cubit: formBloc.dialCode,
                   builder: (_, __) {
                     return CountryCodePicker(
                       onInit: (value) {
@@ -115,7 +115,7 @@ class SendView extends StatelessWidget {
             suffixIcon: const Icon(Icons.phone)));
 
     final Widget buildSubmit = BlocBuilder<FormBloc, dynamic>(
-      bloc: formBloc,
+      cubit: formBloc,
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -161,7 +161,7 @@ class VerifyView extends StatelessWidget {
     final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
 
     final Widget buildSubmit = BlocBuilder<FormBloc, dynamic>(
-      bloc: formBloc,
+      cubit: formBloc,
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -227,7 +227,7 @@ class VerifyView extends StatelessWidget {
                   },
                 ),
                 BlocBuilder<TextFieldBloc, TextFieldBlocState>(
-                    bloc: formBloc.otp,
+                    cubit: formBloc.otp,
                     builder: (context, state) {
                       return Container(
                         alignment: Alignment.center,
