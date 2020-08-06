@@ -216,12 +216,25 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         .subInfo[value.service][value.main][value.sub],
                     selectFieldBloc: formBloc.sub_info,
                   ),
-                  DropdownFieldBlocBuilder(
-                    showEmptyItem: true,
+                  TextFieldBlocBuilder(
+                    focusNode: FocusNode(debugLabel: 'address')
+                      ..addListener(() {
+                        FocusNode focusNode = FocusScope.of(context);
+                        if (focusNode.hasFocus) {
+                          focusNode.unfocus();
+                          context.navigator
+                              .push<Address>('/pickaddr')
+                              .then((value) {
+                            if (value != null) {
+                              formBloc.address.updateValue(
+                                  value.onMap ? value.address : value.toTitle);
+                            }
+                          });
+                        }
+                      }),
                     decoration: InputDecoration(
                         labelText: 'Address', border: OutlineInputBorder()),
-                    itemBuilder: (context, value) => value,
-                    selectFieldBloc: formBloc.address,
+                    textFieldBloc: formBloc.address,
                   ),
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.from_date,

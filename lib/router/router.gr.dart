@@ -57,11 +57,7 @@ class Router extends RouterBase {
       page: AddressPage,
       generator: AddressPageRouter(),
     ),
-    RouteDef(
-      Routes.pickaddr,
-      page: AddressPage,
-      generator: PickaddrRouter(),
-    ),
+    RouteDef(Routes.pickaddr, page: AddressListPage),
     RouteDef(Routes.orderPage, page: OrderPage),
     RouteDef(Routes.orderPost, page: OrderPostPage),
     RouteDef(Routes.orderPut, page: OrderPostPage),
@@ -96,6 +92,12 @@ class Router extends RouterBase {
     AddressPage: (data) {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => AddressPage(),
+        settings: data,
+      );
+    },
+    AddressListPage: (data) {
+      return buildAdaptivePageRoute<Address>(
+        builder: (context) => AddressListPage(),
         settings: data,
         fullscreenDialog: true,
       );
@@ -238,49 +240,6 @@ class AddressPageRouter extends RouterBase {
     RouteDef(AddressPageRoutes.list, page: AddressListPage),
     RouteDef(AddressPageRoutes.post, page: AddressPostPage),
     RouteDef(AddressPageRoutes.put, page: AddressPostPage),
-  ];
-  @override
-  Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
-  final _pagesMap = <Type, AutoRouteFactory>{
-    AddressListPage: (data) {
-      return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => AddressListPage(),
-        settings: data,
-      );
-    },
-    AddressPostPage: (data) {
-      final args = data.getArgs<AddressPostPageArguments>(
-        orElse: () => AddressPostPageArguments(),
-      );
-      return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => AddressPostPage(
-          key: args.key,
-          data: args.data,
-        ),
-        settings: data,
-      );
-    },
-  };
-}
-
-class PickaddrRoutes {
-  static const String list = '/';
-  static const String post = '/post';
-  static const String put = '/put';
-  static const all = <String>{
-    list,
-    post,
-    put,
-  };
-}
-
-class PickaddrRouter extends RouterBase {
-  @override
-  List<RouteDef> get routes => _routes;
-  final _routes = <RouteDef>[
-    RouteDef(PickaddrRoutes.list, page: AddressListPage),
-    RouteDef(PickaddrRoutes.post, page: AddressPostPage),
-    RouteDef(PickaddrRoutes.put, page: AddressPostPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;

@@ -25,12 +25,10 @@ class AddressPage extends StatefulWidget {
 class _AddressPageState extends State<AddressPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) => AddressBloc(this.context),
-        child: ExtendedNavigator(
-          name: 'address',
-          initialRoute: AddressPageRoutes.list,
-        ));
+    return ExtendedNavigator(
+      name: 'address',
+      initialRoute: AddressPageRoutes.list,
+    );
   }
 }
 
@@ -42,94 +40,105 @@ class AddressListPage extends StatefulWidget {
 class _AddressListPageState extends State<AddressListPage> {
   @override
   Widget build(BuildContext context) {
-    bool pick = RouteData.of(context).name == '/pickaddr/';
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Localization.of(context).address),
-        leading: pick
-            ? CloseButton(onPressed: () {
-                context.navigator.root.pop();
-              })
-            : BackButton(onPressed: () {
-                context.navigator.root.pop();
-              }),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              context.navigator
-                  .push('/post',
-                      arguments: AddressPostPageArguments(
-                          data: Address(
-                        defAddr: false,
-                        onMap: false,
-                        model: 0,
-                        style: 0,
-                        city: '',
-                        community: '',
-                        street: '',
-                        building: '',
-                        roomNo: '',
-                        address: '',
-                      )))
-                  .then((value) {
-                if (value != null && value) {
-                  AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
-                  bloc.refreshController.requestRefresh();
-                }
-              });
-            },
-          )
-        ],
-      ),
-      body: BlocBuilder<AddressBloc, AddressState>(
-        builder: (context, state) {
-          AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
+    bool pick = RouteData.of(context).name == '/pickaddr';
 
-          return SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: false,
-            header: WaterDropHeader(),
-            footer: CustomFooter(
-              builder: (BuildContext context, LoadStatus mode) {
-                Widget body;
-                if (mode == LoadStatus.idle) {
-                  body = Text("pull up load");
-                } else if (mode == LoadStatus.loading) {
-                  body = CupertinoActivityIndicator();
-                } else if (mode == LoadStatus.failed) {
-                  body = Text("Load Failed!Click retry!");
-                } else if (mode == LoadStatus.canLoading) {
-                  body = Text("release to load more");
-                } else {
-                  body = Text("No more Data");
-                }
-                return Container(
-                  height: 55.0,
-                  child: Center(child: body),
-                );
-              },
-            ),
-            controller: bloc.refreshController,
-            onRefresh: () => bloc.add(AddressRefreshList()),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemBuilder: (c, i) => AddressItem(
-                data: state.list[i],
+    Widget body = Builder(
+        builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: pick
+                    ? Text(Localization.of(context).chooseAddress)
+                    : Text(Localization.of(context).address),
+                leading: pick
+                    ? CloseButton(onPressed: () {
+                        context.navigator.root.pop();
+                      })
+                    : BackButton(onPressed: () {
+                        context.navigator.root.pop();
+                      }),
+                actions: pick
+                    ? null
+                    : <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            context.navigator
+                                .push('/post',
+                                    arguments: AddressPostPageArguments(
+                                        data: Address(
+                                      defAddr: false,
+                                      onMap: false,
+                                      model: 0,
+                                      style: 0,
+                                      city: '',
+                                      community: '',
+                                      street: '',
+                                      building: '',
+                                      roomNo: '',
+                                      address: '',
+                                    )))
+                                .then((value) {
+                              if (value != null && value) {
+                                AddressBloc bloc =
+                                    BlocProvider.of<AddressBloc>(context);
+                                bloc.refreshController.requestRefresh();
+                              }
+                            });
+                          },
+                        )
+                      ],
               ),
-              itemCount: state.list.length,
-            ),
-          );
-        },
-      ),
-    );
+              body: BlocBuilder<AddressBloc, AddressState>(
+                builder: (context, state) {
+                  AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
+
+                  return SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    header: WaterDropHeader(),
+                    footer: CustomFooter(
+                      builder: (BuildContext context, LoadStatus mode) {
+                        Widget body;
+                        if (mode == LoadStatus.idle) {
+                          body = Text("pull up load");
+                        } else if (mode == LoadStatus.loading) {
+                          body = CupertinoActivityIndicator();
+                        } else if (mode == LoadStatus.failed) {
+                          body = Text("Load Failed!Click retry!");
+                        } else if (mode == LoadStatus.canLoading) {
+                          body = Text("release to load more");
+                        } else {
+                          body = Text("No more Data");
+                        }
+                        return Container(
+                          height: 55.0,
+                          child: Center(child: body),
+                        );
+                      },
+                    ),
+                    controller: bloc.refreshController,
+                    onRefresh: () => bloc.add(AddressRefreshList()),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      itemBuilder: (c, i) => AddressItem(
+                        data: state.list[i],
+                        pick: pick,
+                      ),
+                      itemCount: state.list.length,
+                    ),
+                  );
+                },
+              ),
+            ));
+
+    return BlocProvider(create: (_) => AddressBloc(), child: body);
   }
 }
 
 class AddressItem extends StatelessWidget {
   final Address data;
+  final bool pick;
 
-  const AddressItem({Key key, this.data}) : super(key: key);
+  const AddressItem({Key key, this.data, this.pick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -176,24 +185,35 @@ class AddressItem extends StatelessWidget {
                     label: 'Address',
                     content: Text(data.toTitle),
                   ),
-                  CardSettingsButton(
-                    label: 'View Detail',
-                    isDestructive: true,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).buttonColor,
-                    onPressed: () {
-                      context.navigator
-                          .push('/put',
-                              arguments: AddressPostPageArguments(data: data))
-                          .then((value) {
-                        if (value != null && value) {
-                          AddressBloc bloc =
-                              BlocProvider.of<AddressBloc>(context);
-                          bloc.refreshController.requestRefresh();
-                        }
-                      });
-                    },
-                  )
+                  pick
+                      ? CardSettingsButton(
+                          label: 'Select',
+                          isDestructive: true,
+                          backgroundColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).buttonColor,
+                          onPressed: () {
+                            context.navigator.pop(data);
+                          },
+                        )
+                      : CardSettingsButton(
+                          label: 'View Detail',
+                          isDestructive: true,
+                          backgroundColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).buttonColor,
+                          onPressed: () {
+                            context.navigator
+                                .push('/put',
+                                    arguments:
+                                        AddressPostPageArguments(data: data))
+                                .then((value) {
+                              if (value != null && value) {
+                                AddressBloc bloc =
+                                    BlocProvider.of<AddressBloc>(context);
+                                bloc.refreshController.requestRefresh();
+                              }
+                            });
+                          },
+                        )
                 ],
               )
             ],

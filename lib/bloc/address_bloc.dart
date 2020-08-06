@@ -17,11 +17,9 @@ part 'address_state.dart';
 // ignore_for_file: close_sinks
 
 class AddressBloc extends Bloc<AddressEvent, AddressState> {
-  final BuildContext context;
-
   RefreshController refreshController = RefreshController(initialRefresh: true);
 
-  AddressBloc(this.context) : super(AddressState.initial());
+  AddressBloc() : super(AddressState.initial());
 
   @override
   Stream<AddressState> mapEventToState(

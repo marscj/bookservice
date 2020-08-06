@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/pages/pages.dart';
 import 'package:flutter/material.dart';
 
@@ -33,16 +34,11 @@ import 'package:flutter/material.dart';
       AdaptiveRoute(name: 'post', path: '/post', page: AddressPostPage),
       AdaptiveRoute(name: 'put', path: '/put', page: AddressPostPage)
     ]),
-    AdaptiveRoute(
+    AdaptiveRoute<Address>(
         name: 'pickaddr',
         path: '/pickaddr',
-        page: AddressPage,
-        fullscreenDialog: true,
-        children: [
-          AdaptiveRoute(name: 'list', path: '/', page: AddressListPage),
-          AdaptiveRoute(name: 'post', path: '/post', page: AddressPostPage),
-          AdaptiveRoute(name: 'put', path: '/put', page: AddressPostPage)
-        ]),
+        page: AddressListPage,
+        fullscreenDialog: true),
     AdaptiveRoute(path: '/order', page: OrderPage),
     AdaptiveRoute(name: 'orderPost', path: '/order/post', page: OrderPostPage),
     AdaptiveRoute(name: 'orderPut', path: '/order/put', page: OrderPostPage)

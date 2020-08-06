@@ -109,7 +109,7 @@ class OrderFormBloc extends FormBloc<String, String> {
   TextFieldBloc code;
   // TextFieldBloc lat;
   // TextFieldBloc lng;
-  SelectFieldBloc address;
+  TextFieldBloc address;
 
   OrderFormBloc(this.context, this.data) {
     status =
@@ -134,7 +134,7 @@ class OrderFormBloc extends FormBloc<String, String> {
     from_date = InputFieldBloc<DateTime, Object>();
     to_date = InputFieldBloc<DateTime, Object>();
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
-    address = SelectFieldBloc(items: ['new address'], initialValue: null);
+    address = TextFieldBloc(initialValue: '${data.address ?? ''}');
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -144,7 +144,7 @@ class OrderFormBloc extends FormBloc<String, String> {
       from_date,
       to_date,
       code,
-      address,
+      address
     ]);
 
     addValidators();
@@ -182,23 +182,6 @@ class OrderFormBloc extends FormBloc<String, String> {
               length: Localization.of(context)
                   .subInfo[service.value][value.value.main]
                   .length));
-        }
-      });
-
-    address
-      ..listen((value) {
-        if (value.value != null) {
-          ExtendedNavigator.of(context)
-              .push(
-            '/pickaddr',
-          )
-              .then((value) {
-            if (value != null) {
-              address.updateValue(null);
-            } else {
-              address.updateValue(null);
-            }
-          });
         }
       });
   }
