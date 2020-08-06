@@ -14,7 +14,6 @@ class User extends Equatable {
   bool is_active;
   bool is_superuser;
   EmailAddress email;
-  List<Address> address;
 
   int role;
   Map<String, String> photo;
@@ -34,7 +33,6 @@ class User extends Equatable {
         role,
         photo,
         email,
-        address
       ];
 }
 

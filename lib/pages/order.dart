@@ -216,6 +216,13 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         .subInfo[value.service][value.main][value.sub],
                     selectFieldBloc: formBloc.sub_info,
                   ),
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: true,
+                    decoration: InputDecoration(
+                        labelText: 'Address', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) => value,
+                    selectFieldBloc: formBloc.address,
+                  ),
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.from_date,
                     canSelectTime: true,
@@ -245,7 +252,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         labelText: 'To Date',
                         prefixIcon: Icon(Icons.calendar_today),
                         border: OutlineInputBorder()),
-                  )
+                  ),
                 ],
               );
             },

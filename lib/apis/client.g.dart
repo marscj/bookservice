@@ -150,10 +150,6 @@ User _$UserFromJson(Map<String, dynamic> json) {
     ..email = json['email'] == null
         ? null
         : EmailAddress.fromJson(json['email'] as Map<String, dynamic>)
-    ..address = (json['address'] as List)
-        ?.map((e) =>
-            e == null ? null : Address.fromJson(e as Map<String, dynamic>))
-        ?.toList()
     ..role = json['role'] as int
     ..photo = (json['photo'] as Map<String, dynamic>)?.map(
       (k, e) => MapEntry(k, e as String),
@@ -170,7 +166,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'is_active': instance.is_active,
       'is_superuser': instance.is_superuser,
       'email': instance.email,
-      'address': instance.address,
       'role': instance.role,
       'photo': instance.photo,
     };

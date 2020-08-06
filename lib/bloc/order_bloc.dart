@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:bookservice/I18n/i18n.dart';
@@ -106,9 +107,9 @@ class OrderFormBloc extends FormBloc<String, String> {
   InputFieldBloc<DateTime, Object> to_date;
 
   TextFieldBloc code;
-  TextFieldBloc address;
-  TextFieldBloc lat;
-  TextFieldBloc lng;
+  // TextFieldBloc lat;
+  // TextFieldBloc lng;
+  SelectFieldBloc address;
 
   OrderFormBloc(this.context, this.data) {
     status =
@@ -133,9 +134,7 @@ class OrderFormBloc extends FormBloc<String, String> {
     from_date = InputFieldBloc<DateTime, Object>();
     to_date = InputFieldBloc<DateTime, Object>();
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
-    address = TextFieldBloc(initialValue: '${data.address ?? ''}');
-    lat = TextFieldBloc(initialValue: '${data.lat ?? ''}');
-    lng = TextFieldBloc(initialValue: '${data.lng ?? ''}');
+    address = SelectFieldBloc(items: ['new address'], initialValue: null);
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -146,8 +145,6 @@ class OrderFormBloc extends FormBloc<String, String> {
       to_date,
       code,
       address,
-      lat,
-      lng
     ]);
 
     addValidators();
@@ -185,6 +182,23 @@ class OrderFormBloc extends FormBloc<String, String> {
               length: Localization.of(context)
                   .subInfo[service.value][value.value.main]
                   .length));
+        }
+      });
+
+    address
+      ..listen((value) {
+        if (value.value != null) {
+          ExtendedNavigator.of(context)
+              .push(
+            '/pickaddr',
+          )
+              .then((value) {
+            if (value != null) {
+              address.updateValue(null);
+            } else {
+              address.updateValue(null);
+            }
+          });
         }
       });
   }

@@ -19,6 +19,7 @@ class Routes {
   static const String faqPage = '/faqs';
   static const String contractPage = '/contract';
   static const String addressPage = '/address';
+  static const String pickaddr = '/pickaddr';
   static const String orderPage = '/order';
   static const String orderPost = '/order/post';
   static const String orderPut = '/order/put';
@@ -28,6 +29,7 @@ class Routes {
     faqPage,
     contractPage,
     addressPage,
+    pickaddr,
     orderPage,
     orderPost,
     orderPut,
@@ -54,6 +56,11 @@ class Router extends RouterBase {
       Routes.addressPage,
       page: AddressPage,
       generator: AddressPageRouter(),
+    ),
+    RouteDef(
+      Routes.pickaddr,
+      page: AddressPage,
+      generator: PickaddrRouter(),
     ),
     RouteDef(Routes.orderPage, page: OrderPage),
     RouteDef(Routes.orderPost, page: OrderPostPage),
@@ -90,6 +97,7 @@ class Router extends RouterBase {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => AddressPage(),
         settings: data,
+        fullscreenDialog: true,
       );
     },
     OrderPage: (data) {
@@ -230,6 +238,49 @@ class AddressPageRouter extends RouterBase {
     RouteDef(AddressPageRoutes.list, page: AddressListPage),
     RouteDef(AddressPageRoutes.post, page: AddressPostPage),
     RouteDef(AddressPageRoutes.put, page: AddressPostPage),
+  ];
+  @override
+  Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
+  final _pagesMap = <Type, AutoRouteFactory>{
+    AddressListPage: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => AddressListPage(),
+        settings: data,
+      );
+    },
+    AddressPostPage: (data) {
+      final args = data.getArgs<AddressPostPageArguments>(
+        orElse: () => AddressPostPageArguments(),
+      );
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => AddressPostPage(
+          key: args.key,
+          data: args.data,
+        ),
+        settings: data,
+      );
+    },
+  };
+}
+
+class PickaddrRoutes {
+  static const String list = '/';
+  static const String post = '/post';
+  static const String put = '/put';
+  static const all = <String>{
+    list,
+    post,
+    put,
+  };
+}
+
+class PickaddrRouter extends RouterBase {
+  @override
+  List<RouteDef> get routes => _routes;
+  final _routes = <RouteDef>[
+    RouteDef(PickaddrRoutes.list, page: AddressListPage),
+    RouteDef(PickaddrRoutes.post, page: AddressPostPage),
+    RouteDef(PickaddrRoutes.put, page: AddressPostPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;

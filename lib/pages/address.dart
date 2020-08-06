@@ -42,12 +42,17 @@ class AddressListPage extends StatefulWidget {
 class _AddressListPageState extends State<AddressListPage> {
   @override
   Widget build(BuildContext context) {
+    bool pick = RouteData.of(context).name == '/pickaddr/';
     return Scaffold(
       appBar: AppBar(
         title: Text(Localization.of(context).address),
-        leading: BackButton(onPressed: () {
-          context.navigator.root.pop();
-        }),
+        leading: pick
+            ? CloseButton(onPressed: () {
+                context.navigator.root.pop();
+              })
+            : BackButton(onPressed: () {
+                context.navigator.root.pop();
+              }),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
