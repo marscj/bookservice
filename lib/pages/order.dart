@@ -185,7 +185,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                 children: <Widget>[
                   DropdownFieldBlocBuilder(
                     showEmptyItem: false,
-                    // isEnabled: false,
+                    isEnabled: false,
                     decoration: InputDecoration(
                         labelText: 'Status', border: OutlineInputBorder()),
                     itemBuilder: (context, value) =>
@@ -232,6 +232,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                           });
                         }
                       }),
+                    maxLines: 3,
                     decoration: InputDecoration(
                         labelText: 'Address', border: OutlineInputBorder()),
                     textFieldBloc: formBloc.address,
@@ -239,7 +240,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.from_date,
                     canSelectTime: true,
-                    format: DateFormat('yyyy-MM-dd HH:mm '),
+                    format: DateFormat('yyyy-MM-dd HH:mm'),
                     initialDate: DateTime(dateTime.year, dateTime.month,
                         dateTime.day, dateTime.hour + 2),
                     firstDate: DateTime(dateTime.year, dateTime.month,
@@ -254,7 +255,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.to_date,
                     canSelectTime: true,
-                    format: DateFormat('yyyy-MM-dd HH:mm '),
+                    format: DateFormat('yyyy-MM-dd HH:mm'),
                     initialDate: DateTime(dateTime.year, dateTime.month,
                         dateTime.day, dateTime.hour + 2),
                     firstDate: DateTime(dateTime.year, dateTime.month,

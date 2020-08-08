@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -181,8 +182,18 @@ class AddressItem extends StatelessWidget {
                   CardSettingsField(
                     fieldPadding: null,
                     labelAlign: null,
-                    requiredIndicator: null,
-                    label: 'Address',
+                    label: '',
+                    requiredIndicator: data.style == 0
+                        ? Image.asset(
+                            'assets/images/apartment.png',
+                            width: 48,
+                            height: 48,
+                          )
+                        : Image.asset(
+                            'assets/images/villa.png',
+                            width: 48,
+                            height: 48,
+                          ),
                     content: Text(data.toTitle),
                   ),
                   pick

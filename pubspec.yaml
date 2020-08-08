@@ -87,6 +87,8 @@ flutter:
     - assets/images/question.png
     - assets/images/user.png
     - assets/images/join.png
+    - assets/images/apartment.png
+    - assets/images/villa.png
 
     - assets/images/slider-1.jpg
     - assets/images/slider-2.jpg
