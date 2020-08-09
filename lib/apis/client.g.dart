@@ -280,6 +280,25 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
       'user_id': instance.user_id,
     };
 
+Image _$ImageFromJson(Map<String, dynamic> json) {
+  return Image()
+    ..id = json['id'] as int
+    ..image = (json['image'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    )
+    ..tag = json['tag'] as String
+    ..content_type = json['content_type'] as String
+    ..object_id = json['object_id'] as int;
+}
+
+Map<String, dynamic> _$ImageToJson(Image instance) => <String, dynamic>{
+      'id': instance.id,
+      'image': instance.image,
+      'tag': instance.tag,
+      'content_type': instance.content_type,
+      'object_id': instance.object_id,
+    };
+
 // **************************************************************************
 // RetrofitGenerator
 // **************************************************************************

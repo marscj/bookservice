@@ -273,13 +273,13 @@ class _DateTimeFieldBlocBuilderBaseState<T>
   //   );
   // }
 
-  DateTime _combine(DateTime date, TimeOfDay time) {
-    if (date != null && time != null) {
-      return DateTime(
-          date.year, date.month, date.day, time?.hour ?? 0, time?.minute ?? 0);
-    }
-    return null;
-  }
+  // DateTime _combine(DateTime date, TimeOfDay time) {
+  //   if (date != null && time != null) {
+  //     return DateTime(
+  //         date.year, date.month, date.day, time?.hour ?? 0, time?.minute ?? 0);
+  //   }
+  //   return null;
+  // }
 
   String _tryFormat(T value, DateFormat format) {
     DateTime date;

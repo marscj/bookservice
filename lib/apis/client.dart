@@ -16,6 +16,8 @@ part 'user.dart';
 part 'contract.dart';
 part 'job.dart';
 part 'address.dart';
+part 'image.dart';
+part 'comment.dart';
 
 part 'client.g.dart';
 

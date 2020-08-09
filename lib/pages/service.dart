@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:bookservice/apis/client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:flutter/material.dart';
@@ -33,16 +35,24 @@ class _ServicePageState extends State<ServicePage> {
                   crossAxisSpacing: 10,
                   padding: const EdgeInsets.all(8),
                   children: [
-                    ['assets/images/ac.png', 'A/C Maintenance'],
-                    ['assets/images/eletectrical.png', 'Eletectrical Works'],
-                    ['assets/images/plumbing.png', 'Plumbing Works'],
-                    ['assets/images/house.png', 'House Cleaning'],
+                    ['assets/images/ac.png', 'A/C Maintenance', '0'],
+                    [
+                      'assets/images/eletectrical.png',
+                      'Eletectrical Works',
+                      '1'
+                    ],
+                    ['assets/images/plumbing.png', 'Plumbing Works', '2'],
+                    ['assets/images/house.png', 'House Cleaning', '3'],
                   ].map((item) {
                     return GestureDetector(
                       child: _GridPhotoItem(
                         photo: _Photo(assetName: item[0], title: item[1]),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        ExtendedNavigator.of(context).push('/order/post',
+                            arguments: OrderPostPageArguments(
+                                data: Order(service: item[2])));
+                      },
                     );
                   }).toList(),
                 ),

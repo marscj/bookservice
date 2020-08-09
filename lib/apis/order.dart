@@ -9,13 +9,15 @@ class Order extends Equatable {
 
   User user;
   int user_id;
-  List<String> job;
+
   Contract contract;
   int contract_id;
   String orderID;
-  int image_count;
-  int job_count;
-  int comment_count;
+
+  List<Image> images;
+  List<Job> jobs;
+  List<Comment> comments;
+
   int status;
   int service;
   int main_info;
