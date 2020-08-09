@@ -84,6 +84,8 @@ class Localization implements WidgetsLocalizations {
 
   String get submit => 'SUBMIT';
 
+  String get next => 'NEXT';
+
   String get camera => 'Camera';
 
   String get gallery => 'Gallery';
@@ -454,6 +456,9 @@ class $ar extends Localization {
   String get submit => 'SUBMIT';
 
   @override
+  String get next => 'NEXT';
+
+  @override
   String get camera => 'Camera';
 
   @override
@@ -777,6 +782,9 @@ class $en extends Localization {
 
   @override
   String get submit => 'SUBMIT';
+
+  @override
+  String get next => 'NEXT';
 
   @override
   String get camera => 'Camera';

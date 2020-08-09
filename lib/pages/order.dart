@@ -22,7 +22,13 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return OrderListPage();
+    return BlocProvider<OrderBloc>(
+      create: (context) => OrderBloc(context),
+      child: ExtendedNavigator(
+        name: 'address',
+        initialRoute: OrderPageRoutes.list,
+      ),
+    );
   }
 }
 
@@ -100,7 +106,7 @@ class OrderListItem extends StatelessWidget {
 
     return GestureDetector(
         onTap: () {
-          ExtendedNavigator.of(context).push('/order/put',
+          ExtendedNavigator.of(context).push('${order.id}/post',
               arguments: OrderPostPageArguments(data: order));
         },
         child: DefaultTextStyle(
@@ -165,22 +171,16 @@ class _OrderPostPageState extends State<OrderPostPage> {
   Widget build(BuildContext context) {
     return BlocProvider<OrderFormBloc>(
         create: (_) => OrderFormBloc(context, widget.data),
-        child: FormBlocListener<OrderFormBloc, String, String>(
-            child: Scaffold(
-          appBar: AppBar(
-            title: Text('Order Detail'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(Localization.of(context).submit),
-                onPressed: () {},
-              )
-            ],
-          ),
-          body: Builder(
-            builder: (context) {
-              OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
-              DateTime dateTime = DateTime.now();
-              return ListView(
+        child: Builder(builder: (context) {
+          OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
+          DateTime dateTime = DateTime.now();
+          return Scaffold(
+              appBar: AppBar(
+                title: Text('Order Detail'),
+                actions: <Widget>[],
+              ),
+              body: FormBlocListener<OrderFormBloc, String, String>(
+                  child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 children: <Widget>[
                   DropdownFieldBlocBuilder(
@@ -272,10 +272,23 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         prefixIcon: Icon(Icons.calendar_today),
                         border: OutlineInputBorder()),
                   ),
+                  BlocBuilder<BooleanFieldBloc, dynamic>(
+                      cubit: formBloc.nextButton,
+                      builder: (context, state) => RaisedButton(
+                            child: state.value
+                                ? Text(Localization.of(context).next)
+                                : Text(Localization.of(context).submit),
+                            onPressed: formBloc.state.isValid()
+                                ? () {
+                                    if (state.value) {
+                                    } else {
+                                      formBloc.submit();
+                                    }
+                                  }
+                                : null,
+                          ))
                 ],
-              );
-            },
-          ),
-        )));
+              )));
+        }));
   }
 }

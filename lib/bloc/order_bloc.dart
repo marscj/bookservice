@@ -6,6 +6,7 @@ import 'package:bookservice/apis/client.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'order_event.dart';
@@ -135,6 +136,7 @@ class OrderFormBloc extends FormBloc<String, String> {
     address = TextFieldBloc(initialValue: '${data.address ?? ''}');
     lat = TextFieldBloc(initialValue: null);
     lng = TextFieldBloc(initialValue: null);
+    nextButton = BooleanFieldBloc(initialValue: false);
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -144,7 +146,8 @@ class OrderFormBloc extends FormBloc<String, String> {
       from_date,
       to_date,
       code,
-      address
+      address,
+      nextButton
     ]);
 
     addValidators();
@@ -188,9 +191,6 @@ class OrderFormBloc extends FormBloc<String, String> {
     sub_info
       ..listen((value) async {
         if (value != null && value.value != null) {
-          print(Localization.of(context)
-              .subInfo[value.value.service][value.value.main]
-              .length);
           if (Localization.of(context)
                       .subInfo[value.value.service][value.value.main]
                       .length -
@@ -206,13 +206,15 @@ class OrderFormBloc extends FormBloc<String, String> {
 
   void addValidators() {
     from_date.addValidators([
-      // RequiredValidator(errorText: Localization.of(context).requiredString)
+      RequiredDateTimeValidator(
+          errorText: Localization.of(context).requiredString)
     ]);
     to_date.addValidators([
-      // RequiredValidator(errorText: Localization.of(context).requiredString)
+      RequiredDateTimeValidator(
+          errorText: Localization.of(context).requiredString)
     ]);
     address.addValidators([
-      // RequiredValidator(errorText: Localization.of(context).requiredString)
+      RequiredValidator(errorText: Localization.of(context).requiredString)
     ]);
   }
 
@@ -230,4 +232,22 @@ class OrderFormBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() {}
+}
+
+class RequiredDateTimeValidator extends FieldValidator<DateTime> {
+  RequiredDateTimeValidator({@required String errorText}) : super(errorText);
+
+  @override
+  // ignore: override_on_non_overriding_member
+  bool get ignoreEmptyValues => false;
+
+  @override
+  bool isValid(DateTime value) {
+    return value != null;
+  }
+
+  @override
+  String call(DateTime value) {
+    return isValid(value) ? null : errorText;
+  }
 }
