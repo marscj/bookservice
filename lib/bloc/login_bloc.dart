@@ -23,7 +23,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
-    print(event);
     if (event is UpdateStep) {
       yield state.copyWith(step: event.step);
     }
