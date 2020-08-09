@@ -4,6 +4,7 @@ import 'package:bookservice/constanc.dart';
 import 'package:dio/dio.dart';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';

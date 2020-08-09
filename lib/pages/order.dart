@@ -257,9 +257,9 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     canSelectTime: true,
                     format: DateFormat('yyyy-MM-dd HH:mm'),
                     initialDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 2),
+                        dateTime.day, dateTime.hour + 4),
                     firstDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 2),
+                        dateTime.day, dateTime.hour + 4),
                     lastDate: DateTime(
                         dateTime.year, dateTime.month, dateTime.day + 30),
                     decoration: InputDecoration(

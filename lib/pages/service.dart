@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/apis/client.dart';
+import 'package:bookservice/router/router.gr.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,7 +53,9 @@ class _ServicePageState extends State<ServicePage> {
                       onTap: () {
                         ExtendedNavigator.of(context).push('/order/post',
                             arguments: OrderPostPageArguments(
-                                data: Order(service: item[2])));
+                                data: Order(
+                              service: int.parse(item[2]),
+                            )));
                       },
                     );
                   }).toList(),
