@@ -253,8 +253,8 @@ class AddressPageRouter extends RouterBase {
 
 class OrderPageRoutes {
   static const String list = '/';
-  static const String _post = '/:id/post';
-  static String post({@required dynamic id}) => '/$id/post';
+  static const String _post = '/:id?/post';
+  static String post({dynamic id = ''}) => '/$id/post';
   static const all = <String>{
     list,
     _post,
