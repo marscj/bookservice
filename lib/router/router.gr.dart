@@ -102,8 +102,14 @@ class Router extends RouterBase {
       );
     },
     OrderPage: (data) {
+      final args = data.getArgs<OrderPageArguments>(
+        orElse: () => OrderPageArguments(),
+      );
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => OrderPage(),
+        builder: (context) => OrderPage(
+          key: args.key,
+          data: args.data,
+        ),
         settings: data,
       );
     },
@@ -267,6 +273,13 @@ class AddressPageRouter extends RouterBase {
 /// ************************************************************************
 /// Arguments holder classes
 /// *************************************************************************
+
+/// OrderPage arguments holder class
+class OrderPageArguments {
+  final Key key;
+  final Order data;
+  OrderPageArguments({this.key, this.data});
+}
 
 /// OrderPostPage arguments holder class
 class OrderPostPageArguments {

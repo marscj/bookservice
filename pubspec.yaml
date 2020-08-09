@@ -46,6 +46,7 @@ dependencies:
   google_fonts: ^1.1.0
   
   #tool
+  intl: ^0.16.1 
   auto_route: ^0.6.6
   wakelock: ^0.1.4+2
   validators: ^2.0.1

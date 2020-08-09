@@ -34,10 +34,7 @@ class _EletecAppState extends State<EletecApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const <Locale>[
-            Locale('en', ''),
-            Locale('ar', ''),
-          ],
+          supportedLocales: Localization.delegate.supportedLocales,
           builder: ExtendedNavigator.builder<Router>(
             router: Router(),
             builder: (context, child) => child,
