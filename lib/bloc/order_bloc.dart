@@ -104,9 +104,10 @@ class OrderFormBloc extends FormBloc<String, String> {
   InputFieldBloc<DateTime, Object> to_date;
 
   TextFieldBloc code;
-  // TextFieldBloc lat;
-  // TextFieldBloc lng;
+  TextFieldBloc lat;
+  TextFieldBloc lng;
   TextFieldBloc address;
+  BooleanFieldBloc nextButton;
 
   OrderFormBloc(this.context, this.data) {
     status =
@@ -132,6 +133,8 @@ class OrderFormBloc extends FormBloc<String, String> {
     to_date = InputFieldBloc<DateTime, Object>();
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
     address = TextFieldBloc(initialValue: '${data.address ?? ''}');
+    lat = TextFieldBloc(initialValue: null);
+    lng = TextFieldBloc(initialValue: null);
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -179,6 +182,24 @@ class OrderFormBloc extends FormBloc<String, String> {
               length: Localization.of(context)
                   .subInfo[service.value][value.value.main]
                   .length));
+        }
+      });
+
+    sub_info
+      ..listen((value) async {
+        if (value != null && value.value != null) {
+          print(Localization.of(context)
+              .subInfo[value.value.service][value.value.main]
+              .length);
+          if (Localization.of(context)
+                      .subInfo[value.value.service][value.value.main]
+                      .length -
+                  1 ==
+              value.value.sub) {
+            nextButton.updateValue(true);
+          } else {
+            nextButton.updateValue(false);
+          }
         }
       });
   }

@@ -226,8 +226,13 @@ class _OrderPostPageState extends State<OrderPostPage> {
                               .push<Address>('/pickaddr')
                               .then((value) {
                             if (value != null) {
-                              formBloc.address.updateValue(
-                                  value.onMap ? value.address : value.toTitle);
+                              if (value.onMap) {
+                                formBloc.lat.updateValue('${value.lat}');
+                                formBloc.lng.updateValue('${value.lng}');
+                                formBloc.address.updateValue(value.address);
+                              } else {
+                                formBloc.address.updateValue(value.toTitle);
+                              }
                             }
                           });
                         }
