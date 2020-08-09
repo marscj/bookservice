@@ -68,39 +68,39 @@ Map<String, dynamic> _$TokenToJson(Token instance) => <String, dynamic>{
 Order _$OrderFromJson(Map<String, dynamic> json) {
   return Order(
     id: json['id'] as int,
-  )
-    ..user = json['user'] == null
+    user: json['user'] == null
         ? null
-        : User.fromJson(json['user'] as Map<String, dynamic>)
-    ..user_id = json['user_id'] as int
-    ..contract = json['contract'] == null
+        : User.fromJson(json['user'] as Map<String, dynamic>),
+    user_id: json['user_id'] as int,
+    contract: json['contract'] == null
         ? null
-        : Contract.fromJson(json['contract'] as Map<String, dynamic>)
-    ..contract_id = json['contract_id'] as int
-    ..orderID = json['orderID'] as String
-    ..images = (json['images'] as List)
+        : Contract.fromJson(json['contract'] as Map<String, dynamic>),
+    contract_id: json['contract_id'] as int,
+    orderID: json['orderID'] as String,
+    images: (json['images'] as List)
         ?.map((e) =>
             e == null ? null : SourceImage.fromJson(e as Map<String, dynamic>))
-        ?.toList()
-    ..jobs = (json['jobs'] as List)
+        ?.toList(),
+    jobs: (json['jobs'] as List)
         ?.map((e) => e == null ? null : Job.fromJson(e as Map<String, dynamic>))
-        ?.toList()
-    ..comments = (json['comments'] as List)
+        ?.toList(),
+    comments: (json['comments'] as List)
         ?.map((e) =>
             e == null ? null : Comment.fromJson(e as Map<String, dynamic>))
-        ?.toList()
-    ..status = json['status'] as int
-    ..service = json['service'] as int
-    ..main_info = json['main_info'] as int
-    ..sub_info = json['sub_info'] as int
-    ..from_date = json['from_date'] as String
-    ..to_date = json['to_date'] as String
-    ..code = json['code'] as String
-    ..address = json['address'] as String
-    ..lat = (json['lat'] as num)?.toDouble()
-    ..lng = (json['lng'] as num)?.toDouble()
-    ..create_at = json['create_at'] as String
-    ..change_at = json['change_at'] as String;
+        ?.toList(),
+    status: json['status'] as int,
+    service: json['service'] as int,
+    main_info: json['main_info'] as int,
+    sub_info: json['sub_info'] as int,
+    from_date: json['from_date'] as String,
+    to_date: json['to_date'] as String,
+    code: json['code'] as String,
+    address: json['address'] as String,
+    lat: (json['lat'] as num)?.toDouble(),
+    lng: (json['lng'] as num)?.toDouble(),
+    create_at: json['create_at'] as String,
+    change_at: json['change_at'] as String,
+  );
 }
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
