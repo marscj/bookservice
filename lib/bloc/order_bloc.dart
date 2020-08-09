@@ -110,6 +110,8 @@ class OrderFormBloc extends FormBloc<String, String> {
   TextFieldBloc address;
   BooleanFieldBloc nextButton;
 
+  List<InputFieldBloc<SourceImage, Object>> sources;
+
   OrderFormBloc(this.context, this.data) {
     status =
         SelectFieldBloc(items: [0, 1, 2, 3, 4, 5], initialValue: data.status);
@@ -137,6 +139,7 @@ class OrderFormBloc extends FormBloc<String, String> {
     lat = TextFieldBloc(initialValue: null);
     lng = TextFieldBloc(initialValue: null);
     nextButton = BooleanFieldBloc(initialValue: false);
+    sources = List<InputFieldBloc<SourceImage, Object>>();
 
     addFieldBlocs(fieldBlocs: [
       status,

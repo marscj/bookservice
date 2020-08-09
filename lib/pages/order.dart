@@ -236,10 +236,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     canSelectTime: true,
                     isEnabled: post,
                     format: DateFormat('yyyy-MM-dd HH:mm'),
-                    initialDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 2),
-                    firstDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 2),
+                    initialDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 1, 12),
+                    firstDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day, 12),
                     lastDate: DateTime(
                         dateTime.year, dateTime.month, dateTime.day + 30),
                     decoration: InputDecoration(
@@ -252,10 +252,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     canSelectTime: true,
                     isEnabled: post,
                     format: DateFormat('yyyy-MM-dd HH:mm'),
-                    initialDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 4),
-                    firstDate: DateTime(dateTime.year, dateTime.month,
-                        dateTime.day, dateTime.hour + 4),
+                    initialDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 1, 14),
+                    firstDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day, 14),
                     lastDate: DateTime(
                         dateTime.year, dateTime.month, dateTime.day + 30),
                     decoration: InputDecoration(
@@ -270,14 +270,12 @@ class _OrderPostPageState extends State<OrderPostPage> {
                               child: state.value
                                   ? Text(Localization.of(context).next)
                                   : Text(Localization.of(context).submit),
-                              onPressed: formBloc.state.isValid()
-                                  ? () {
-                                      if (state.value) {
-                                      } else {
-                                        formBloc.submit();
-                                      }
-                                    }
-                                  : null,
+                              onPressed: () {
+                                if (state.value) {
+                                } else {
+                                  formBloc.submit();
+                                }
+                              },
                             )
                           : Container())
                 ],
@@ -395,9 +393,9 @@ class _OrderPageState extends State<OrderPage> {
             child: GNav(
                 tabs: [
                   OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
-                  OrderNav(Colors.purple, LineIcons.adjust, 'Base'),
-                  OrderNav(Colors.teal, LineIcons.joomla, 'Base'),
-                  OrderNav(Colors.pink, LineIcons.comment, 'Base')
+                  OrderNav(Colors.purple, Icons.image, 'Additional'),
+                  OrderNav(Colors.teal, Icons.work, 'Job'),
+                  OrderNav(Colors.pink, LineIcons.comment, 'Comment')
                 ].map((e) {
                   return GButton(
                     gap: 10,
@@ -422,5 +420,17 @@ class _OrderPageState extends State<OrderPage> {
         ),
       ),
     );
+  }
+}
+
+class AdditionPostPage extends StatefulWidget {
+  @override
+  _AdditionPostPageState createState() => _AdditionPostPageState();
+}
+
+class _AdditionPostPageState extends State<AdditionPostPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
