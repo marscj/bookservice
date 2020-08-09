@@ -21,6 +21,8 @@ class Routes {
   static const String addressPage = '/address';
   static const String pickaddr = '/pickaddr';
   static const String orderPage = '/order';
+  static const String _orderPostPage = '/order/:id?/post';
+  static String orderPostPage({dynamic id = ''}) => '/order/$id/post';
   static const all = <String>{
     authentication,
     _userPage,
@@ -29,6 +31,7 @@ class Routes {
     addressPage,
     pickaddr,
     orderPage,
+    _orderPostPage,
   };
 }
 
@@ -54,11 +57,8 @@ class Router extends RouterBase {
       generator: AddressPageRouter(),
     ),
     RouteDef(Routes.pickaddr, page: AddressListPage),
-    RouteDef(
-      Routes.orderPage,
-      page: OrderPage,
-      generator: OrderPageRouter(),
-    ),
+    RouteDef(Routes.orderPage, page: OrderPage),
+    RouteDef(Routes._orderPostPage, page: OrderPostPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -103,6 +103,18 @@ class Router extends RouterBase {
     OrderPage: (data) {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => OrderPage(),
+        settings: data,
+      );
+    },
+    OrderPostPage: (data) {
+      final args = data.getArgs<OrderPostPageArguments>(
+        orElse: () => OrderPostPageArguments(),
+      );
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderPostPage(
+          key: args.key,
+          data: args.data,
+        ),
         settings: data,
       );
     },
@@ -251,61 +263,20 @@ class AddressPageRouter extends RouterBase {
   };
 }
 
-class OrderPageRoutes {
-  static const String list = '/';
-  static const String _post = '/:id?/post';
-  static String post({dynamic id = ''}) => '/$id/post';
-  static const all = <String>{
-    list,
-    _post,
-  };
-}
-
-class OrderPageRouter extends RouterBase {
-  @override
-  List<RouteDef> get routes => _routes;
-  final _routes = <RouteDef>[
-    RouteDef(OrderPageRoutes.list, page: OrderListPage),
-    RouteDef(OrderPageRoutes._post, page: OrderPostPage),
-  ];
-  @override
-  Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
-  final _pagesMap = <Type, AutoRouteFactory>{
-    OrderListPage: (data) {
-      return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => OrderListPage(),
-        settings: data,
-      );
-    },
-    OrderPostPage: (data) {
-      final args = data.getArgs<OrderPostPageArguments>(
-        orElse: () => OrderPostPageArguments(),
-      );
-      return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => OrderPostPage(
-          key: args.key,
-          data: args.data,
-        ),
-        settings: data,
-      );
-    },
-  };
-}
-
 /// ************************************************************************
 /// Arguments holder classes
 /// *************************************************************************
-
-/// AddressPostPage arguments holder class
-class AddressPostPageArguments {
-  final Key key;
-  final Address data;
-  AddressPostPageArguments({this.key, this.data});
-}
 
 /// OrderPostPage arguments holder class
 class OrderPostPageArguments {
   final Key key;
   final Order data;
   OrderPostPageArguments({this.key, this.data});
+}
+
+/// AddressPostPage arguments holder class
+class AddressPostPageArguments {
+  final Key key;
+  final Address data;
+  AddressPostPageArguments({this.key, this.data});
 }

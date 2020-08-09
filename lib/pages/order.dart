@@ -22,13 +22,12 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<OrderBloc>(
-      create: (context) => OrderBloc(context),
-      child: ExtendedNavigator(
-        name: 'address',
-        initialRoute: OrderPageRoutes.list,
-      ),
-    );
+    // return ExtendedNavigator(
+    //   name: 'order',
+    //   initialRoute: OrderPageRoutes.list,
+    //   router: OrderPageRouter(),
+    // );
+    return OrderListPage();
   }
 }
 
@@ -106,7 +105,7 @@ class OrderListItem extends StatelessWidget {
 
     return GestureDetector(
         onTap: () {
-          ExtendedNavigator.of(context).push('${order.id}/post',
+          ExtendedNavigator.of(context).push('/order/${order.id}/post',
               arguments: OrderPostPageArguments(data: order));
         },
         child: DefaultTextStyle(
@@ -169,6 +168,8 @@ class OrderPostPage extends StatefulWidget {
 class _OrderPostPageState extends State<OrderPostPage> {
   @override
   Widget build(BuildContext context) {
+    bool post = RouteData.of(context).pathParams['id'].intValue == 0;
+
     return BlocProvider<OrderFormBloc>(
         create: (_) => OrderFormBloc(context, widget.data),
         child: Builder(builder: (context) {
@@ -194,6 +195,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ),
                   DropdownFieldBlocBuilder(
                     showEmptyItem: false,
+                    isEnabled: post,
                     decoration: InputDecoration(
                         labelText: 'Service', border: OutlineInputBorder()),
                     itemBuilder: (context, value) =>
@@ -202,6 +204,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ),
                   DropdownFieldBlocBuilder(
                     showEmptyItem: false,
+                    isEnabled: post,
                     decoration: InputDecoration(
                         labelText: 'Main Info', border: OutlineInputBorder()),
                     itemBuilder: (context, value) => Localization.of(context)
@@ -210,6 +213,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ),
                   DropdownFieldBlocBuilder(
                     showEmptyItem: false,
+                    isEnabled: post,
                     decoration: InputDecoration(
                         labelText: 'Sub Info', border: OutlineInputBorder()),
                     itemBuilder: (context, value) => Localization.of(context)
@@ -217,6 +221,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     selectFieldBloc: formBloc.sub_info,
                   ),
                   TextFieldBlocBuilder(
+                    isEnabled: post,
                     focusNode: FocusNode(debugLabel: 'address')
                       ..addListener(() {
                         FocusNode focusNode = FocusScope.of(context);
@@ -245,6 +250,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.from_date,
                     canSelectTime: true,
+                    isEnabled: post,
                     format: DateFormat('yyyy-MM-dd HH:mm'),
                     initialDate: DateTime(dateTime.year, dateTime.month,
                         dateTime.day, dateTime.hour + 2),
@@ -260,6 +266,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   _IL.DateTimeFieldBlocBuilder(
                     dateTimeFieldBloc: formBloc.to_date,
                     canSelectTime: true,
+                    isEnabled: post,
                     format: DateFormat('yyyy-MM-dd HH:mm'),
                     initialDate: DateTime(dateTime.year, dateTime.month,
                         dateTime.day, dateTime.hour + 4),
@@ -274,19 +281,21 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ),
                   BlocBuilder<BooleanFieldBloc, dynamic>(
                       cubit: formBloc.nextButton,
-                      builder: (context, state) => RaisedButton(
-                            child: state.value
-                                ? Text(Localization.of(context).next)
-                                : Text(Localization.of(context).submit),
-                            onPressed: formBloc.state.isValid()
-                                ? () {
-                                    if (state.value) {
-                                    } else {
-                                      formBloc.submit();
+                      builder: (context, state) => post
+                          ? RaisedButton(
+                              child: state.value
+                                  ? Text(Localization.of(context).next)
+                                  : Text(Localization.of(context).submit),
+                              onPressed: formBloc.state.isValid()
+                                  ? () {
+                                      if (state.value) {
+                                      } else {
+                                        formBloc.submit();
+                                      }
                                     }
-                                  }
-                                : null,
-                          ))
+                                  : null,
+                            )
+                          : Container())
                 ],
               )));
         }));

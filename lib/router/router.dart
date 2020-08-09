@@ -39,10 +39,8 @@ import 'package:flutter/material.dart';
         path: '/pickaddr',
         page: AddressListPage,
         fullscreenDialog: true),
-    AdaptiveRoute(path: '/order', page: OrderPage, children: [
-      AdaptiveRoute(name: 'list', path: '/', page: OrderListPage),
-      AdaptiveRoute(name: 'post', path: '/:id?/post', page: OrderPostPage),
-    ]),
+    AdaptiveRoute(path: '/order', page: OrderPage),
+    AdaptiveRoute(path: '/order/:id?/post', page: OrderPostPage),
   ],
 )
 class $Router {}
