@@ -57,7 +57,7 @@ class _CustomerPageState extends State<CustomerPage>
   }
 
   List<Widget> buildTabViews() {
-    return [ServicePage(), OrderPage(), SettingPage()];
+    return [ServicePage(), OrderListPage(), SettingPage()];
   }
 
   List<Widget> buildTabs(context, textStyle) {

@@ -8,28 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
     as _IL;
 
 // ignore_for_file: close_sinks
-
-class OrderPage extends StatefulWidget {
-  @override
-  _OrderPageState createState() => _OrderPageState();
-}
-
-class _OrderPageState extends State<OrderPage> {
-  @override
-  Widget build(BuildContext context) {
-    // return ExtendedNavigator(
-    //   name: 'order',
-    //   initialRoute: OrderPageRoutes.list,
-    //   router: OrderPageRouter(),
-    // );
-    return OrderListPage();
-  }
-}
 
 class OrderListPage extends StatefulWidget {
   @override
@@ -105,7 +90,7 @@ class OrderListItem extends StatelessWidget {
 
     return GestureDetector(
         onTap: () {
-          ExtendedNavigator.of(context).push('/order/${order.id}/post',
+          ExtendedNavigator.of(context).push('/order/${order.id}',
               arguments: OrderPostPageArguments(data: order));
         },
         child: DefaultTextStyle(
@@ -168,7 +153,9 @@ class OrderPostPage extends StatefulWidget {
 class _OrderPostPageState extends State<OrderPostPage> {
   @override
   Widget build(BuildContext context) {
-    bool post = RouteData.of(context).pathParams['id'].intValue == 0;
+    bool post = RouteData.of(context)?.pathParams != null
+        ? RouteData.of(context).pathParams['id'].intValue == 0 ? true : false
+        : false;
 
     return BlocProvider<OrderFormBloc>(
         create: (_) => OrderFormBloc(context, widget.data),
@@ -299,5 +286,183 @@ class _OrderPostPageState extends State<OrderPostPage> {
                 ],
               )));
         }));
+  }
+}
+
+class OrderAdditionPage extends StatefulWidget {
+  @override
+  _OrderAdditionPageState createState() => _OrderAdditionPageState();
+}
+
+class _OrderAdditionPageState extends State<OrderAdditionPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class OrderJobPage extends StatefulWidget {
+  @override
+  _OrderJobPageState createState() => _OrderJobPageState();
+}
+
+class _OrderJobPageState extends State<OrderJobPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class OrderCommentPage extends StatefulWidget {
+  @override
+  _OrderCommentPageState createState() => _OrderCommentPageState();
+}
+
+class _OrderCommentPageState extends State<OrderCommentPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class OrderPage extends StatefulWidget {
+  final Order data;
+
+  const OrderPage({Key key, this.data}) : super(key: key);
+
+  @override
+  _OrderPageState createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  int selectedIndex = 0;
+
+  PageController controller = PageController();
+
+  List<GButton> tabs = new List();
+  List<Color> colors = [
+    Colors.purple,
+    Colors.pink,
+    Colors.amber[600],
+    Colors.teal
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    var padding = EdgeInsets.symmetric(horizontal: 18, vertical: 5);
+    double gap = 10;
+
+    tabs.add(GButton(
+      gap: gap,
+      iconActiveColor: Colors.purple,
+      iconColor: Colors.black,
+      textColor: Colors.purple,
+      backgroundColor: Colors.purple.withOpacity(.2),
+      iconSize: 24,
+      padding: padding,
+      icon: LineIcons.home,
+      // textStyle: t.textStyle,
+      text: 'Home',
+    ));
+
+    tabs.add(GButton(
+      gap: gap,
+      iconActiveColor: Colors.pink,
+      iconColor: Colors.black,
+      textColor: Colors.pink,
+      backgroundColor: Colors.pink.withOpacity(.2),
+      iconSize: 24,
+      padding: padding,
+      icon: LineIcons.heart_o,
+      // textStyle: t.textStyle,
+      text: 'Likes',
+    ));
+
+    tabs.add(GButton(
+      gap: gap,
+      iconActiveColor: Colors.amber[600],
+      iconColor: Colors.black,
+      textColor: Colors.amber[600],
+      backgroundColor: Colors.amber[600].withOpacity(.2),
+      iconSize: 24,
+      padding: padding,
+      icon: LineIcons.search,
+      // textStyle: t.textStyle,
+      text: 'Search',
+    ));
+
+    tabs.add(GButton(
+      gap: gap,
+      iconActiveColor: Colors.teal,
+      iconColor: Colors.black,
+      textColor: Colors.teal,
+      backgroundColor: Colors.teal.withOpacity(.2),
+      iconSize: 24,
+      padding: padding,
+      icon: LineIcons.user,
+      // textStyle: t.textStyle,
+      text: 'Profile',
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        extendBody: true,
+        appBar: AppBar(
+          brightness: Brightness.dark,
+          title: Text(
+            'GoogleNavBar',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+        ),
+        body: PageView(
+          onPageChanged: (page) {
+            setState(() {
+              selectedIndex = page;
+            });
+          },
+          controller: controller,
+          children: [
+            OrderPostPage(data: widget.data),
+            OrderAdditionPage(),
+            OrderJobPage(),
+            OrderCommentPage()
+          ],
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(100)),
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: -10,
+                      blurRadius: 60,
+                      color: Colors.black.withOpacity(.20),
+                      offset: Offset(0, 15))
+                ]),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+              child: GNav(
+                  tabs: tabs,
+                  selectedIndex: selectedIndex,
+                  onTabChange: (index) {
+                    print(index);
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                    controller.jumpToPage(index);
+                  }),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

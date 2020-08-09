@@ -20,7 +20,8 @@ class Routes {
   static const String contractPage = '/contract';
   static const String addressPage = '/address';
   static const String pickaddr = '/pickaddr';
-  static const String orderPage = '/order';
+  static const String _orderPage = '/order/:id?';
+  static String orderPage({dynamic id = ''}) => '/order/$id';
   static const String _orderPostPage = '/order/:id?/post';
   static String orderPostPage({dynamic id = ''}) => '/order/$id/post';
   static const all = <String>{
@@ -30,7 +31,7 @@ class Routes {
     contractPage,
     addressPage,
     pickaddr,
-    orderPage,
+    _orderPage,
     _orderPostPage,
   };
 }
@@ -57,7 +58,7 @@ class Router extends RouterBase {
       generator: AddressPageRouter(),
     ),
     RouteDef(Routes.pickaddr, page: AddressListPage),
-    RouteDef(Routes.orderPage, page: OrderPage),
+    RouteDef(Routes._orderPage, page: OrderPage),
     RouteDef(Routes._orderPostPage, page: OrderPostPage),
   ];
   @override
