@@ -6,18 +6,14 @@ part of 'client.dart';
 @JsonSerializable()
 class Order extends Equatable {
   int id;
-
   User user;
   int user_id;
-
   Contract contract;
   int contract_id;
   String orderID;
-
-  List<Image> images;
+  List<SourceImage> images;
   List<Job> jobs;
   List<Comment> comments;
-
   int status;
   int service;
   int main_info;
@@ -31,7 +27,28 @@ class Order extends Equatable {
   String create_at;
   String change_at;
 
-  Order({this.id});
+  Order(
+      {this.id,
+      this.user,
+      this.user_id,
+      this.contract,
+      this.contract_id,
+      this.orderID,
+      this.images,
+      this.jobs,
+      this.comments,
+      this.status,
+      this.service,
+      this.main_info,
+      this.sub_info,
+      this.from_date,
+      this.to_date,
+      this.code,
+      this.address,
+      this.lat,
+      this.lng,
+      this.create_at,
+      this.change_at});
 
   static Order fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
   Map<String, dynamic> toJson() => _$OrderToJson(this);
@@ -41,13 +58,12 @@ class Order extends Equatable {
         id,
         user,
         user_id,
-        job,
         contract,
         contract_id,
         orderID,
-        image_count,
-        job_count,
-        comment_count,
+        images,
+        jobs,
+        comments,
         status,
         service,
         main_info,

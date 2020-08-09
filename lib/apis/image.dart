@@ -4,15 +4,16 @@ part of 'client.dart';
 // ignore_for_file: must_be_immutable
 
 @JsonSerializable()
-class Image extends Equatable {
+class SourceImage extends Equatable {
   int id;
   Map<String, String> image;
   String tag;
   String content_type;
   int object_id;
 
-  static Image fromJson(Map<String, dynamic> json) => _$ImageFromJson(json);
-  Map<String, dynamic> toJson() => _$ImageToJson(this);
+  static SourceImage fromJson(Map<String, dynamic> json) =>
+      _$SourceImageFromJson(json);
+  Map<String, dynamic> toJson() => _$SourceImageToJson(this);
 
   @override
   List<Object> get props => [

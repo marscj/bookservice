@@ -24,9 +24,15 @@ class Comment extends Equatable {
   @override
   List<Object> get props => [
         id,
+        comment,
+        rating,
+        read,
         image,
-        tag,
+        create_at,
+        user,
+        child,
         content_type,
         object_id,
+        user_id
       ];
 }
