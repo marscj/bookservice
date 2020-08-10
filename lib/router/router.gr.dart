@@ -24,6 +24,7 @@ class Routes {
   static String orderPage({dynamic id = ''}) => '/order/$id';
   static const String _orderPostPage = '/order/:id?/post';
   static String orderPostPage({dynamic id = ''}) => '/order/$id/post';
+  static const String additionPostPage = '/addition/post';
   static const all = <String>{
     authentication,
     _userPage,
@@ -33,6 +34,7 @@ class Routes {
     pickaddr,
     _orderPage,
     _orderPostPage,
+    additionPostPage,
   };
 }
 
@@ -60,6 +62,7 @@ class Router extends RouterBase {
     RouteDef(Routes.pickaddr, page: AddressListPage),
     RouteDef(Routes._orderPage, page: OrderPage),
     RouteDef(Routes._orderPostPage, page: OrderPostPage),
+    RouteDef(Routes.additionPostPage, page: AdditionPostPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -122,6 +125,12 @@ class Router extends RouterBase {
           key: args.key,
           data: args.data,
         ),
+        settings: data,
+      );
+    },
+    AdditionPostPage: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => AdditionPostPage(),
         settings: data,
       );
     },

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
+import 'package:bookservice/bloc/addition_bloc.dart';
 import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
@@ -271,13 +272,20 @@ class _OrderPostPageState extends State<OrderPostPage> {
                                   ? Text(Localization.of(context).next)
                                   : Text(Localization.of(context).submit),
                               onPressed: () {
-                                if (state.value) {
-                                } else {
-                                  formBloc.submit();
-                                }
+                                formBloc.submit();
                               },
                             )
-                          : Container())
+                          : Container()),
+                  BlocBuilder<BooleanFieldBloc, dynamic>(
+                      cubit: formBloc.nextButton,
+                      builder: (context, state) => RaisedButton(
+                            child: state.value
+                                ? Text(Localization.of(context).next)
+                                : Text(Localization.of(context).submit),
+                            onPressed: () {
+                              formBloc.submit();
+                            },
+                          ))
                 ],
               ));
 
@@ -431,6 +439,24 @@ class AdditionPostPage extends StatefulWidget {
 class _AdditionPostPageState extends State<AdditionPostPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return BlocProvider<AdditionBloc>(
+        create: (context) => AdditionBloc(),
+        child: FormBlocListener<AdditionBloc, String, String>(
+          child: Scaffold(
+            appBar: AppBar(),
+            body: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {},
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
