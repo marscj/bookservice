@@ -93,7 +93,6 @@ class DropDownData extends Equatable {
 
 class OrderFormBloc extends FormBloc<String, String> {
   final BuildContext context;
-  final Order data;
 
   SelectFieldBloc status;
   SelectFieldBloc service;
@@ -110,9 +109,7 @@ class OrderFormBloc extends FormBloc<String, String> {
   TextFieldBloc address;
   BooleanFieldBloc nextButton;
 
-  List<InputFieldBloc<SourceImage, Object>> sources;
-
-  OrderFormBloc(this.context, this.data) {
+  OrderFormBloc(this.context, Order data, bool post) {
     status =
         SelectFieldBloc(items: [0, 1, 2, 3, 4, 5], initialValue: data.status);
     service = SelectFieldBloc(items: [0, 1, 2, 3], initialValue: data.service);
@@ -132,14 +129,17 @@ class OrderFormBloc extends FormBloc<String, String> {
         initialValue: DropDownData(
             service: data.service, main: data.main_info, sub: data.sub_info));
 
-    from_date = InputFieldBloc<DateTime, Object>();
-    to_date = InputFieldBloc<DateTime, Object>();
+    from_date = InputFieldBloc<DateTime, Object>(
+        initialValue:
+            data.from_date != null ? DateTime.parse(data.from_date) : null);
+    to_date = InputFieldBloc<DateTime, Object>(
+        initialValue:
+            data.to_date != null ? DateTime.parse(data.to_date) : null);
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
     address = TextFieldBloc(initialValue: '${data.address ?? ''}');
-    lat = TextFieldBloc(initialValue: null);
-    lng = TextFieldBloc(initialValue: null);
+    lat = TextFieldBloc(initialValue: data?.lat?.toString());
+    lng = TextFieldBloc(initialValue: data?.lng?.toString());
     nextButton = BooleanFieldBloc(initialValue: false);
-    sources = List<InputFieldBloc<SourceImage, Object>>();
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -154,7 +154,10 @@ class OrderFormBloc extends FormBloc<String, String> {
     ]);
 
     addValidators();
-    addListen();
+
+    if (post) {
+      addListen();
+    }
   }
 
   void addListen() {
@@ -236,6 +239,9 @@ class OrderFormBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() {
+    emitLoading();
+    return;
+
     RestService.instance.postOrder({
       'service': service.value,
       'main_info': main_info.value.main,

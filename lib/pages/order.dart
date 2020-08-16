@@ -164,7 +164,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
         : false;
 
     return BlocProvider<OrderFormBloc>(
-        create: (_) => OrderFormBloc(context, widget.data),
+        create: (_) => OrderFormBloc(context, widget.data, post),
         child: Builder(builder: (context) {
           OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
           DateTime dateTime = DateTime.now();
@@ -184,14 +184,18 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     children: <Widget>[
-                      DropdownFieldBlocBuilder(
-                        showEmptyItem: false,
-                        isEnabled: false,
-                        decoration: InputDecoration(
-                            labelText: 'Status', border: OutlineInputBorder()),
-                        itemBuilder: (context, value) =>
-                            Localization.of(context).orderStatus[value],
-                        selectFieldBloc: formBloc.status,
+                      Visibility(
+                        visible: !post,
+                        child: DropdownFieldBlocBuilder(
+                          showEmptyItem: false,
+                          isEnabled: false,
+                          decoration: InputDecoration(
+                              labelText: 'Status',
+                              border: OutlineInputBorder()),
+                          itemBuilder: (context, value) =>
+                              Localization.of(context).orderStatus[value],
+                          selectFieldBloc: formBloc.status,
+                        ),
                       ),
                       DropdownFieldBlocBuilder(
                         showEmptyItem: false,
@@ -255,6 +259,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         dateTimeFieldBloc: formBloc.from_date,
                         canSelectTime: true,
                         isEnabled: post,
+                        showClearIcon: false,
                         format: DateFormat('yyyy-MM-dd HH:mm'),
                         initialDate: DateTime(dateTime.year, dateTime.month,
                             dateTime.day + 1, 12),
@@ -271,6 +276,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                         dateTimeFieldBloc: formBloc.to_date,
                         canSelectTime: true,
                         isEnabled: post,
+                        showClearIcon: false,
                         format: DateFormat('yyyy-MM-dd HH:mm'),
                         initialDate: DateTime(dateTime.year, dateTime.month,
                             dateTime.day + 1, 14),
