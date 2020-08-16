@@ -599,12 +599,12 @@ class _RestService implements RestService {
   }
 
   @override
-  postOrder(data) async {
-    ArgumentError.checkNotNull(data, 'data');
+  postOrder(playload) async {
+    ArgumentError.checkNotNull(playload, 'playload');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(data?.toJson() ?? <String, dynamic>{});
+    _data.addAll(playload ?? <String, dynamic>{});
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/orders/',
         queryParameters: queryParameters,

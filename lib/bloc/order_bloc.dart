@@ -236,17 +236,16 @@ class OrderFormBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() {
-    RestService.instance
-        .postOrder(Order(
-            service: service.value,
-            main_info: main_info.value.main,
-            sub_info: sub_info.value.sub,
-            address: address.value,
-            lat: lat.valueToDouble,
-            lng: lat.valueToDouble,
-            from_date: DateFormat('yyyy-MM-dd HH:mm').format(from_date.value),
-            to_date: DateFormat('yyyy-MM-dd HH:mm').format(to_date.value)))
-        .then((value) {
+    RestService.instance.postOrder({
+      'service': service.value,
+      'main_info': main_info.value.main,
+      'sub_info': sub_info.value.sub,
+      'address': address.value,
+      'lat': lat.valueToDouble,
+      'lng': lat.valueToDouble,
+      'from_date': DateFormat('yyyy-MM-dd HH:mm:ss').format(from_date.value),
+      'to_date': DateFormat('yyyy-MM-dd HH:mm:ss').format(to_date.value)
+    }).then((value) {
       emitSuccess(canSubmitAgain: true);
     }).catchError((onError) {
       emitFailure();

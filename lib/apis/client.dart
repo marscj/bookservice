@@ -141,7 +141,7 @@ abstract class RestService {
   Future<Order> getOrder(@Path() String id);
 
   @POST('/orders/')
-  Future<Order> postOrder(@Body() Order data);
+  Future<Order> postOrder(@Body() Map<String, dynamic> playload);
 
   @PATCH('/orders/{id}/')
   Future<Address> updateOrder(@Path() String id, @Body() Order data);
