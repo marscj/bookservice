@@ -7,6 +7,7 @@ part of 'client.dart';
 class Order extends Equatable {
   int id;
   User user;
+  @JsonKey(includeIfNull: true)
   int user_id;
   Contract contract;
   int contract_id;

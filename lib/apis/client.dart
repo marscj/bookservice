@@ -15,6 +15,7 @@ part 'contract.dart';
 part 'job.dart';
 part 'address.dart';
 part 'image.dart';
+
 part 'comment.dart';
 
 part 'client.g.dart';
@@ -138,6 +139,9 @@ abstract class RestService {
 
   @GET('/orders/{id}/')
   Future<Order> getOrder(@Path() String id);
+
+  @POST('/orders/')
+  Future<Order> postOrder(@Body() Order data);
 
   @PATCH('/orders/{id}/')
   Future<Address> updateOrder(@Path() String id, @Body() Order data);

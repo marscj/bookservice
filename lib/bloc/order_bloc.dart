@@ -98,8 +98,8 @@ class OrderFormBloc extends FormBloc<String, String> {
   SelectFieldBloc status;
   SelectFieldBloc service;
 
-  SelectFieldBloc main_info;
-  SelectFieldBloc sub_info;
+  SelectFieldBloc<DropDownData, Object> main_info;
+  SelectFieldBloc<DropDownData, Object> sub_info;
 
   InputFieldBloc<DateTime, Object> from_date;
   InputFieldBloc<DateTime, Object> to_date;
@@ -228,13 +228,31 @@ class OrderFormBloc extends FormBloc<String, String> {
 
     status.addFieldError(errors['status']);
     service.addFieldError(errors['service']);
+    address.addFieldError(errors['address']);
     from_date.addFieldError(errors['from_date']);
-    to_date.addFieldError(errors['from_date']);
-    address.addFieldError(errors['from_date'] ?? errors['non_field_errors']);
+    to_date.addFieldError(
+        errors['from_date'] ?? errors['non_field_errors'] ?? errors['user_id']);
   }
 
   @override
-  void onSubmitting() {}
+  void onSubmitting() {
+    RestService.instance
+        .postOrder(Order(
+            service: service.value,
+            main_info: main_info.value.main,
+            sub_info: sub_info.value.sub,
+            address: address.value,
+            lat: lat.valueToDouble,
+            lng: lat.valueToDouble,
+            from_date: DateFormat('yyyy-MM-dd HH:mm').format(from_date.value),
+            to_date: DateFormat('yyyy-MM-dd HH:mm').format(to_date.value)))
+        .then((value) {
+      emitSuccess(canSubmitAgain: true);
+    }).catchError((onError) {
+      emitFailure();
+      addErrors(onError?.response?.data);
+    });
+  }
 }
 
 class RequiredDateTimeValidator extends FieldValidator<DateTime> {
