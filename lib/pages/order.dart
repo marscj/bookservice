@@ -16,13 +16,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:flutter_form_bloc/src/utils/style.dart';
+import 'package:flutter_form_bloc/src/utils/style.dart' as IStyle;
 import 'package:line_icons/line_icons.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
     as _IL;
 
 // ignore_for_file: close_sinks
+// ignore_for_file: implementation_imports
 
 class OrderListPage extends StatefulWidget {
   @override
@@ -252,7 +253,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               softWrap: true,
-                              style: Style.getDefaultTextStyle(
+                              style: IStyle.Style.getDefaultTextStyle(
                                 context: context,
                                 isEnabled: post,
                               ),
@@ -327,7 +328,47 @@ class OrderAdditionPage extends StatefulWidget {
 class _OrderAdditionPageState extends State<OrderAdditionPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return BlocBuilder<AddressBloc, AddressState>(
+      builder: (context, state) {
+        AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
+
+        return SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = Text("pull up load");
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
+          ),
+          controller: bloc.refreshController,
+          onRefresh: () => bloc.add(AddressRefreshList()),
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            itemBuilder: (c, i) => AddressItem(
+              data: state.list[i],
+              pick: pick,
+            ),
+            itemCount: state.list.length,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -513,12 +554,23 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AdditionBloc>(
-        create: (_) => AdditionBloc(context, widget.postId),
+    return BlocProvider<AdditionFormBloc>(
+        create: (_) => AdditionFormBloc(context, widget.postId),
         child: Builder(
           builder: (context) {
-            AdditionBloc formBloc = BlocProvider.of<AdditionBloc>(context);
-            return FormBlocListener<AdditionBloc, String, String>(
+            AdditionFormBloc formBloc =
+                BlocProvider.of<AdditionFormBloc>(context);
+            return FormBlocListener<AdditionFormBloc, String, String>(
+              onSubmitting: (context, state) {
+                LoadingDialog.show(context);
+              },
+              onSuccess: (context, state) {
+                LoadingDialog.hide(context);
+                context.navigator.pop(true);
+              },
+              onFailure: (context, state) {
+                LoadingDialog.hide(context);
+              },
               child: Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(),
@@ -571,49 +623,6 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                                           ))));
                       },
                     ),
-                    // BlocBuilder<InputFieldBloc, dynamic>(
-                    //     cubit: formBloc.image,
-                    //     builder: (context, state) => GestureDetector(
-                    //         onTap: () => onPressed,
-                    //         child: AspectRatio(
-                    //             aspectRatio: 16.0 / 9.0,
-                    //             child: DottedBorder(
-                    //                 color: Colors.black,
-                    //                 strokeWidth: 1,
-                    //                 strokeCap: StrokeCap.butt,
-                    //                 dashPattern: const <double>[8, 2],
-                    //                 child: Container(
-                    //                     alignment: Alignment.center,
-                    //                     child: state.value == null
-                    //                         ? Column(
-                    //                             mainAxisAlignment:
-                    //                                 MainAxisAlignment
-                    //                                     .spaceAround,
-                    //                             crossAxisAlignment:
-                    //                                 CrossAxisAlignment.center,
-                    //                             mainAxisSize: MainAxisSize.max,
-                    //                             children: [
-                    //                                 Icon(
-                    //                                   Icons.file_upload,
-                    //                                   color: Colors.grey,
-                    //                                   size: 64,
-                    //                                 ),
-                    //                                 Expanded(
-                    //                                   child: Text(
-                    //                                       'Images for select a picture or take'),
-                    //                                 ),
-                    //                               ])
-                    //                         : Stack(
-                    //                             children: [
-                    //                               Container(
-                    //                                 alignment: Alignment.center,
-                    //                                 child: Image.file(
-                    //                                   state.value,
-                    //                                   fit: BoxFit.fill,
-                    //                                 ),
-                    //                               ),
-                    //                             ],
-                    //                           )))))),
                     SizedBox(height: 10),
                     TextFieldBlocBuilder(
                       textFieldBloc: formBloc.tag,

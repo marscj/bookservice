@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
@@ -17,7 +15,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

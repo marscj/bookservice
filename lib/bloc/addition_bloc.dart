@@ -2,20 +2,48 @@ import 'dart:io';
 
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+part 'addition_event.dart';
+part 'addition_state.dart';
+
+class AdditionBloc extends Bloc<AdditionEvent, AdditionState> {
+  RefreshController refreshController = RefreshController(initialRefresh: true);
+
+  AdditionBloc() : super(AdditionState.initial());
+
+  @override
+  Stream<AdditionState> mapEventToState(
+    AdditionEvent event,
+  ) async* {
+    if (event is AdditionRefreshList) {
+      yield await RestService.instance
+          .getAddressList()
+          .then<AdditionState>((value) {
+        refreshController.refreshCompleted();
+        return state.copyWith(list: value ?? []);
+      }).catchError((onError) {
+        refreshController.refreshFailed();
+        return state.copyWith(list: []);
+      });
+    }
+  }
+}
 
 // ignore_for_file: close_sinks
-class AdditionBloc extends FormBloc<String, String> {
+class AdditionFormBloc extends FormBloc<String, String> {
   TextFieldBloc tag = TextFieldBloc();
   InputFieldBloc<File, Object> image = InputFieldBloc<File, Object>();
 
   final int postId;
   final BuildContext context;
 
-  AdditionBloc(this.context, this.postId) {
+  AdditionFormBloc(this.context, this.postId) {
     addFieldBlocs(fieldBlocs: [tag, image]);
     addValidators();
   }
