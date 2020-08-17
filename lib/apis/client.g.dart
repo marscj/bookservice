@@ -640,6 +640,41 @@ class _RestService implements RestService {
   }
 
   @override
+  postImage(image, tag, content_type, object_id) async {
+    ArgumentError.checkNotNull(image, 'image');
+    ArgumentError.checkNotNull(tag, 'tag');
+    ArgumentError.checkNotNull(content_type, 'content_type');
+    ArgumentError.checkNotNull(object_id, 'object_id');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(MapEntry(
+        'image',
+        MultipartFile.fromFileSync(image.path,
+            filename: image.path.split(Platform.pathSeparator).last)));
+    if (tag != null) {
+      _data.fields.add(MapEntry('tag', tag));
+    }
+    if (content_type != null) {
+      _data.fields.add(MapEntry('content_type', content_type));
+    }
+    if (object_id != null) {
+      _data.fields.add(MapEntry('object_id', object_id.toString()));
+    }
+    final Response<Map<String, dynamic>> _result = await _dio.request(
+        '/images/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = Address.fromJson(_result.data);
+    return value;
+  }
+
+  @override
   phoneGenerate(playload) async {
     ArgumentError.checkNotNull(playload, 'playload');
     const _extra = <String, dynamic>{};

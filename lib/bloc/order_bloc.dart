@@ -107,9 +107,11 @@ class OrderFormBloc extends FormBloc<String, String> {
   TextFieldBloc lat;
   TextFieldBloc lng;
   TextFieldBloc address;
-  BooleanFieldBloc nextButton;
+  bool nextStep;
 
-  OrderFormBloc(this.context, Order data, bool post) {
+  Order data;
+
+  OrderFormBloc(this.context, this.data, bool post) {
     status =
         SelectFieldBloc(items: [0, 1, 2, 3, 4, 5], initialValue: data.status);
     service = SelectFieldBloc(items: [0, 1, 2, 3], initialValue: data.service);
@@ -139,7 +141,7 @@ class OrderFormBloc extends FormBloc<String, String> {
     address = TextFieldBloc(initialValue: '${data.address ?? ''}');
     lat = TextFieldBloc(initialValue: data?.lat?.toString());
     lng = TextFieldBloc(initialValue: data?.lng?.toString());
-    nextButton = BooleanFieldBloc(initialValue: false);
+    nextStep = false;
 
     addFieldBlocs(fieldBlocs: [
       status,
@@ -150,7 +152,6 @@ class OrderFormBloc extends FormBloc<String, String> {
       to_date,
       code,
       address,
-      nextButton
     ]);
 
     addValidators();
@@ -202,9 +203,9 @@ class OrderFormBloc extends FormBloc<String, String> {
                       .length -
                   1 ==
               value.value.sub) {
-            nextButton.updateValue(true);
+            nextStep = true;
           } else {
-            nextButton.updateValue(false);
+            nextStep = false;
           }
         }
       });
@@ -233,15 +234,11 @@ class OrderFormBloc extends FormBloc<String, String> {
     service.addFieldError(errors['service']);
     address.addFieldError(errors['address']);
     from_date.addFieldError(errors['from_date']);
-    to_date.addFieldError(
-        errors['from_date'] ?? errors['non_field_errors'] ?? errors['user_id']);
+    to_date.addFieldError(errors['from_date'] ?? errors['non_field_errors']);
   }
 
   @override
   void onSubmitting() {
-    emitLoading();
-    return;
-
     RestService.instance.postOrder({
       'service': service.value,
       'main_info': main_info.value.main,
@@ -252,6 +249,7 @@ class OrderFormBloc extends FormBloc<String, String> {
       'from_date': DateFormat('yyyy-MM-dd HH:mm:ss').format(from_date.value),
       'to_date': DateFormat('yyyy-MM-dd HH:mm:ss').format(to_date.value)
     }).then((value) {
+      data = value;
       emitSuccess(canSubmitAgain: true);
     }).catchError((onError) {
       emitFailure();

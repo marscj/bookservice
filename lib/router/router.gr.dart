@@ -129,9 +129,16 @@ class Router extends RouterBase {
       );
     },
     AdditionPostPage: (data) {
+      final args = data.getArgs<AdditionPostPageArguments>(
+        orElse: () => AdditionPostPageArguments(),
+      );
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => AdditionPostPage(),
+        builder: (context) => AdditionPostPage(
+          key: args.key,
+          postId: args.postId,
+        ),
         settings: data,
+        fullscreenDialog: true,
       );
     },
   };
@@ -295,6 +302,13 @@ class OrderPostPageArguments {
   final Key key;
   final Order data;
   OrderPostPageArguments({this.key, this.data});
+}
+
+/// AdditionPostPage arguments holder class
+class AdditionPostPageArguments {
+  final Key key;
+  final int postId;
+  AdditionPostPageArguments({this.key, this.postId});
 }
 
 /// AddressPostPage arguments holder class

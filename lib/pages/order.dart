@@ -2,9 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/addition_bloc.dart';
+import 'package:bookservice/bloc/app_bloc.dart';
 import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/dialog.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -176,7 +178,13 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   },
                   onSuccess: (context, state) {
                     LoadingDialog.hide(context);
-                    context.navigator.pop(true);
+                    if (formBloc.nextStep) {
+                      context.navigator.replace('/addition/post',
+                          arguments: AdditionPostPageArguments(
+                              postId: formBloc.data.id));
+                    } else {
+                      context.navigator.pop();
+                    }
                   },
                   onFailure: (context, state) {
                     LoadingDialog.hide(context);
@@ -375,76 +383,132 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        title: Text(
-          'OrderDetail',
-        ),
-      ),
-      body: PageView(
-        onPageChanged: (page) {
-          setState(() {
-            selectedIndex = page;
-          });
-        },
-        controller: controller,
-        children: [
-          OrderPostPage(data: widget.data),
-          OrderAdditionPage(),
-          OrderJobPage(),
-          OrderCommentPage()
-        ],
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(100)),
-              boxShadow: [
-                BoxShadow(
-                    spreadRadius: -10,
-                    blurRadius: 60,
-                    color: Colors.black.withOpacity(.20),
-                    offset: Offset(0, 15))
-              ]),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-            child: GNav(
-                tabs: [
-                  OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
-                  OrderNav(Colors.purple, Icons.image, 'Additional'),
-                  OrderNav(Colors.teal, Icons.work, 'Job'),
-                  OrderNav(Colors.pink, LineIcons.comment, 'Comment')
-                ].map((e) {
-                  return GButton(
-                    gap: 10,
-                    iconActiveColor: e.color,
-                    iconColor: Colors.grey,
-                    textColor: e.color,
-                    backgroundColor: e.color.withOpacity(.2),
-                    iconSize: 24,
-                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-                    icon: e.icon,
-                    text: e.text,
-                  );
-                }).toList(),
-                selectedIndex: selectedIndex,
-                onTabChange: (index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                  controller.jumpToPage(index);
-                }),
+    return BlocBuilder<AppBloc, AppState>(
+      builder: (context, state) {
+        List<Widget> actions() {
+          switch (selectedIndex) {
+            case 0:
+            case 3:
+              break;
+            case 1:
+              return [
+                IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      context.navigator.push('/addition/post',
+                          arguments: AdditionPostPageArguments(
+                              postId: widget.data.id));
+                    })
+              ];
+            case 2:
+              return [IconButton(icon: Icon(Icons.add), onPressed: () {})];
+          }
+          return [];
+        }
+
+        List<Widget> child() {
+          if (state.user.role == 0) {
+            return [
+              OrderPostPage(data: widget.data),
+              OrderAdditionPage(),
+              OrderCommentPage(),
+            ];
+          } else {
+            return [
+              OrderPostPage(data: widget.data),
+              OrderAdditionPage(),
+              OrderCommentPage(),
+              OrderJobPage(),
+            ];
+          }
+        }
+
+        List<OrderNav> tabs() {
+          if (state.user.role == 0) {
+            return [
+              OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
+              OrderNav(Colors.purple, Icons.image, 'Additional'),
+              OrderNav(Colors.pink, LineIcons.comment, 'Comment'),
+            ];
+          } else {
+            return [
+              OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
+              OrderNav(Colors.purple, Icons.image, 'Additional'),
+              OrderNav(Colors.pink, LineIcons.comment, 'Comment'),
+              OrderNav(Colors.teal, Icons.work, 'Job'),
+            ];
+          }
+        }
+
+        return Scaffold(
+          extendBody: true,
+          appBar: AppBar(
+            title: Text(
+              'OrderDetail',
+            ),
+            actions: actions(),
           ),
-        ),
-      ),
+          body: PageView(
+            onPageChanged: (page) {
+              setState(() {
+                selectedIndex = page;
+              });
+            },
+            controller: controller,
+            children: child(),
+          ),
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: -10,
+                        blurRadius: 60,
+                        color: Colors.black.withOpacity(.20),
+                        offset: Offset(0, 15))
+                  ]),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+                child: GNav(
+                    tabs: tabs().map((e) {
+                      return GButton(
+                        gap: 10,
+                        iconActiveColor: e.color,
+                        iconColor: Colors.grey,
+                        textColor: e.color,
+                        backgroundColor: e.color.withOpacity(.2),
+                        iconSize: 24,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 18, vertical: 5),
+                        icon: e.icon,
+                        text: e.text,
+                      );
+                    }).toList(),
+                    selectedIndex: selectedIndex,
+                    onTabChange: (index) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                      controller.jumpToPage(index);
+                    }),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class AdditionPostPage extends StatefulWidget {
+  final int postId;
+
+  const AdditionPostPage({Key key, this.postId}) : super(key: key);
+
   @override
   _AdditionPostPageState createState() => _AdditionPostPageState();
 }
@@ -455,10 +519,116 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AdditionBloc>(
-        create: (context) => AdditionBloc(),
+        create: (_) => AdditionBloc(context, widget.postId),
         child: Builder(
           builder: (context) {
             AdditionBloc formBloc = BlocProvider.of<AdditionBloc>(context);
+
+            void onPressed() {
+              _scaffoldKey.currentState.showBottomSheet<void>(
+                (_) {
+                  return Container(
+                    height: 200,
+                    color: Colors.white,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: <Widget>[
+                          FlatButton(
+                            child: Text(Localization.of(context).camera),
+                            onPressed: () async {
+                              await ImagePicker()
+                                  .getImage(source: ImageSource.camera)
+                                  .then((file) {
+                                if (file != null) {
+                                  return ImageCropper.cropImage(
+                                      sourcePath: file.path,
+                                      maxWidth: 1080,
+                                      maxHeight: 1920,
+                                      // aspectRatio: CropAspectRatio(
+                                      //     ratioX: 9, ratioY: 16),
+                                      androidUiSettings: AndroidUiSettings(
+                                          toolbarTitle: 'Cropper',
+                                          toolbarColor: Colors.deepOrange,
+                                          toolbarWidgetColor: Colors.white,
+                                          initAspectRatio:
+                                              CropAspectRatioPreset.original,
+                                          lockAspectRatio: false),
+                                      iosUiSettings: IOSUiSettings(
+                                        minimumAspectRatio: 1.0,
+                                      )).then((value) {
+                                    if (value != null) {
+                                      Navigator.of(context).pop(value);
+                                      return value;
+                                    }
+                                  });
+                                }
+                                return null;
+                              }).then((value) {
+                                if (value != null) {
+                                  formBloc.image.updateValue(value);
+                                }
+                              });
+                            },
+                          ),
+                          Divider(
+                            color: Colors.grey,
+                          ),
+                          FlatButton(
+                            child: Text(Localization.of(context).gallery),
+                            onPressed: () async {
+                              await ImagePicker()
+                                  .getImage(source: ImageSource.gallery)
+                                  .then((file) {
+                                if (file != null) {
+                                  return ImageCropper.cropImage(
+                                      sourcePath: file.path,
+                                      maxWidth: 1080,
+                                      maxHeight: 1920,
+                                      // aspectRatio: CropAspectRatio(
+                                      //     ratioX: 9, ratioY: 16),
+                                      androidUiSettings: AndroidUiSettings(
+                                          toolbarTitle: 'Cropper',
+                                          toolbarColor: Colors.deepOrange,
+                                          toolbarWidgetColor: Colors.white,
+                                          initAspectRatio:
+                                              CropAspectRatioPreset.original,
+                                          lockAspectRatio: false),
+                                      iosUiSettings: IOSUiSettings(
+                                        minimumAspectRatio: 1.0,
+                                      )).then((value) {
+                                    if (value != null) {
+                                      Navigator.of(context).pop(value);
+                                      return value;
+                                    }
+                                  });
+                                }
+                                return null;
+                              }).then((value) {
+                                if (value != null) {
+                                  formBloc.image.updateValue(value);
+                                }
+                              });
+                            },
+                          ),
+                          Divider(
+                            height: 20,
+                            thickness: 6,
+                          ),
+                          FlatButton(
+                            child: Text(Localization.of(context).cancel),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+
             return FormBlocListener<AdditionBloc, String, String>(
               child: Scaffold(
                 key: _scaffoldKey,
@@ -466,126 +636,72 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                 body: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   children: [
+                    SizedBox(height: 20),
+                    BlocBuilder<InputFieldBloc, dynamic>(
+                      builder: (context, state) {
+                        return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: GestureDetector());
+                      },
+                    ),
                     BlocBuilder<InputFieldBloc, dynamic>(
                         cubit: formBloc.image,
-                        builder: (context, state) => IconButton(
-                            icon: Icon(
-                              Icons.add_box,
-                              size: 96,
-                              color: Colors.blue,
-                            ),
-                            onPressed: () {
-                              _scaffoldKey.currentState.showBottomSheet<void>(
-                                (_) {
-                                  return Container(
-                                    height: 200,
-                                    color: Colors.white,
-                                    child: Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Column(
-                                        children: <Widget>[
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .camera),
-                                            onPressed: () async {
-                                              await ImagePicker()
-                                                  .getImage(
-                                                      source:
-                                                          ImageSource.camera)
-                                                  .then((file) {
-                                                if (file != null) {
-                                                  return ImageCropper.cropImage(
-                                                      sourcePath: file.path,
-                                                      maxWidth: 1080,
-                                                      maxHeight: 1920,
-                                                      androidUiSettings:
-                                                          AndroidUiSettings(
-                                                              toolbarTitle:
-                                                                  'Cropper',
-                                                              toolbarColor: Colors
-                                                                  .deepOrange,
-                                                              toolbarWidgetColor:
-                                                                  Colors.white,
-                                                              initAspectRatio:
-                                                                  CropAspectRatioPreset
-                                                                      .original,
-                                                              lockAspectRatio:
-                                                                  false),
-                                                      iosUiSettings:
-                                                          IOSUiSettings(
-                                                        minimumAspectRatio: 1.0,
-                                                      )).then((value) {
-                                                    if (value != null) {
-                                                      Navigator.pop(context);
-                                                    }
-                                                  });
-                                                }
-                                                return null;
-                                              });
-                                            },
-                                          ),
-                                          Divider(
-                                            color: Colors.grey,
-                                          ),
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .gallery),
-                                            onPressed: () async {
-                                              await ImagePicker()
-                                                  .getImage(
-                                                      source:
-                                                          ImageSource.gallery)
-                                                  .then((file) {
-                                                if (file != null) {
-                                                  return ImageCropper.cropImage(
-                                                      sourcePath: file.path,
-                                                      maxWidth: 1080,
-                                                      maxHeight: 1920,
-                                                      androidUiSettings:
-                                                          AndroidUiSettings(
-                                                              toolbarTitle:
-                                                                  'Cropper',
-                                                              toolbarColor: Colors
-                                                                  .deepOrange,
-                                                              toolbarWidgetColor:
-                                                                  Colors.white,
-                                                              initAspectRatio:
-                                                                  CropAspectRatioPreset
-                                                                      .original,
-                                                              lockAspectRatio:
-                                                                  false),
-                                                      iosUiSettings:
-                                                          IOSUiSettings(
-                                                        minimumAspectRatio: 1.0,
-                                                      )).then((value) {
-                                                    if (value != null) {
-                                                      Navigator.of(context)
-                                                          .pop(value);
-                                                    }
-                                                  });
-                                                }
-                                                return null;
-                                              });
-                                            },
-                                          ),
-                                          Divider(
-                                            height: 20,
-                                            thickness: 6,
-                                          ),
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .cancel),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            }))
+                        builder: (context, state) => GestureDetector(
+                            onTap: onPressed,
+                            child: AspectRatio(
+                                aspectRatio: 16.0 / 9.0,
+                                child: DottedBorder(
+                                    color: Colors.black,
+                                    strokeWidth: 1,
+                                    strokeCap: StrokeCap.butt,
+                                    dashPattern: const <double>[8, 2],
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: state.value == null
+                                            ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                    Icon(
+                                                      Icons.file_upload,
+                                                      color: Colors.grey,
+                                                      size: 64,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                          'Images for select a picture or take'),
+                                                    ),
+                                                  ])
+                                            : Stack(
+                                                children: [
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    child: Image.file(
+                                                      state.value,
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )))))),
+                    SizedBox(height: 10),
+                    TextFieldBlocBuilder(
+                      textFieldBloc: formBloc.tag,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                          labelText: 'Description',
+                          border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10),
+                    RaisedButton(
+                      child: Text(Localization.of(context).submit),
+                      onPressed: () {
+                        formBloc.submit();
+                      },
+                    ),
                   ],
                 ),
               ),

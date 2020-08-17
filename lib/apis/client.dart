@@ -20,6 +20,8 @@ part 'comment.dart';
 
 part 'client.g.dart';
 
+// ignore_for_file: non_constant_identifier_names
+
 class CacheService<T> {
   static CacheService get instance => CacheService._();
 
@@ -145,6 +147,10 @@ abstract class RestService {
 
   @PATCH('/orders/{id}/')
   Future<Address> updateOrder(@Path() String id, @Body() Order data);
+
+  @POST('/images/')
+  Future<Address> postImage(@Part() File image, @Part() String tag,
+      @Part() String content_type, @Part() int object_id);
 
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);
