@@ -321,6 +321,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
 }
 
 class OrderAdditionPage extends StatefulWidget {
+  final Order data;
+
+  const OrderAdditionPage({Key key, this.data}) : super(key: key);
+
   @override
   _OrderAdditionPageState createState() => _OrderAdditionPageState();
 }
@@ -328,47 +332,50 @@ class OrderAdditionPage extends StatefulWidget {
 class _OrderAdditionPageState extends State<OrderAdditionPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddressBloc, AddressState>(
-      builder: (context, state) {
-        AddressBloc bloc = BlocProvider.of<AddressBloc>(context);
+    return BlocProvider<AdditionBloc>(
+        create: (context) => AdditionBloc(),
+        child: BlocBuilder<AdditionBloc, AdditionState>(
+          builder: (context, state) {
+            AdditionBloc bloc = BlocProvider.of<AdditionBloc>(context);
 
-        return SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: false,
-          header: WaterDropHeader(),
-          footer: CustomFooter(
-            builder: (BuildContext context, LoadStatus mode) {
-              Widget body;
-              if (mode == LoadStatus.idle) {
-                body = Text("pull up load");
-              } else if (mode == LoadStatus.loading) {
-                body = CupertinoActivityIndicator();
-              } else if (mode == LoadStatus.failed) {
-                body = Text("Load Failed!Click retry!");
-              } else if (mode == LoadStatus.canLoading) {
-                body = Text("release to load more");
-              } else {
-                body = Text("No more Data");
-              }
-              return Container(
-                height: 55.0,
-                child: Center(child: body),
-              );
-            },
-          ),
-          controller: bloc.refreshController,
-          onRefresh: () => bloc.add(AddressRefreshList()),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemBuilder: (c, i) => AddressItem(
-              data: state.list[i],
-              pick: pick,
-            ),
-            itemCount: state.list.length,
-          ),
-        );
-      },
-    );
+            return SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: false,
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull up load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = CupertinoActivityIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed!Click retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: bloc.refreshController,
+              onRefresh: () => bloc.add(AdditionRefreshList(widget.data.id)),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemBuilder: (c, i) => Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(
+                                state.list[i].image['full_size'])))),
+                itemCount: state.list.length,
+              ),
+            );
+          },
+        ));
   }
 }
 

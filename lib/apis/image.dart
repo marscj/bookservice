@@ -3,6 +3,12 @@ part of 'client.dart';
 // ignore_for_file: non_constant_identifier_names
 // ignore_for_file: must_be_immutable
 
+// ('full_size', 'url'),
+// ('thumbnail', 'thumbnail__400x400'),
+// ('samll', 'crop__640x360'),
+// ('medium', 'crop__854x480'),
+// ('large', 'crop__1280x720'),
+
 @JsonSerializable()
 class SourceImage extends Equatable {
   int id;

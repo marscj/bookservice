@@ -12,6 +12,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 part 'addition_event.dart';
 part 'addition_state.dart';
 
+// ignore_for_file: non_constant_identifier_names
+
 class AdditionBloc extends Bloc<AdditionEvent, AdditionState> {
   RefreshController refreshController = RefreshController(initialRefresh: true);
 
@@ -22,9 +24,10 @@ class AdditionBloc extends Bloc<AdditionEvent, AdditionState> {
     AdditionEvent event,
   ) async* {
     if (event is AdditionRefreshList) {
-      yield await RestService.instance
-          .getAddressList()
-          .then<AdditionState>((value) {
+      yield await RestService.instance.getImages(query: {
+        'object_id': event.object_id,
+        'content_type': 'order'
+      }).then<AdditionState>((value) {
         refreshController.refreshCompleted();
         return state.copyWith(list: value ?? []);
       }).catchError((onError) {

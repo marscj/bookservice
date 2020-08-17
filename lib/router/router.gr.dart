@@ -98,8 +98,14 @@ class Router extends RouterBase {
       );
     },
     AddressListPage: (data) {
+      final args = data.getArgs<AddressListPageArguments>(
+        orElse: () => AddressListPageArguments(),
+      );
       return buildAdaptivePageRoute<Address>(
-        builder: (context) => AddressListPage(),
+        builder: (context) => AddressListPage(
+          key: args.key,
+          pick: args.pick,
+        ),
         settings: data,
         fullscreenDialog: true,
       );
@@ -266,8 +272,14 @@ class AddressPageRouter extends RouterBase {
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
   final _pagesMap = <Type, AutoRouteFactory>{
     AddressListPage: (data) {
+      final args = data.getArgs<AddressListPageArguments>(
+        orElse: () => AddressListPageArguments(),
+      );
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => AddressListPage(),
+        builder: (context) => AddressListPage(
+          key: args.key,
+          pick: args.pick,
+        ),
         settings: data,
       );
     },
@@ -289,6 +301,13 @@ class AddressPageRouter extends RouterBase {
 /// ************************************************************************
 /// Arguments holder classes
 /// *************************************************************************
+
+/// AddressListPage arguments holder class
+class AddressListPageArguments {
+  final Key key;
+  final bool pick;
+  AddressListPageArguments({this.key, this.pick = false});
+}
 
 /// OrderPage arguments holder class
 class OrderPageArguments {

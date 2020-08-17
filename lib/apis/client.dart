@@ -149,8 +149,11 @@ abstract class RestService {
   Future<Address> updateOrder(@Path() String id, @Body() Order data);
 
   @POST('/images/')
-  Future<Address> postImage(@Part() File image, @Part() String tag,
+  Future<SourceImage> postImage(@Part() File image, @Part() String tag,
       @Part() String content_type, @Part() int object_id);
+
+  @GET('/images/')
+  Future<List<SourceImage>> getImages({@Queries() Map<String, dynamic> query});
 
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);

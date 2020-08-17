@@ -7,7 +7,7 @@ class AdditionState extends Equatable {
 
   factory AdditionState.initial() => AdditionState(list: List<SourceImage>());
 
-  AdditionState copyWith({List<Address> list, bool isLoading}) =>
+  AdditionState copyWith({List<SourceImage> list, bool isLoading}) =>
       AdditionState(list: list ?? this.list);
 
   @override
