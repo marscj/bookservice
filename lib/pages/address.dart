@@ -33,6 +33,10 @@ class _AddressPageState extends State<AddressPage> {
 }
 
 class AddressListPage extends StatefulWidget {
+  final bool pick;
+
+  const AddressListPage({Key key, this.pick = false}) : super(key: key);
+
   @override
   _AddressListPageState createState() => _AddressListPageState();
 }
@@ -40,7 +44,7 @@ class AddressListPage extends StatefulWidget {
 class _AddressListPageState extends State<AddressListPage> {
   @override
   Widget build(BuildContext context) {
-    bool pick = RouteData.of(context).name == '/pickaddr';
+    bool pick = widget.pick;
 
     Widget body = Builder(
         builder: (context) => Scaffold(

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
@@ -17,8 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_form_bloc/src/utils/style.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
@@ -240,33 +238,26 @@ class _OrderPostPageState extends State<OrderPostPage> {
                                 [value.main][value.sub],
                         selectFieldBloc: formBloc.sub_info,
                       ),
-                      TextFieldBlocBuilder(
-                        isEnabled: post,
-                        focusNode: FocusNode(debugLabel: 'address')
-                          ..addListener(() {
-                            FocusNode focusNode = FocusScope.of(context);
-                            if (focusNode.hasFocus) {
-                              focusNode.unfocus();
-                              context.navigator
-                                  .push<Address>('/pickaddr')
-                                  .then((value) {
-                                if (value != null) {
-                                  if (value.onMap) {
-                                    formBloc.lat.updateValue('${value.lat}');
-                                    formBloc.lng.updateValue('${value.lng}');
-                                    formBloc.address.updateValue(value.address);
-                                  } else {
-                                    formBloc.address.updateValue(value.toTitle);
-                                  }
-                                }
-                              });
-                            }
+                      AnyFieldBlocBuilder<Address>(
+                          inputFieldBloc: formBloc.address,
+                          onPick: showAddressPickModal,
+                          isEnabled: post,
+                          showClearIcon: post,
+                          decoration: InputDecoration(
+                              labelText: 'Address',
+                              border: OutlineInputBorder()),
+                          builder: (context, state) {
+                            return Text(
+                              state?.value?.address ?? '',
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              style: Style.getDefaultTextStyle(
+                                context: context,
+                                isEnabled: post,
+                              ),
+                            );
                           }),
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                            labelText: 'Address', border: OutlineInputBorder()),
-                        textFieldBloc: formBloc.address,
-                      ),
                       _IL.DateTimeFieldBlocBuilder(
                         dateTimeFieldBloc: formBloc.from_date,
                         canSelectTime: true,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bookservice/I18n/i18n.dart';
+import 'package:bookservice/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -92,10 +93,12 @@ Future<T> showImagePickModal<T>(BuildContext context,
       });
 }
 
-Future<T> showAddressPickModal<T>(BuildContext context, Widget child) async {
+Future<T> showAddressPickModal<T>(BuildContext context) async {
   return showModalBottomSheet<T>(
       context: context,
       builder: (BuildContext context) {
-        return child;
+        return AddressListPage(
+          pick: true,
+        );
       });
 }

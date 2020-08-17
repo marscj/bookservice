@@ -106,7 +106,8 @@ class OrderFormBloc extends FormBloc<String, String> {
   TextFieldBloc code;
   TextFieldBloc lat;
   TextFieldBloc lng;
-  TextFieldBloc address;
+  // TextFieldBloc address;
+  InputFieldBloc<Address, Object> address;
   bool nextStep;
 
   Order data;
@@ -138,7 +139,9 @@ class OrderFormBloc extends FormBloc<String, String> {
         initialValue:
             data.to_date != null ? DateTime.parse(data.to_date) : null);
     code = TextFieldBloc(initialValue: '${data.code ?? ''}');
-    address = TextFieldBloc(initialValue: '${data.address ?? ''}');
+    // address = TextFieldBloc(initialValue: '${data.address ?? ''}');
+    address =
+        InputFieldBloc(initialValue: Address(address: '${data.address ?? ''}'));
     lat = TextFieldBloc(initialValue: data?.lat?.toString());
     lng = TextFieldBloc(initialValue: data?.lng?.toString());
     nextStep = false;
@@ -221,7 +224,8 @@ class OrderFormBloc extends FormBloc<String, String> {
           errorText: Localization.of(context).requiredString)
     ]);
     address.addValidators([
-      RequiredValidator(errorText: Localization.of(context).requiredString)
+      RequiredAddressValidator(
+          errorText: Localization.of(context).requiredString)
     ]);
   }
 
@@ -243,7 +247,7 @@ class OrderFormBloc extends FormBloc<String, String> {
       'service': service.value,
       'main_info': main_info.value.main,
       'sub_info': sub_info.value.sub,
-      'address': address.value,
+      'address': address.value.address ?? address.value.toTitle,
       'lat': lat.valueToDouble,
       'lng': lat.valueToDouble,
       'from_date': DateFormat('yyyy-MM-dd HH:mm:ss').format(from_date.value),
@@ -272,6 +276,24 @@ class RequiredDateTimeValidator extends FieldValidator<DateTime> {
 
   @override
   String call(DateTime value) {
+    return isValid(value) ? null : errorText;
+  }
+}
+
+class RequiredAddressValidator extends FieldValidator<Address> {
+  RequiredAddressValidator({@required String errorText}) : super(errorText);
+
+  @override
+  // ignore: override_on_non_overriding_member
+  bool get ignoreEmptyValues => false;
+
+  @override
+  bool isValid(Address value) {
+    return value != null;
+  }
+
+  @override
+  String call(Address value) {
     return isValid(value) ? null : errorText;
   }
 }
