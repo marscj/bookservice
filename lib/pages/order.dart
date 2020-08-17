@@ -453,13 +453,17 @@ class _OrderPageState extends State<OrderPage> {
           if (state.user.role == 0) {
             return [
               OrderPostPage(data: widget.data),
-              OrderAdditionPage(),
+              OrderAdditionPage(
+                data: widget.data,
+              ),
               OrderCommentPage(),
             ];
           } else {
             return [
               OrderPostPage(data: widget.data),
-              OrderAdditionPage(),
+              OrderAdditionPage(
+                data: widget.data,
+              ),
               OrderCommentPage(),
               OrderJobPage(),
             ];
