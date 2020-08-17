@@ -364,13 +364,34 @@ class _OrderAdditionPageState extends State<OrderAdditionPage> {
               ),
               controller: bloc.refreshController,
               onRefresh: () => bloc.add(AdditionRefreshList(widget.data.id)),
-              child: ListView.builder(
+              child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 25);
+                },
                 itemBuilder: (c, i) => Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                state.list[i].image['full_size'])))),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    shape: BoxShape.rectangle,
+                    color: Colors.grey[300],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 250,
+                        child: Image.network(state.list[i].image['full_size'],
+                            fit: BoxFit.cover),
+                      ),
+                      Container(
+                          height: 100,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          alignment: Alignment.center,
+                          child: Expanded(
+                            child: Text(state.list[i].tag ?? ''),
+                          ))
+                    ],
+                  ),
+                ),
                 itemCount: state.list.length,
               ),
             );
