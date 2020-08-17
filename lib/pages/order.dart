@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
 import 'package:bookservice/apis/client.dart';
@@ -5,7 +7,9 @@ import 'package:bookservice/bloc/addition_bloc.dart';
 import 'package:bookservice/bloc/app_bloc.dart';
 import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
+import 'package:bookservice/views/date_time/any_field_bloc_builder.dart';
 import 'package:bookservice/views/dialog.dart';
+import 'package:bookservice/views/modal.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -523,112 +527,6 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
         child: Builder(
           builder: (context) {
             AdditionBloc formBloc = BlocProvider.of<AdditionBloc>(context);
-
-            void onPressed() {
-              _scaffoldKey.currentState.showBottomSheet<void>(
-                (_) {
-                  return Container(
-                    height: 200,
-                    color: Colors.white,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            child: Text(Localization.of(context).camera),
-                            onPressed: () async {
-                              await ImagePicker()
-                                  .getImage(source: ImageSource.camera)
-                                  .then((file) {
-                                if (file != null) {
-                                  return ImageCropper.cropImage(
-                                      sourcePath: file.path,
-                                      maxWidth: 1080,
-                                      maxHeight: 1920,
-                                      // aspectRatio: CropAspectRatio(
-                                      //     ratioX: 9, ratioY: 16),
-                                      androidUiSettings: AndroidUiSettings(
-                                          toolbarTitle: 'Cropper',
-                                          toolbarColor: Colors.deepOrange,
-                                          toolbarWidgetColor: Colors.white,
-                                          initAspectRatio:
-                                              CropAspectRatioPreset.original,
-                                          lockAspectRatio: false),
-                                      iosUiSettings: IOSUiSettings(
-                                        minimumAspectRatio: 1.0,
-                                      )).then((value) {
-                                    if (value != null) {
-                                      Navigator.of(context).pop(value);
-                                      return value;
-                                    }
-                                  });
-                                }
-                                return null;
-                              }).then((value) {
-                                if (value != null) {
-                                  formBloc.image.updateValue(value);
-                                }
-                              });
-                            },
-                          ),
-                          Divider(
-                            color: Colors.grey,
-                          ),
-                          FlatButton(
-                            child: Text(Localization.of(context).gallery),
-                            onPressed: () async {
-                              await ImagePicker()
-                                  .getImage(source: ImageSource.gallery)
-                                  .then((file) {
-                                if (file != null) {
-                                  return ImageCropper.cropImage(
-                                      sourcePath: file.path,
-                                      maxWidth: 1080,
-                                      maxHeight: 1920,
-                                      // aspectRatio: CropAspectRatio(
-                                      //     ratioX: 9, ratioY: 16),
-                                      androidUiSettings: AndroidUiSettings(
-                                          toolbarTitle: 'Cropper',
-                                          toolbarColor: Colors.deepOrange,
-                                          toolbarWidgetColor: Colors.white,
-                                          initAspectRatio:
-                                              CropAspectRatioPreset.original,
-                                          lockAspectRatio: false),
-                                      iosUiSettings: IOSUiSettings(
-                                        minimumAspectRatio: 1.0,
-                                      )).then((value) {
-                                    if (value != null) {
-                                      Navigator.of(context).pop(value);
-                                      return value;
-                                    }
-                                  });
-                                }
-                                return null;
-                              }).then((value) {
-                                if (value != null) {
-                                  formBloc.image.updateValue(value);
-                                }
-                              });
-                            },
-                          ),
-                          Divider(
-                            height: 20,
-                            thickness: 6,
-                          ),
-                          FlatButton(
-                            child: Text(Localization.of(context).cancel),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            }
-
             return FormBlocListener<AdditionBloc, String, String>(
               child: Scaffold(
                 key: _scaffoldKey,
@@ -637,56 +535,94 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   children: [
                     SizedBox(height: 20),
-                    BlocBuilder<InputFieldBloc, dynamic>(
+                    AnyFieldBlocBuilder<File>(
+                      inputFieldBloc: formBloc.image,
+                      showClearIcon: true,
+                      onPick: showImagePickModal,
                       builder: (context, state) {
-                        return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: GestureDetector());
+                        return AspectRatio(
+                            aspectRatio: 16.0 / 9.0,
+                            child: DottedBorder(
+                                color: Colors.black,
+                                strokeWidth: 1,
+                                strokeCap: StrokeCap.butt,
+                                dashPattern: const <double>[8, 2],
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    child: state.value == null
+                                        ? Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                                Icon(
+                                                  Icons.file_upload,
+                                                  color: Colors.grey,
+                                                  size: 64,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                      'Images for select a picture or take'),
+                                                ),
+                                              ])
+                                        : Stack(
+                                            children: [
+                                              Container(
+                                                alignment: Alignment.center,
+                                                child: Image.file(
+                                                  state.value,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                            ],
+                                          ))));
                       },
                     ),
-                    BlocBuilder<InputFieldBloc, dynamic>(
-                        cubit: formBloc.image,
-                        builder: (context, state) => GestureDetector(
-                            onTap: onPressed,
-                            child: AspectRatio(
-                                aspectRatio: 16.0 / 9.0,
-                                child: DottedBorder(
-                                    color: Colors.black,
-                                    strokeWidth: 1,
-                                    strokeCap: StrokeCap.butt,
-                                    dashPattern: const <double>[8, 2],
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        child: state.value == null
-                                            ? Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                    Icon(
-                                                      Icons.file_upload,
-                                                      color: Colors.grey,
-                                                      size: 64,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                          'Images for select a picture or take'),
-                                                    ),
-                                                  ])
-                                            : Stack(
-                                                children: [
-                                                  Container(
-                                                    alignment: Alignment.center,
-                                                    child: Image.file(
-                                                      state.value,
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )))))),
+                    // BlocBuilder<InputFieldBloc, dynamic>(
+                    //     cubit: formBloc.image,
+                    //     builder: (context, state) => GestureDetector(
+                    //         onTap: () => onPressed,
+                    //         child: AspectRatio(
+                    //             aspectRatio: 16.0 / 9.0,
+                    //             child: DottedBorder(
+                    //                 color: Colors.black,
+                    //                 strokeWidth: 1,
+                    //                 strokeCap: StrokeCap.butt,
+                    //                 dashPattern: const <double>[8, 2],
+                    //                 child: Container(
+                    //                     alignment: Alignment.center,
+                    //                     child: state.value == null
+                    //                         ? Column(
+                    //                             mainAxisAlignment:
+                    //                                 MainAxisAlignment
+                    //                                     .spaceAround,
+                    //                             crossAxisAlignment:
+                    //                                 CrossAxisAlignment.center,
+                    //                             mainAxisSize: MainAxisSize.max,
+                    //                             children: [
+                    //                                 Icon(
+                    //                                   Icons.file_upload,
+                    //                                   color: Colors.grey,
+                    //                                   size: 64,
+                    //                                 ),
+                    //                                 Expanded(
+                    //                                   child: Text(
+                    //                                       'Images for select a picture or take'),
+                    //                                 ),
+                    //                               ])
+                    //                         : Stack(
+                    //                             children: [
+                    //                               Container(
+                    //                                 alignment: Alignment.center,
+                    //                                 child: Image.file(
+                    //                                   state.value,
+                    //                                   fit: BoxFit.fill,
+                    //                                 ),
+                    //                               ),
+                    //                             ],
+                    //                           )))))),
                     SizedBox(height: 10),
                     TextFieldBlocBuilder(
                       textFieldBloc: formBloc.tag,

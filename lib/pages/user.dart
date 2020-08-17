@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/I18n/i18n.dart';
@@ -216,8 +218,9 @@ class _UserPhotoPageState extends State<UserPhotoPage> {
                         IconButton(
                             icon: Icon(Icons.more_horiz),
                             onPressed: () {
-                              _scaffoldKey.currentState.showBottomSheet<void>(
-                                (_) {
+                              showModalBottomSheet<File>(
+                                context: context,
+                                builder: (_) {
                                   return Container(
                                     height: 200,
                                     color: Colors.white,
