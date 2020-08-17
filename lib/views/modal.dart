@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-Future<T> showImagePickModal<T>(BuildContext context) async {
+Future<T> showImagePickModal<T>(BuildContext context,
+    {int maxWidth = 1080,
+    int maxHeight = 1920,
+    CropAspectRatio aspectRatio =
+        const CropAspectRatio(ratioX: 16, ratioY: 9)}) async {
   return showModalBottomSheet<T>(
       context: context,
       builder: (BuildContext context) {
@@ -25,9 +29,9 @@ Future<T> showImagePickModal<T>(BuildContext context) async {
                       if (file != null) {
                         return ImageCropper.cropImage(
                             sourcePath: file.path,
-                            maxWidth: 1080,
-                            maxHeight: 1920,
-                            aspectRatio: CropAspectRatio(ratioX: 16, ratioY: 9),
+                            maxWidth: maxWidth,
+                            maxHeight: maxHeight,
+                            aspectRatio: aspectRatio,
                             androidUiSettings: AndroidUiSettings(
                                 toolbarTitle: 'Cropper',
                                 toolbarColor: Colors.deepOrange,
@@ -39,7 +43,7 @@ Future<T> showImagePickModal<T>(BuildContext context) async {
                             ));
                       }
                       return null;
-                    });
+                    }).then((value) => Navigator.of(context).pop(value));
                   },
                 ),
                 Divider(
@@ -54,9 +58,9 @@ Future<T> showImagePickModal<T>(BuildContext context) async {
                       if (file != null) {
                         return ImageCropper.cropImage(
                             sourcePath: file.path,
-                            maxWidth: 1080,
-                            maxHeight: 1920,
-                            aspectRatio: CropAspectRatio(ratioX: 16, ratioY: 9),
+                            maxWidth: maxWidth,
+                            maxHeight: maxHeight,
+                            aspectRatio: aspectRatio,
                             androidUiSettings: AndroidUiSettings(
                                 toolbarTitle: 'Cropper',
                                 toolbarColor: Colors.deepOrange,
@@ -68,7 +72,7 @@ Future<T> showImagePickModal<T>(BuildContext context) async {
                             ));
                       }
                       return null;
-                    });
+                    }).then((value) => Navigator.of(context).pop(value));
                   },
                 ),
                 Divider(
@@ -85,5 +89,13 @@ Future<T> showImagePickModal<T>(BuildContext context) async {
             ),
           ),
         );
+      });
+}
+
+Future<T> showAddressPickModal<T>(BuildContext context, Widget child) async {
+  return showModalBottomSheet<T>(
+      context: context,
+      builder: (BuildContext context) {
+        return child;
       });
 }

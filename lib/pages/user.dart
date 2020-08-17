@@ -10,6 +10,7 @@ import 'package:bookservice/bloc/user_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/ifnone_widget.dart';
 import 'package:bookservice/views/dialog.dart';
+import 'package:bookservice/views/modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -217,134 +218,17 @@ class _UserPhotoPageState extends State<UserPhotoPage> {
                       actions: <Widget>[
                         IconButton(
                             icon: Icon(Icons.more_horiz),
-                            onPressed: () {
-                              showModalBottomSheet<File>(
-                                context: context,
-                                builder: (_) {
-                                  return Container(
-                                    height: 200,
-                                    color: Colors.white,
-                                    child: Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Column(
-                                        children: <Widget>[
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .camera),
-                                            onPressed: () async {
-                                              await ImagePicker()
-                                                  .getImage(
-                                                      source:
-                                                          ImageSource.camera)
-                                                  .then((file) {
-                                                if (file != null) {
-                                                  return ImageCropper.cropImage(
-                                                      sourcePath: file.path,
-                                                      maxHeight: 400,
-                                                      maxWidth: 400,
-                                                      aspectRatio:
-                                                          CropAspectRatio(
-                                                              ratioX: 1.0,
-                                                              ratioY: 1.0),
-                                                      androidUiSettings:
-                                                          AndroidUiSettings(
-                                                              toolbarTitle:
-                                                                  'Cropper',
-                                                              toolbarColor: Colors
-                                                                  .deepOrange,
-                                                              toolbarWidgetColor:
-                                                                  Colors.white,
-                                                              initAspectRatio:
-                                                                  CropAspectRatioPreset
-                                                                      .original,
-                                                              lockAspectRatio:
-                                                                  false),
-                                                      iosUiSettings:
-                                                          IOSUiSettings(
-                                                        minimumAspectRatio: 1.0,
-                                                      )).then((value) {
-                                                    if (value != null) {
-                                                      Navigator.pop(context);
-                                                      BlocProvider.of<UserBloc>(
-                                                              context)
-                                                          .add(UploadUserPhoto(
-                                                              value));
-                                                    }
-                                                  });
-                                                }
-                                                return null;
-                                              });
-                                            },
-                                          ),
-                                          Divider(
-                                            color: Colors.grey,
-                                          ),
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .gallery),
-                                            onPressed: () async {
-                                              await ImagePicker()
-                                                  .getImage(
-                                                      source:
-                                                          ImageSource.gallery)
-                                                  .then((file) {
-                                                if (file != null) {
-                                                  return ImageCropper.cropImage(
-                                                      sourcePath: file.path,
-                                                      maxHeight: 400,
-                                                      maxWidth: 400,
-                                                      aspectRatio:
-                                                          CropAspectRatio(
-                                                              ratioX: 1.0,
-                                                              ratioY: 1.0),
-                                                      androidUiSettings:
-                                                          AndroidUiSettings(
-                                                              toolbarTitle:
-                                                                  'Cropper',
-                                                              toolbarColor: Colors
-                                                                  .deepOrange,
-                                                              toolbarWidgetColor:
-                                                                  Colors.white,
-                                                              initAspectRatio:
-                                                                  CropAspectRatioPreset
-                                                                      .original,
-                                                              lockAspectRatio:
-                                                                  false),
-                                                      iosUiSettings:
-                                                          IOSUiSettings(
-                                                        minimumAspectRatio: 1.0,
-                                                      )).then((value) {
-                                                    if (value != null) {
-                                                      Navigator.pop(context);
-                                                      BlocProvider.of<UserBloc>(
-                                                              context)
-                                                          .add(UploadUserPhoto(
-                                                              value));
-                                                    }
-                                                  });
-                                                }
-                                                return null;
-                                              });
-                                            },
-                                          ),
-                                          Divider(
-                                            height: 20,
-                                            thickness: 6,
-                                          ),
-                                          FlatButton(
-                                            child: Text(Localization.of(context)
-                                                .cancel),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            })
+                            onPressed: () => showImagePickModal(context,
+                                        maxHeight: 400,
+                                        maxWidth: 400,
+                                        aspectRatio: CropAspectRatio(
+                                            ratioX: 1.0, ratioY: 1.0))
+                                    .then((value) {
+                                  if (value != null) {
+                                    BlocProvider.of<UserBloc>(context)
+                                        .add(UploadUserPhoto(value));
+                                  }
+                                }))
                       ],
                     ),
                     body: BlocBuilder<AppBloc, AppState>(
