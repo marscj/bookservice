@@ -53,43 +53,43 @@ class _AddressListPageState extends State<AddressListPage> {
                     ? Text(Localization.of(context).chooseAddress)
                     : Text(Localization.of(context).address),
                 leading: pick
-                    ? CloseButton(onPressed: () {
-                        context.navigator.root.pop();
-                      })
+                    ? Container()
                     : BackButton(onPressed: () {
                         context.navigator.root.pop();
                       }),
-                actions: pick
-                    ? null
-                    : <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            context.navigator
-                                .push('/post',
-                                    arguments: AddressPostPageArguments(
-                                        data: Address(
-                                      defAddr: false,
-                                      onMap: false,
-                                      model: 0,
-                                      style: 0,
-                                      city: '',
-                                      community: '',
-                                      street: '',
-                                      building: '',
-                                      roomNo: '',
-                                      address: '',
-                                    )))
-                                .then((value) {
-                              if (value != null && value) {
-                                AddressBloc bloc =
-                                    BlocProvider.of<AddressBloc>(context);
-                                bloc.refreshController.requestRefresh();
-                              }
-                            });
-                          },
-                        )
-                      ],
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      if (pick) {
+                        context.navigator.popAndPush('/address');
+                      } else {
+                        context.navigator
+                            .push('/post',
+                                arguments: AddressPostPageArguments(
+                                    data: Address(
+                                  defAddr: false,
+                                  onMap: false,
+                                  model: 0,
+                                  style: 0,
+                                  city: '',
+                                  community: '',
+                                  street: '',
+                                  building: '',
+                                  roomNo: '',
+                                  address: '',
+                                )))
+                            .then((value) {
+                          if (value != null && value) {
+                            AddressBloc bloc =
+                                BlocProvider.of<AddressBloc>(context);
+                            bloc.refreshController.requestRefresh();
+                          }
+                        });
+                      }
+                    },
+                  )
+                ],
               ),
               body: BlocBuilder<AddressBloc, AddressState>(
                 builder: (context, state) {

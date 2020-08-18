@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_form_bloc/src/utils/style.dart' as IStyle;
@@ -26,6 +27,7 @@ import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
 
 // ignore_for_file: close_sinks
 // ignore_for_file: implementation_imports
+// ignore_for_file: non_constant_identifier_names
 
 class OrderListPage extends StatefulWidget {
   @override
@@ -419,6 +421,37 @@ class OrderCommentPage extends StatefulWidget {
 }
 
 class _OrderCommentPageState extends State<OrderCommentPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: RatingBar(
+      initialRating: 3,
+      minRating: 1,
+      direction: Axis.horizontal,
+      itemCount: 5,
+      unratedColor: Colors.grey,
+      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.amber,
+      ),
+      onRatingUpdate: (rating) {},
+    ));
+  }
+}
+
+class OrderCommentPostPage extends StatefulWidget {
+  final int object_id;
+  final String content_type;
+
+  const OrderCommentPostPage({Key key, this.object_id, this.content_type})
+      : super(key: key);
+
+  @override
+  _OrderCommentPostPageState createState() => _OrderCommentPostPageState();
+}
+
+class _OrderCommentPostPageState extends State<OrderCommentPostPage> {
   @override
   Widget build(BuildContext context) {
     return Container();

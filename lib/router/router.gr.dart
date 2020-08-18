@@ -26,6 +26,7 @@ class Routes {
   static String orderPostPage({dynamic id = ''}) => '/order/$id/post';
   static const String additionPostPage = '/addition/post';
   static const String viewOrderImage = '/image/order';
+  static const String orderCommentPostPage = '/comment/post';
   static const all = <String>{
     authentication,
     _userPage,
@@ -37,6 +38,7 @@ class Routes {
     _orderPostPage,
     additionPostPage,
     viewOrderImage,
+    orderCommentPostPage,
   };
 }
 
@@ -66,6 +68,7 @@ class Router extends RouterBase {
     RouteDef(Routes._orderPostPage, page: OrderPostPage),
     RouteDef(Routes.additionPostPage, page: AdditionPostPage),
     RouteDef(Routes.viewOrderImage, page: ViewOrderImage),
+    RouteDef(Routes.orderCommentPostPage, page: OrderCommentPostPage),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -158,6 +161,20 @@ class Router extends RouterBase {
         builder: (context) => ViewOrderImage(
           key: args.key,
           url: args.url,
+        ),
+        settings: data,
+        fullscreenDialog: true,
+      );
+    },
+    OrderCommentPostPage: (data) {
+      final args = data.getArgs<OrderCommentPostPageArguments>(
+        orElse: () => OrderCommentPostPageArguments(),
+      );
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderCommentPostPage(
+          key: args.key,
+          objectid: args.objectid,
+          contenttype: args.contenttype,
         ),
         settings: data,
         fullscreenDialog: true,
@@ -351,6 +368,14 @@ class ViewOrderImageArguments {
   final Key key;
   final String url;
   ViewOrderImageArguments({this.key, this.url});
+}
+
+/// OrderCommentPostPage arguments holder class
+class OrderCommentPostPageArguments {
+  final Key key;
+  final int objectid;
+  final String contenttype;
+  OrderCommentPostPageArguments({this.key, this.objectid, this.contenttype});
 }
 
 /// AddressPostPage arguments holder class

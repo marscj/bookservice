@@ -696,6 +696,47 @@ class _RestService implements RestService {
   }
 
   @override
+  postComment(playload) async {
+    ArgumentError.checkNotNull(playload, 'playload');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(playload ?? <String, dynamic>{});
+    final Response<Map<String, dynamic>> _result = await _dio.request(
+        '/comments/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = Comment.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  getComments({query}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final Response<List<dynamic>> _result = await _dio.request('/comments/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Comment.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   phoneGenerate(playload) async {
     ArgumentError.checkNotNull(playload, 'playload');
     const _extra = <String, dynamic>{};

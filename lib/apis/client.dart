@@ -155,6 +155,12 @@ abstract class RestService {
   @GET('/images/')
   Future<List<SourceImage>> getImages({@Queries() Map<String, dynamic> query});
 
+  @POST('/comments/')
+  Future<Comment> postComment(@Body() Map<String, dynamic> playload);
+
+  @GET('/comments/')
+  Future<List<Comment>> getComments({@Queries() Map<String, dynamic> query});
+
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);
 

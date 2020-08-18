@@ -1,10 +1,15 @@
 part of 'comment_bloc.dart';
 
-abstract class CommentState extends Equatable {
-  const CommentState();
-  
-  @override
-  List<Object> get props => [];
-}
+class CommentState extends Equatable {
+  final List<Comment> list;
 
-class CommentInitial extends CommentState {}
+  const CommentState({this.list});
+
+  factory CommentState.initial() => CommentState(list: List<Comment>());
+
+  CommentState copyWith({List<Comment> list, bool isLoading}) =>
+      CommentState(list: list ?? this.list);
+
+  @override
+  List<Object> get props => [list];
+}
