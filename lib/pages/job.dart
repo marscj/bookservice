@@ -25,7 +25,7 @@ class _JobPageState extends State<JobPage> {
 
         return SmartRefresher(
           enablePullDown: true,
-          enablePullUp: false,
+          enablePullUp: true,
           header: WaterDropHeader(),
           footer: CustomFooter(
             builder: (BuildContext context, LoadStatus mode) {
@@ -48,7 +48,8 @@ class _JobPageState extends State<JobPage> {
             },
           ),
           controller: bloc.refreshController,
-          onRefresh: () => bloc.add(JobRefreshList()),
+          onRefresh: () => bloc.add(RefreshJobList()),
+          onLoading: () => bloc.add(LoadJobList()),
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             itemBuilder: (c, i) => JobItem(

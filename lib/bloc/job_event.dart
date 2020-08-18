@@ -7,9 +7,6 @@ abstract class JobEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class JobRefreshList extends JobEvent {
-  JobRefreshList();
+class RefreshJobList extends JobEvent {}
 
-  @override
-  List<Object> get props => [];
-}
+class LoadJobList extends JobEvent {}

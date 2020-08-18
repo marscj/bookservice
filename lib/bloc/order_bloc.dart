@@ -34,7 +34,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       }).then<OrderState>((value) {
         refreshController.refreshCompleted();
         return state.copyWith(
-            list: value.data, pageNo: 2, totalCount: value.totalCount);
+            list: value.data ?? [], pageNo: 2, totalCount: value.totalCount);
       }).catchError((onError) {
         refreshController.refreshFailed();
         return state.copyWith(list: [], pageNo: 1, totalCount: 0);

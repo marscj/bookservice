@@ -263,6 +263,21 @@ Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'order_id': instance.order_id,
     };
 
+JobList _$JobListFromJson(Map<String, dynamic> json) {
+  return JobList()
+    ..totalCount = json['totalCount'] as int
+    ..pageNo = json['pageNo'] as int
+    ..data = (json['data'] as List)
+        ?.map((e) => e == null ? null : Job.fromJson(e as Map<String, dynamic>))
+        ?.toList();
+}
+
+Map<String, dynamic> _$JobListToJson(JobList instance) => <String, dynamic>{
+      'totalCount': instance.totalCount,
+      'pageNo': instance.pageNo,
+      'data': instance.data,
+    };
+
 Address _$AddressFromJson(Map<String, dynamic> json) {
   return Address(
     id: json['id'] as int,
@@ -756,7 +771,7 @@ class _RestService implements RestService {
     queryParameters.addAll(query ?? <String, dynamic>{});
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/jobs/',
+    final Response<Map<String, dynamic>> _result = await _dio.request('/jobs/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -764,9 +779,7 @@ class _RestService implements RestService {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    var value = _result.data
-        .map((dynamic i) => Job.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = JobList.fromJson(_result.data);
     return value;
   }
 
