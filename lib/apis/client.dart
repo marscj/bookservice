@@ -161,6 +161,9 @@ abstract class RestService {
   @GET('/comments/')
   Future<List<Comment>> getComments({@Queries() Map<String, dynamic> query});
 
+  @GET('/jobs/')
+  Future<List<Comment>> getJobs({@Queries() Map<String, dynamic> query});
+
   @POST('/auth/phone/generate/')
   Future<Otp> phoneGenerate(@Body() Map<String, dynamic> playload);
 

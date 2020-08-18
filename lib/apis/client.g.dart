@@ -243,11 +243,24 @@ Map<String, dynamic> _$ContractListToJson(ContractList instance) =>
     };
 
 Job _$JobFromJson(Map<String, dynamic> json) {
-  return Job()..id = json['id'] as int;
+  return Job()
+    ..id = json['id'] as int
+    ..date = json['date'] as String
+    ..card = json['card'] as String
+    ..unit = json['unit'] as int
+    ..remark = json['remark'] as String
+    ..order = json['order'] == null
+        ? null
+        : Order.fromJson(json['order'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'id': instance.id,
+      'date': instance.date,
+      'card': instance.card,
+      'unit': instance.unit,
+      'remark': instance.remark,
+      'order': instance.order,
     };
 
 Address _$AddressFromJson(Map<String, dynamic> json) {
@@ -723,6 +736,27 @@ class _RestService implements RestService {
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/comments/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Comment.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  getJobs({query}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final Response<List<dynamic>> _result = await _dio.request('/jobs/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',

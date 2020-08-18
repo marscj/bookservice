@@ -175,6 +175,7 @@ class Router extends RouterBase {
           key: args.key,
           objectid: args.objectid,
           contenttype: args.contenttype,
+          reply: args.reply,
         ),
         settings: data,
         fullscreenDialog: true,
@@ -375,7 +376,9 @@ class OrderCommentPostPageArguments {
   final Key key;
   final int objectid;
   final String contenttype;
-  OrderCommentPostPageArguments({this.key, this.objectid, this.contenttype});
+  final Comment reply;
+  OrderCommentPostPageArguments(
+      {this.key, this.objectid, this.contenttype, this.reply});
 }
 
 /// AddressPostPage arguments holder class

@@ -6,6 +6,11 @@ part of 'client.dart';
 @JsonSerializable()
 class Job extends Equatable {
   int id;
+  String date;
+  String card;
+  int unit;
+  String remark;
+  Order order;
 
   static Job fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
   Map<String, dynamic> toJson() => _$JobToJson(this);

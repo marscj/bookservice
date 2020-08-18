@@ -404,68 +404,6 @@ class _OrderAdditionPageState extends State<OrderAdditionPage> {
   }
 }
 
-class OrderJobPage extends StatefulWidget {
-  final Order data;
-
-  const OrderJobPage({Key key, this.data}) : super(key: key);
-
-  @override
-  _OrderJobPageState createState() => _OrderJobPageState();
-}
-
-class _OrderJobPageState extends State<OrderJobPage> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CommentBloc, CommentState>(
-      builder: (context, state) {
-        CommentBloc bloc = BlocProvider.of<CommentBloc>(context);
-
-        return SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: false,
-          header: WaterDropHeader(),
-          footer: CustomFooter(
-            builder: (BuildContext context, LoadStatus mode) {
-              Widget body;
-              if (mode == LoadStatus.idle) {
-                body = Text("pull up load");
-              } else if (mode == LoadStatus.loading) {
-                body = CupertinoActivityIndicator();
-              } else if (mode == LoadStatus.failed) {
-                body = Text("Load Failed!Click retry!");
-              } else if (mode == LoadStatus.canLoading) {
-                body = Text("release to load more");
-              } else {
-                body = Text("No more Data");
-              }
-              return Container(
-                height: 55.0,
-                child: Center(child: body),
-              );
-            },
-          ),
-          controller: bloc.refreshController,
-          onRefresh: () => bloc.add(CommentRefreshList(widget.data.id)),
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            separatorBuilder: (context, index) {
-              return SizedBox(height: 25);
-            },
-            itemBuilder: (c, i) => GestureDetector(
-                onTap: () {
-                  context.navigator.push('/image/order',
-                      arguments: ViewOrderImageArguments(
-                          url: state.list[i].image['full_size']));
-                },
-                child: Container()),
-            itemCount: state.list.length,
-          ),
-        );
-      },
-    );
-  }
-}
-
 class OrderCommentPage extends StatefulWidget {
   final Order data;
 
