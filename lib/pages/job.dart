@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class OrderJobPage extends StatefulWidget {
-  const OrderJobPage({Key key}) : super(key: key);
+class JobPage extends StatefulWidget {
+  const JobPage({Key key}) : super(key: key);
 
   @override
-  _OrderJobPageState createState() => _OrderJobPageState();
+  _JobPageState createState() => _JobPageState();
 }
 
-class _OrderJobPageState extends State<OrderJobPage> {
+class _JobPageState extends State<JobPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<JobBloc, JobState>(

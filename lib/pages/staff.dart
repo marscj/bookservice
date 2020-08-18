@@ -1,8 +1,10 @@
 import 'package:bookservice/I18n/i18n.dart';
+import 'package:bookservice/bloc/job_bloc.dart';
 import 'package:bookservice/views/rally_tabbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'order.dart';
+import 'job.dart';
 import 'setting.dart';
 
 class StaffPage extends StatefulWidget {
@@ -31,32 +33,34 @@ class _StaffPageState extends State<StaffPage>
 
   @override
   Widget build(BuildContext context) {
-    return FocusTraversalGroup(
-      policy: OrderedTraversalPolicy(),
-      child: Column(
-        children: [
-          RallyTabBar(
-            tabs: buildTabs(
-                context,
-                Theme.of(context).textTheme.button.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue)),
-            tabController: _tabController,
+    return BlocProvider<JobBloc>(
+        create: (context) => JobBloc(),
+        child: FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: Column(
+            children: [
+              RallyTabBar(
+                tabs: buildTabs(
+                    context,
+                    Theme.of(context).textTheme.button.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue)),
+                tabController: _tabController,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: buildTabViews(),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: buildTabViews(),
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   List<Widget> buildTabViews() {
-    return [OrderPage(), SettingPage()];
+    return [JobPage(), SettingPage()];
   }
 
   List<Widget> buildTabs(context, textStyle) {
@@ -65,21 +69,21 @@ class _StaffPageState extends State<StaffPage>
         textStyle: textStyle,
         iconData: Icons.date_range,
         title: Localization.of(context).orders,
-        tabIndex: 0,
+        tabIndex: 1,
         tabController: _tabController,
         isVertical: false,
         color: Colors.blue,
-        tabCount: 2,
+        tabCount: 3,
       ),
       RallyTab(
         textStyle: textStyle,
         iconData: Icons.settings,
         title: Localization.of(context).settings,
-        tabIndex: 1,
+        tabIndex: 2,
         tabController: _tabController,
         isVertical: false,
         color: Colors.blue,
-        tabCount: 2,
+        tabCount: 3,
       ),
     ];
   }

@@ -1,5 +1,8 @@
+import 'package:bookservice/bloc/app_bloc.dart';
 import 'package:bookservice/bloc/home_bloc.dart';
+import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/pages/customer.dart';
+import 'package:bookservice/pages/staff.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,13 +37,17 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<HomeBloc>(
-      create: (context) => HomeBloc(),
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          return SafeArea(top: true, bottom: false, child: CustomerPage());
-        },
-      ),
-    );
+    return SafeArea(
+        top: true,
+        bottom: false,
+        child: BlocBuilder<AppBloc, AppState>(
+          builder: (context, state) {
+            if (state.user.role == 0) {
+              return CustomerPage();
+            } else {
+              return StaffPage();
+            }
+          },
+        ));
   }
 }

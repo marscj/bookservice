@@ -1,6 +1,8 @@
 import 'package:bookservice/I18n/i18n.dart';
+import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/views/rally_tabbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
 import 'order.dart';
 import 'service.dart';
@@ -32,28 +34,30 @@ class _CustomerPageState extends State<CustomerPage>
 
   @override
   Widget build(BuildContext context) {
-    return FocusTraversalGroup(
-      policy: OrderedTraversalPolicy(),
-      child: Column(
-        children: [
-          RallyTabBar(
-            tabs: buildTabs(
-                context,
-                Theme.of(context).textTheme.button.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue)),
-            tabController: _tabController,
+    return BlocProvider<OrderBloc>(
+        create: (_) => OrderBloc(context),
+        child: FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: Column(
+            children: [
+              RallyTabBar(
+                tabs: buildTabs(
+                    context,
+                    Theme.of(context).textTheme.button.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue)),
+                tabController: _tabController,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: buildTabViews(),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: buildTabViews(),
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   List<Widget> buildTabViews() {
