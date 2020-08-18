@@ -1,8 +1,13 @@
+import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/job_bloc.dart';
+import 'package:bookservice/views/ifnone_widget.dart';
+import 'package:card_settings/card_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+// ignore_for_file: close_sinks
 
 class JobPage extends StatefulWidget {
   const JobPage({Key key}) : super(key: key);
@@ -44,16 +49,92 @@ class _JobPageState extends State<JobPage> {
           ),
           controller: bloc.refreshController,
           onRefresh: () => bloc.add(JobRefreshList()),
-          child: ListView.separated(
+          child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            separatorBuilder: (context, index) {
-              return SizedBox(height: 25);
-            },
-            itemBuilder: (c, i) => Container(),
+            itemBuilder: (c, i) => JobItem(
+              data: state.list[i],
+            ),
             itemCount: state.list.length,
           ),
         );
       },
+    );
+  }
+}
+
+class JobItem extends StatelessWidget {
+  final Job data;
+
+  const JobItem({Key key, this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+          secondaryHeaderColor: Colors.blue, // card header background
+          cardColor: Colors.white, // card field background
+          buttonColor: Colors.blue, // button background color
+          textTheme: Theme.of(context).textTheme.copyWith(
+                button: Theme.of(context)
+                    .textTheme
+                    .button
+                    .copyWith(color: Colors.white), // button text
+                subtitle1: Theme.of(context)
+                    .textTheme
+                    .subtitle1
+                    .copyWith(color: Colors.black87), // input text
+                headline6: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(color: Colors.white), // card header text
+              ),
+          inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.black87), // style for labels
+          ),
+          cardTheme: CardTheme(
+              shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ))),
+      child: CardSettings.sectioned(
+        showMaterialonIOS: true,
+        fieldPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        margin: const EdgeInsets.all(0),
+        children: [
+          CardSettingsSection(
+            header: CardSettingsHeader(
+              label: '${data.card}',
+            ),
+            children: [
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Action Date',
+                content: Text(data.date ?? ''),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Unit',
+                content: Text('${data.unit}'),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
+                label: 'Remark',
+                contentOnNewLine: true,
+                content: IfNoneWidget(
+                  basis: data?.remark != null,
+                  builder: (context) => Text('${data.remark}', maxLines: 3),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

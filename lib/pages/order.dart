@@ -846,8 +846,6 @@ class AdditionPostPage extends StatefulWidget {
 }
 
 class _AdditionPostPageState extends State<AdditionPostPage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AdditionFormBloc>(
