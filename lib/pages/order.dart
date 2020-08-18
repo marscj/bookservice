@@ -658,6 +658,7 @@ class _OrderCommentPostPageState extends State<OrderCommentPostPage> {
                     TextFieldBlocBuilder(
                       textFieldBloc: formBloc.comment,
                       maxLines: 3,
+                      maxLength: 256,
                       decoration: InputDecoration(
                           labelText: 'Comment', border: OutlineInputBorder()),
                     ),
@@ -925,6 +926,7 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                     TextFieldBlocBuilder(
                       textFieldBloc: formBloc.tag,
                       maxLines: 3,
+                      maxLength: 128,
                       decoration: InputDecoration(
                           labelText: 'Description',
                           border: OutlineInputBorder()),
