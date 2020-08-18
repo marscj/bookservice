@@ -528,8 +528,25 @@ class _OrderCommentPageState extends State<OrderCommentPage> {
                                       state.list[i].user?.photo['thumbnail'])
                                   : ExactAssetImage('assets/images/user.png')),
                         )),
-                    title: Text(
-                        '${state.list[i].comment}\n${state.list[i].user.name}  ${state.list[i].create_at}'),
+                    title: RichText(
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: <TextSpan>[
+                          TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(fontSize: 18),
+                              text: state.list[i].comment),
+                          TextSpan(text: '\n'),
+                          TextSpan(
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(color: Colors.grey[600]),
+                              text:
+                                  '${state.list[i].user.name}  ${state.list[i].create_at}'),
+                        ],
+                      ),
+                    ),
                     subtitle: RatingBar(
                       initialRating: state.list[i].rating.toDouble(),
                       minRating: 1,
