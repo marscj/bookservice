@@ -245,22 +245,22 @@ Map<String, dynamic> _$ContractListToJson(ContractList instance) =>
 Job _$JobFromJson(Map<String, dynamic> json) {
   return Job()
     ..id = json['id'] as int
+    ..jobID = json['jobID'] as String
     ..date = json['date'] as String
     ..card = json['card'] as String
     ..unit = json['unit'] as int
     ..remark = json['remark'] as String
-    ..order = json['order'] == null
-        ? null
-        : Order.fromJson(json['order'] as Map<String, dynamic>);
+    ..order_id = json['order_id'] as int;
 }
 
 Map<String, dynamic> _$JobToJson(Job instance) => <String, dynamic>{
       'id': instance.id,
+      'jobID': instance.jobID,
       'date': instance.date,
       'card': instance.card,
       'unit': instance.unit,
       'remark': instance.remark,
-      'order': instance.order,
+      'order_id': instance.order_id,
     };
 
 Address _$AddressFromJson(Map<String, dynamic> json) {

@@ -103,15 +103,15 @@ class JobItem extends StatelessWidget {
         children: [
           CardSettingsSection(
             header: CardSettingsHeader(
-              label: '${data.card}',
+              label: '${data.jobID}',
             ),
             children: [
               CardSettingsField(
                 fieldPadding: null,
                 labelAlign: null,
                 requiredIndicator: null,
-                label: 'Action Date',
-                content: Text(data.date ?? ''),
+                label: 'Card',
+                content: Text(data.card ?? ''),
               ),
               CardSettingsField(
                 fieldPadding: null,
@@ -124,6 +124,13 @@ class JobItem extends StatelessWidget {
                 fieldPadding: null,
                 labelAlign: null,
                 requiredIndicator: null,
+                label: 'Action Date',
+                content: Text(data.date ?? ''),
+              ),
+              CardSettingsField(
+                fieldPadding: null,
+                labelAlign: null,
+                requiredIndicator: null,
                 label: 'Remark',
                 contentOnNewLine: true,
                 content: IfNoneWidget(
@@ -131,6 +138,13 @@ class JobItem extends StatelessWidget {
                   builder: (context) => Text('${data.remark}', maxLines: 3),
                 ),
               ),
+              CardSettingsButton(
+                label: 'View Order Detail',
+                isDestructive: true,
+                backgroundColor: Theme.of(context).cardColor,
+                textColor: Theme.of(context).buttonColor,
+                onPressed: () {},
+              )
             ],
           )
         ],

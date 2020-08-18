@@ -6,15 +6,16 @@ part of 'client.dart';
 @JsonSerializable()
 class Job extends Equatable {
   int id;
+  String jobID;
   String date;
   String card;
   int unit;
   String remark;
-  Order order;
+  int order_id;
 
   static Job fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
   Map<String, dynamic> toJson() => _$JobToJson(this);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, jobID, date, card, unit, remark, order_id];
 }
