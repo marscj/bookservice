@@ -404,6 +404,10 @@ class _OrderAdditionPageState extends State<OrderAdditionPage> {
 }
 
 class OrderJobPage extends StatefulWidget {
+  final Order data;
+
+  const OrderJobPage({Key key, this.data}) : super(key: key);
+
   @override
   _OrderJobPageState createState() => _OrderJobPageState();
 }
@@ -411,11 +415,61 @@ class OrderJobPage extends StatefulWidget {
 class _OrderJobPageState extends State<OrderJobPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return BlocBuilder<CommentBloc, CommentState>(
+      builder: (context, state) {
+        CommentBloc bloc = BlocProvider.of<CommentBloc>(context);
+
+        return SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = Text("pull up load");
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
+          ),
+          controller: bloc.refreshController,
+          onRefresh: () => bloc.add(CommentRefreshList(widget.data.id)),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 25);
+            },
+            itemBuilder: (c, i) => GestureDetector(
+                onTap: () {
+                  context.navigator.push('/image/order',
+                      arguments: ViewOrderImageArguments(
+                          url: state.list[i].image['full_size']));
+                },
+                child: Container()),
+            itemCount: state.list.length,
+          ),
+        );
+      },
+    );
   }
 }
 
 class OrderCommentPage extends StatefulWidget {
+  final Order data;
+
+  const OrderCommentPage({Key key, this.data}) : super(key: key);
+
   @override
   _OrderCommentPageState createState() => _OrderCommentPageState();
 }
@@ -423,20 +477,53 @@ class OrderCommentPage extends StatefulWidget {
 class _OrderCommentPageState extends State<OrderCommentPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: RatingBar(
-      initialRating: 3,
-      minRating: 1,
-      direction: Axis.horizontal,
-      itemCount: 5,
-      unratedColor: Colors.grey,
-      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-      itemBuilder: (context, _) => Icon(
-        Icons.star,
-        color: Colors.amber,
-      ),
-      onRatingUpdate: (rating) {},
-    ));
+    return BlocBuilder<CommentBloc, CommentState>(
+      builder: (context, state) {
+        CommentBloc bloc = BlocProvider.of<CommentBloc>(context);
+
+        return SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = Text("pull up load");
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
+          ),
+          controller: bloc.refreshController,
+          onRefresh: () => bloc.add(CommentRefreshList(widget.data.id)),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 25);
+            },
+            itemBuilder: (c, i) => GestureDetector(
+                onTap: () {
+                  context.navigator.push('/image/order',
+                      arguments: ViewOrderImageArguments(
+                          url: state.list[i].image['full_size']));
+                },
+                child: Container()),
+            itemCount: state.list.length,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -480,10 +567,29 @@ class _OrderCommentPostPageState extends State<OrderCommentPostPage> {
                     SizedBox(height: 20),
                     AnyFieldBlocBuilder<double>(
                       inputFieldBloc: formBloc.rating,
-                      showClearIcon: true,
-                      onPick: showImagePickModal,
+                      showClearIcon: false,
+                      decoration: InputDecoration(
+                          labelText: 'Rating', border: OutlineInputBorder()),
                       builder: (context, state) {
-                        return Container();
+                        return Container(
+                            alignment: Alignment.center,
+                            child: RatingBar(
+                              initialRating: state.value,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              itemCount: 5,
+                              unratedColor: Colors.grey,
+                              itemPadding:
+                                  EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                print(rating);
+                                formBloc.rating.updateValue(rating);
+                              },
+                            ));
                       },
                     ),
                     SizedBox(height: 10),
@@ -587,7 +693,9 @@ class _OrderPageState extends State<OrderPage> {
             OrderAdditionPage(
               data: widget.data,
             ),
-            OrderCommentPage(),
+            OrderCommentPage(
+              data: widget.data,
+            ),
           ];
         }
 

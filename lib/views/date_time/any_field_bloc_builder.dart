@@ -65,11 +65,15 @@ class AnyFieldBlocBuilderState<T> extends State<AnyFieldBlocBuilder<T>> {
 
   void _onFocusRequest() {
     if (_effectiveFocusNode.hasFocus) {
-      // _showPicker(context);
+      _showPicker(context);
     }
   }
 
   void _showPicker(BuildContext context) async {
+    if (_showPicker == null) {
+      return;
+    }
+
     FocusScope.of(context).requestFocus(FocusNode());
     var result = await widget.onPick(context);
 
