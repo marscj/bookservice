@@ -528,18 +528,64 @@ class _OrderCommentPageState extends State<OrderCommentPage> {
                                       state.list[i].user?.photo['thumbnail'])
                                   : ExactAssetImage('assets/images/user.png')),
                         )),
-                    title: Text(state.list[i].comment),
-                    subtitle: Text(
-                      '${state.list[i].user.name}  ${state.list[i].create_at}',
+                    title: Text(
+                        '${state.list[i].comment}\n${state.list[i].user.name}  ${state.list[i].create_at}'),
+                    subtitle: RatingBar(
+                      initialRating: state.list[i].rating.toDouble(),
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      itemCount: 5,
+                      itemSize: 24,
+                      unratedColor: Colors.grey,
+                      itemPadding:
+                          EdgeInsets.symmetric(horizontal: 1.0, vertical: 12),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {},
                     ),
                     trailing: IconButton(
                       icon: Icon(Icons.reply),
                       onPressed: () {
                         showCommentModal(context, state.list[i].id, 'comment',
-                            reply: state.list[i]);
+                                reply: state.list[i])
+                            .then((value) {
+                          if (value != null && value) {
+                            bloc.add(CommentRefreshList(widget.data.id));
+                            bloc.refreshController.requestRefresh();
+                          }
+                        });
                       },
                     ),
                   ),
+                  Container(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: ListBody(
+                        children: state.list[i].child.map((e) {
+                          return ListTile(
+                              isThreeLine: true,
+                              dense: true,
+                              leading: Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(32)),
+                                    image: DecorationImage(
+                                        image: state.list[i].user
+                                                    ?.photo['thumbnail'] !=
+                                                null
+                                            ? NetworkImage(state.list[i].user
+                                                ?.photo['thumbnail'])
+                                            : ExactAssetImage(
+                                                'assets/images/user.png')),
+                                  )),
+                              title: Text('${e.comment}'),
+                              subtitle: Text('${e.user.name}  ${e.create_at}'));
+                        }).toList(),
+                      ))
                 ],
               ),
             ),
