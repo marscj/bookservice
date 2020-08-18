@@ -460,14 +460,12 @@ class JoinPage extends StatelessWidget {
                       image: ExactAssetImage('assets/images/join.png'))),
             ),
             SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(40),
-                child: Text(
-                  Localization.of(context).sendJoninfo,
-                  style: TextStyle(fontSize: 20),
-                ),
+            Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(40),
+              child: Text(
+                Localization.of(context).sendJoninfo,
+                style: TextStyle(fontSize: 20),
               ),
             )
           ],

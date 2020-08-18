@@ -829,85 +829,78 @@ class _OrderPageState extends State<OrderPage> {
                         BlocProvider.of<AdditionBloc>(context);
                     CommentBloc commentBloc =
                         BlocProvider.of<CommentBloc>(context);
-                    return Theme(
-                        data: Theme.of(context).copyWith(
-                            bottomNavigationBarTheme:
-                                BottomNavigationBarThemeData(
-                                    backgroundColor: Colors.red,
-                                    selectedIconTheme:
-                                        IconThemeData(color: Colors.white))),
-                        child: Scaffold(
-                            appBar: AppBar(
-                              title: Text(
-                                title[selectedIndex],
-                              ),
-                              actions: state.user.role == 0
-                                  ? actions(additionBloc, commentBloc)
-                                  : null,
-                            ),
-                            body: PageView(
-                              onPageChanged: (page) {
-                                setState(() {
-                                  selectedIndex = page;
-                                });
-                              },
-                              controller: controller,
-                              children: pages(),
-                            ),
-                            bottomNavigationBar: FlashyTabBar(
-                              backgroundColor: Colors.white,
-                              animationCurve: Curves.linear,
-                              selectedIndex: selectedIndex,
-                              showElevation: true,
-                              onItemSelected: (index) => setState(() {
-                                selectedIndex = index;
-                                controller.jumpToPage(index);
-                              }),
-                              items: tabs(),
-                            )
-                            // SafeArea(
-                            //   child: Container(
-                            //     margin: EdgeInsets.symmetric(horizontal: 10),
-                            //     decoration: BoxDecoration(
-                            //         color: Colors.white,
-                            //         borderRadius:
-                            //             BorderRadius.all(Radius.circular(100)),
-                            //         boxShadow: [
-                            //           BoxShadow(
-                            //               spreadRadius: -10,
-                            //               blurRadius: 60,
-                            //               color: Colors.black.withOpacity(.20),
-                            //               offset: Offset(0, 15))
-                            //         ]),
-                            //     child: Padding(
-                            //       padding: const EdgeInsets.symmetric(
-                            //           horizontal: 5.0, vertical: 5),
-                            //       child: GNav(
-                            //           tabs: tabs().map((e) {
-                            //             return GButton(
-                            //               gap: 10,
-                            //               iconActiveColor: e.color,
-                            //               iconColor: Colors.grey,
-                            //               textColor: e.color,
-                            //               backgroundColor: e.color.withOpacity(.2),
-                            //               iconSize: 24,
-                            //               padding: EdgeInsets.symmetric(
-                            //                   horizontal: 18, vertical: 5),
-                            //               icon: e.icon,
-                            //               text: e.text,
-                            //             );
-                            //           }).toList(),
-                            //           selectedIndex: selectedIndex,
-                            //           onTabChange: (index) {
-                            //             setState(() {
-                            //               selectedIndex = index;
-                            //             });
-                            //             controller.jumpToPage(index);
-                            //           }),
-                            //     ),
-                            //   ),
-                            // ),
-                            ));
+                    return Scaffold(
+                        appBar: AppBar(
+                          title: Text(
+                            title[selectedIndex],
+                          ),
+                          actions: state.user.role == 0
+                              ? actions(additionBloc, commentBloc)
+                              : null,
+                        ),
+                        body: PageView(
+                          onPageChanged: (page) {
+                            setState(() {
+                              selectedIndex = page;
+                            });
+                          },
+                          controller: controller,
+                          children: pages(),
+                        ),
+                        bottomNavigationBar: FlashyTabBar(
+                          backgroundColor: Colors.white,
+                          animationCurve: Curves.linear,
+                          selectedIndex: selectedIndex,
+                          showElevation: true,
+                          onItemSelected: (index) => setState(() {
+                            selectedIndex = index;
+                            controller.jumpToPage(index);
+                          }),
+                          items: tabs(),
+                        )
+                        // SafeArea(
+                        //   child: Container(
+                        //     margin: EdgeInsets.symmetric(horizontal: 10),
+                        //     decoration: BoxDecoration(
+                        //         color: Colors.white,
+                        //         borderRadius:
+                        //             BorderRadius.all(Radius.circular(100)),
+                        //         boxShadow: [
+                        //           BoxShadow(
+                        //               spreadRadius: -10,
+                        //               blurRadius: 60,
+                        //               color: Colors.black.withOpacity(.20),
+                        //               offset: Offset(0, 15))
+                        //         ]),
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 5.0, vertical: 5),
+                        //       child: GNav(
+                        //           tabs: tabs().map((e) {
+                        //             return GButton(
+                        //               gap: 10,
+                        //               iconActiveColor: e.color,
+                        //               iconColor: Colors.grey,
+                        //               textColor: e.color,
+                        //               backgroundColor: e.color.withOpacity(.2),
+                        //               iconSize: 24,
+                        //               padding: EdgeInsets.symmetric(
+                        //                   horizontal: 18, vertical: 5),
+                        //               icon: e.icon,
+                        //               text: e.text,
+                        //             );
+                        //           }).toList(),
+                        //           selectedIndex: selectedIndex,
+                        //           onTabChange: (index) {
+                        //             setState(() {
+                        //               selectedIndex = index;
+                        //             });
+                        //             controller.jumpToPage(index);
+                        //           }),
+                        //     ),
+                        //   ),
+                        // ),
+                        );
                   },
                 );
               },

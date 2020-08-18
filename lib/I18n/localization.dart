@@ -45,6 +45,8 @@ class Localization implements WidgetsLocalizations {
 
   String get orders => 'ORDERS';
 
+  String get jobs => 'JOBS';
+
   String get settings => 'SETTINGS';
 
   String get ourServices => 'Our Services';
@@ -398,6 +400,9 @@ class $ar extends Localization {
   String get orders => 'ORDERS';
 
   @override
+  String get jobs => 'JOBS';
+
+  @override
   String get settings => 'SETTINGS';
 
   @override
@@ -724,6 +729,9 @@ class $en extends Localization {
 
   @override
   String get orders => 'ORDERS';
+
+  @override
+  String get jobs => 'JOBS';
 
   @override
   String get settings => 'SETTINGS';
