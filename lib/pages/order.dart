@@ -167,152 +167,188 @@ class _OrderPostPageState extends State<OrderPostPage> {
   Widget build(BuildContext context) {
     bool post = widget?.data?.id == null;
 
-    final Widget body = Builder(
-      builder: (context) {
-        OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
-        DateTime dateTime = DateTime.now();
-        Widget body = FormBlocListener<OrderFormBloc, String, String>(
-            onSubmitting: (context, state) {
-              LoadingDialog.show(context);
-            },
-            onSuccess: (context, state) {
-              LoadingDialog.hide(context);
-              if (formBloc.nextStep) {
-                context.navigator.replace('/addition/post',
-                    arguments:
-                        AdditionPostPageArguments(postId: formBloc.data.id));
-              } else {
-                context.navigator.pop();
-              }
-            },
-            onFailure: (context, state) {
-              LoadingDialog.hide(context);
-            },
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              children: <Widget>[
-                Visibility(
-                  visible: !post,
-                  child: DropdownFieldBlocBuilder(
+    Widget body() {
+      return Builder(
+        builder: (context) {
+          OrderFormBloc formBloc = BlocProvider.of<OrderFormBloc>(context);
+          DateTime dateTime = DateTime.now();
+          Widget body = FormBlocListener<OrderFormBloc, String, String>(
+              onSubmitting: (context, state) {
+                LoadingDialog.show(context);
+              },
+              onSuccess: (context, state) {
+                LoadingDialog.hide(context);
+                if (formBloc.nextStep) {
+                  context.navigator.replace('/addition/post',
+                      arguments:
+                          AdditionPostPageArguments(postId: formBloc.data.id));
+                } else {
+                  context.navigator.pop();
+                }
+              },
+              onFailure: (context, state) {
+                LoadingDialog.hide(context);
+              },
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                children: <Widget>[
+                  Visibility(
+                    visible: !post,
+                    child: DropdownFieldBlocBuilder(
+                      showEmptyItem: false,
+                      isEnabled: false,
+                      decoration: InputDecoration(
+                          labelText: 'Status', border: OutlineInputBorder()),
+                      itemBuilder: (context, value) =>
+                          Localization.of(context).orderStatus[value],
+                      selectFieldBloc: formBloc.status,
+                    ),
+                  ),
+                  DropdownFieldBlocBuilder(
                     showEmptyItem: false,
-                    isEnabled: false,
-                    decoration: InputDecoration(
-                        labelText: 'Status', border: OutlineInputBorder()),
-                    itemBuilder: (context, value) =>
-                        Localization.of(context).orderStatus[value],
-                    selectFieldBloc: formBloc.status,
-                  ),
-                ),
-                DropdownFieldBlocBuilder(
-                  showEmptyItem: false,
-                  isEnabled: post,
-                  decoration: InputDecoration(
-                      labelText: 'Service', border: OutlineInputBorder()),
-                  itemBuilder: (context, value) =>
-                      Localization.of(context).serviceType[value],
-                  selectFieldBloc: formBloc.service,
-                ),
-                DropdownFieldBlocBuilder(
-                  showEmptyItem: false,
-                  isEnabled: post,
-                  decoration: InputDecoration(
-                      labelText: 'Main Info', border: OutlineInputBorder()),
-                  itemBuilder: (context, value) => Localization.of(context)
-                      .mainInfo[value.service][value.main],
-                  selectFieldBloc: formBloc.main_info,
-                ),
-                DropdownFieldBlocBuilder(
-                  showEmptyItem: false,
-                  isEnabled: post,
-                  decoration: InputDecoration(
-                      labelText: 'Sub Info', border: OutlineInputBorder()),
-                  itemBuilder: (context, value) => Localization.of(context)
-                      .subInfo[value.service][value.main][value.sub],
-                  selectFieldBloc: formBloc.sub_info,
-                ),
-                AnyFieldBlocBuilder<Address>(
-                    inputFieldBloc: formBloc.address,
-                    onPick: showAddressPickModal,
                     isEnabled: post,
-                    showClearIcon: post,
                     decoration: InputDecoration(
-                        labelText: 'Address', border: OutlineInputBorder()),
-                    builder: (context, state) {
-                      return Text(
-                        state?.value?.address ?? '',
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                        style: IStyle.Style.getDefaultTextStyle(
-                          context: context,
-                          isEnabled: post,
-                        ),
-                      );
-                    }),
-                _IL.DateTimeFieldBlocBuilder(
-                  dateTimeFieldBloc: formBloc.from_date,
-                  canSelectTime: true,
-                  isEnabled: post,
-                  showClearIcon: false,
-                  format: DateFormat('yyyy-MM-dd HH:mm'),
-                  initialDate: DateTime(
-                      dateTime.year, dateTime.month, dateTime.day + 1, 12),
-                  firstDate:
-                      DateTime(dateTime.year, dateTime.month, dateTime.day, 12),
-                  lastDate: DateTime(
-                      dateTime.year, dateTime.month, dateTime.day + 30),
-                  decoration: InputDecoration(
-                      labelText: 'From Date',
-                      prefixIcon: Icon(Icons.calendar_today),
-                      border: OutlineInputBorder()),
-                ),
-                _IL.DateTimeFieldBlocBuilder(
-                  dateTimeFieldBloc: formBloc.to_date,
-                  canSelectTime: true,
-                  isEnabled: post,
-                  showClearIcon: false,
-                  format: DateFormat('yyyy-MM-dd HH:mm'),
-                  initialDate: DateTime(
-                      dateTime.year, dateTime.month, dateTime.day + 1, 14),
-                  firstDate:
-                      DateTime(dateTime.year, dateTime.month, dateTime.day, 14),
-                  lastDate: DateTime(
-                      dateTime.year, dateTime.month, dateTime.day + 30),
-                  decoration: InputDecoration(
-                      labelText: 'To Date',
-                      prefixIcon: Icon(Icons.calendar_today),
-                      border: OutlineInputBorder()),
-                ),
-                SizedBox(height: 10),
-                Visibility(
-                  visible: post,
-                  child: RaisedButton(
-                    child: Text(Localization.of(context).submit),
-                    onPressed: () {
-                      formBloc.submit();
-                    },
+                        labelText: 'Service', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) =>
+                        Localization.of(context).serviceType[value],
+                    selectFieldBloc: formBloc.service,
                   ),
-                )
-              ],
-            ));
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    isEnabled: post,
+                    decoration: InputDecoration(
+                        labelText: 'Main Info', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) => Localization.of(context)
+                        .mainInfo[value.service][value.main],
+                    selectFieldBloc: formBloc.main_info,
+                  ),
+                  DropdownFieldBlocBuilder(
+                    showEmptyItem: false,
+                    isEnabled: post,
+                    decoration: InputDecoration(
+                        labelText: 'Sub Info', border: OutlineInputBorder()),
+                    itemBuilder: (context, value) => Localization.of(context)
+                        .subInfo[value.service][value.main][value.sub],
+                    selectFieldBloc: formBloc.sub_info,
+                  ),
+                  AnyFieldBlocBuilder<Address>(
+                      inputFieldBloc: formBloc.address,
+                      onPick: showAddressPickModal,
+                      isEnabled: post,
+                      showClearIcon: post,
+                      decoration: InputDecoration(
+                          labelText: 'Address', border: OutlineInputBorder()),
+                      builder: (context, state) {
+                        return Text(
+                          state?.value?.address ?? '',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
+                          style: IStyle.Style.getDefaultTextStyle(
+                            context: context,
+                            isEnabled: post,
+                          ),
+                        );
+                      }),
+                  _IL.DateTimeFieldBlocBuilder(
+                    dateTimeFieldBloc: formBloc.from_date,
+                    canSelectTime: true,
+                    isEnabled: post,
+                    showClearIcon: false,
+                    format: DateFormat('yyyy-MM-dd HH:mm'),
+                    initialDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 1, 12),
+                    firstDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day, 12),
+                    lastDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 30),
+                    decoration: InputDecoration(
+                        labelText: 'From Date',
+                        prefixIcon: Icon(Icons.calendar_today),
+                        border: OutlineInputBorder()),
+                  ),
+                  _IL.DateTimeFieldBlocBuilder(
+                    dateTimeFieldBloc: formBloc.to_date,
+                    canSelectTime: true,
+                    isEnabled: post,
+                    showClearIcon: false,
+                    format: DateFormat('yyyy-MM-dd HH:mm'),
+                    initialDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 1, 14),
+                    firstDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day, 14),
+                    lastDate: DateTime(
+                        dateTime.year, dateTime.month, dateTime.day + 30),
+                    decoration: InputDecoration(
+                        labelText: 'To Date',
+                        prefixIcon: Icon(Icons.calendar_today),
+                        border: OutlineInputBorder()),
+                  ),
+                  SizedBox(height: 10),
+                  Visibility(
+                    visible: post,
+                    child: RaisedButton(
+                      child: Text(Localization.of(context).submit),
+                      onPressed: () {
+                        formBloc.submit();
+                      },
+                    ),
+                  )
+                ],
+              ));
 
-        return post
-            ? Scaffold(
-                key: _scaffoldKey,
-                appBar: AppBar(
-                  title: Text('Order New'),
-                ),
-                body: body)
-            : body;
-      },
-    );
+          return post
+              ? Scaffold(
+                  key: _scaffoldKey,
+                  appBar: AppBar(
+                    title: Text('Order New'),
+                  ),
+                  body: body)
+              : body;
+        },
+      );
+    }
 
     if (post) {
       return BlocProvider<OrderFormBloc>(
           create: (_) => OrderFormBloc(context, widget.data, true),
-          child: body);
+          child: body());
     } else {
-      return body;
+      return BlocProvider<OrderBloc>(
+          create: (context) => OrderBloc(),
+          child: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
+            OrderBloc bloc = BlocProvider.of<OrderBloc>(context);
+
+            return SmartRefresher(
+              enablePullDown: true,
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull up load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = CupertinoActivityIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed!Click retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: bloc.refreshController,
+              onRefresh: () => bloc.add(RefreshOrder(widget.data.id)),
+              child: BlocProvider<OrderFormBloc>(
+                  create: (_) => OrderFormBloc(context, state.order, true),
+                  child: state.order != null ? body() : Container()),
+            );
+          }));
     }
   }
 }

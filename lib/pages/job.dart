@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:bookservice/apis/client.dart';
 import 'package:bookservice/bloc/job_bloc.dart';
+import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/ifnone_widget.dart';
 import 'package:card_settings/card_settings.dart';
 import 'package:flutter/cupertino.dart';
@@ -144,7 +146,11 @@ class JobItem extends StatelessWidget {
                 isDestructive: true,
                 backgroundColor: Theme.of(context).cardColor,
                 textColor: Theme.of(context).buttonColor,
-                onPressed: () {},
+                onPressed: () {
+                  ExtendedNavigator.of(context).push('/order/${data.order_id}',
+                      arguments:
+                          OrderPageArguments(data: Order(id: data.order_id)));
+                },
               )
             ],
           )

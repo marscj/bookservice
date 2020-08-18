@@ -31,8 +31,7 @@ class OrderState extends Equatable {
 
   factory OrderState.initial() => OrderState();
 
-  OrderState copyWith({Order order}) =>
-      OrderState(order: this.order ?? this.order);
+  OrderState copyWith({Order order}) => OrderState(order: this.order ?? order);
 
   @override
   List<Object> get props => [order];
