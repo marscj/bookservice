@@ -26,7 +26,8 @@ class AdditionBloc extends Bloc<AdditionEvent, AdditionState> {
     if (event is AdditionRefreshList) {
       yield await RestService.instance.getImages(query: {
         'object_id': event.object_id,
-        'content_type': 'order'
+        'content_type': 'order',
+        'sorter': '-id'
       }).then<AdditionState>((value) {
         refreshController.refreshCompleted();
         return state.copyWith(list: value ?? []);

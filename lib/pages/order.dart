@@ -330,75 +330,74 @@ class OrderAdditionPage extends StatefulWidget {
 class _OrderAdditionPageState extends State<OrderAdditionPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AdditionBloc>(
-        create: (context) => AdditionBloc(),
-        child: BlocBuilder<AdditionBloc, AdditionState>(
-          builder: (context, state) {
-            AdditionBloc bloc = BlocProvider.of<AdditionBloc>(context);
+    return BlocBuilder<AdditionBloc, AdditionState>(
+      builder: (context, state) {
+        AdditionBloc bloc = BlocProvider.of<AdditionBloc>(context);
 
-            return SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: false,
-              header: WaterDropHeader(),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = Text("pull up load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = CupertinoActivityIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    body = Text("Load Failed!Click retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = Text("release to load more");
-                  } else {
-                    body = Text("No more Data");
-                  }
-                  return Container(
-                    height: 55.0,
-                    child: Center(child: body),
-                  );
+        return SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = Text("pull up load");
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
+            },
+          ),
+          controller: bloc.refreshController,
+          onRefresh: () => bloc.add(AdditionRefreshList(widget.data.id)),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 25);
+            },
+            itemBuilder: (c, i) => GestureDetector(
+                onTap: () {
+                  context.navigator.push('/image/order',
+                      arguments: ViewOrderImageArguments(
+                          url: state.list[i].image['full_size']));
                 },
-              ),
-              controller: bloc.refreshController,
-              onRefresh: () => bloc.add(AdditionRefreshList(widget.data.id)),
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 25);
-                },
-                itemBuilder: (c, i) => GestureDetector(
-                    onTap: () {
-                      context.navigator.push('/image/order',
-                          arguments: ViewOrderImageArguments(
-                              url: state.list[i].image['full_size']));
-                    },
+                child: AspectRatio(
+                    aspectRatio: 16.0 / 9.0,
                     child: Container(
+                      height: 300,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        shape: BoxShape.rectangle,
-                        color: Colors.grey[300],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Image.network(
-                                state.list[i].image['full_size'],
-                                fit: BoxFit.cover),
-                          ),
-                          Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 20),
-                              child: Text(state.list[i].tag ?? '')),
-                        ],
-                      ),
-                    )),
-                itemCount: state.list.length,
-              ),
-            );
-          },
-        ));
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                  state.list[i].image['full_size']))),
+                      child: Container(
+                          alignment: Alignment.bottomCenter,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          child: Text(
+                            state.list[i].tag ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                .copyWith(color: Colors.white),
+                          )),
+                    ))),
+            itemCount: state.list.length,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -451,7 +450,7 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
-        List<Widget> actions() {
+        List<Widget> actions(AdditionBloc bloc) {
           switch (selectedIndex) {
             case 0:
             case 3:
@@ -466,7 +465,10 @@ class _OrderPageState extends State<OrderPage> {
                               arguments: AdditionPostPageArguments(
                                   postId: widget.data.id))
                           .then((value) {
-                        if (value != null && value) {}
+                        if (value != null && value) {
+                          bloc.add(AdditionRefreshList(widget.data.id));
+                          bloc.refreshController.requestRefresh();
+                        }
                       });
                     })
               ];
@@ -475,6 +477,8 @@ class _OrderPageState extends State<OrderPage> {
           }
           return [];
         }
+
+        List<String> title = ['BaseInfo', 'Additional', 'Comment'];
 
         List<Widget> child() {
           return [
@@ -494,72 +498,78 @@ class _OrderPageState extends State<OrderPage> {
           ];
         }
 
-        final Widget body = Scaffold(
-          extendBody: true,
-          appBar: AppBar(
-            title: Text(
-              'OrderDetail',
-            ),
-            actions: actions(),
-          ),
-          body: PageView(
-            onPageChanged: (page) {
-              setState(() {
-                selectedIndex = page;
-              });
-            },
-            controller: controller,
-            children: child(),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
-                  boxShadow: [
-                    BoxShadow(
-                        spreadRadius: -10,
-                        blurRadius: 60,
-                        color: Colors.black.withOpacity(.20),
-                        offset: Offset(0, 15))
-                  ]),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-                child: GNav(
-                    tabs: tabs().map((e) {
-                      return GButton(
-                        gap: 10,
-                        iconActiveColor: e.color,
-                        iconColor: Colors.grey,
-                        textColor: e.color,
-                        backgroundColor: e.color.withOpacity(.2),
-                        iconSize: 24,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-                        icon: e.icon,
-                        text: e.text,
-                      );
-                    }).toList(),
-                    selectedIndex: selectedIndex,
-                    onTabChange: (index) {
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<OrderFormBloc>(
+                  create: (_) => OrderFormBloc(context, widget.data, false)),
+              BlocProvider<AdditionBloc>(create: (context) => AdditionBloc()),
+              BlocProvider<CommentBloc>(create: (context) => CommentBloc()),
+            ],
+            child: Builder(
+              builder: (context) {
+                AdditionBloc additionBloc =
+                    BlocProvider.of<AdditionBloc>(context);
+                return Scaffold(
+                  extendBody: true,
+                  appBar: AppBar(
+                    title: Text(
+                      title[selectedIndex],
+                    ),
+                    actions: actions(additionBloc),
+                  ),
+                  body: PageView(
+                    onPageChanged: (page) {
                       setState(() {
-                        selectedIndex = index;
+                        selectedIndex = page;
                       });
-                      controller.jumpToPage(index);
-                    }),
-              ),
-            ),
-          ),
-        );
-
-        return MultiBlocProvider(providers: [
-          BlocProvider<OrderFormBloc>(
-              create: (_) => OrderFormBloc(context, widget.data, false)),
-          BlocProvider<AdditionBloc>(create: (context) => AdditionBloc()),
-          BlocProvider<CommentBloc>(create: (context) => CommentBloc()),
-        ], child: body);
+                    },
+                    controller: controller,
+                    children: child(),
+                  ),
+                  bottomNavigationBar: SafeArea(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: -10,
+                                blurRadius: 60,
+                                color: Colors.black.withOpacity(.20),
+                                offset: Offset(0, 15))
+                          ]),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 5),
+                        child: GNav(
+                            tabs: tabs().map((e) {
+                              return GButton(
+                                gap: 10,
+                                iconActiveColor: e.color,
+                                iconColor: Colors.grey,
+                                textColor: e.color,
+                                backgroundColor: e.color.withOpacity(.2),
+                                iconSize: 24,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 18, vertical: 5),
+                                icon: e.icon,
+                                text: e.text,
+                              );
+                            }).toList(),
+                            selectedIndex: selectedIndex,
+                            onTabChange: (index) {
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                              controller.jumpToPage(index);
+                            }),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ));
       },
     );
   }
