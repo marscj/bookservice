@@ -9,6 +9,7 @@ import 'package:bookservice/bloc/order_bloc.dart';
 import 'package:bookservice/router/router.gr.dart';
 import 'package:bookservice/views/date_time/any_field_bloc_builder.dart';
 import 'package:bookservice/views/dialog.dart';
+import 'package:bookservice/views/ifnone_widget.dart';
 import 'package:bookservice/views/modal.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -509,16 +510,39 @@ class _OrderCommentPageState extends State<OrderCommentPage> {
           onRefresh: () => bloc.add(CommentRefreshList(widget.data.id)),
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            separatorBuilder: (context, index) {
-              return SizedBox(height: 25);
-            },
-            itemBuilder: (c, i) => GestureDetector(
-                onTap: () {
-                  context.navigator.push('/image/order',
-                      arguments: ViewOrderImageArguments(
-                          url: state.list[i].image['full_size']));
-                },
-                child: Container()),
+            separatorBuilder: (context, index) => Divider(),
+            itemBuilder: (c, i) => Container(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(32)),
+                          image: DecorationImage(
+                              image: state.list[i].user?.photo['thumbnail'] !=
+                                      null
+                                  ? NetworkImage(
+                                      state.list[i].user?.photo['thumbnail'])
+                                  : ExactAssetImage('assets/images/user.png')),
+                        )),
+                    title: Text(state.list[i].comment),
+                    subtitle: Text(
+                      '${state.list[i].user.name}  ${state.list[i].create_at}',
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.reply),
+                      onPressed: () {
+                        showCommentModal(context, state.list[i].id, 'comment',
+                            reply: state.list[i]);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
             itemCount: state.list.length,
           ),
         );
@@ -530,8 +554,10 @@ class _OrderCommentPageState extends State<OrderCommentPage> {
 class OrderCommentPostPage extends StatefulWidget {
   final int objectid;
   final String contenttype;
+  final Comment reply;
 
-  const OrderCommentPostPage({Key key, this.objectid, this.contenttype})
+  const OrderCommentPostPage(
+      {Key key, this.objectid, this.contenttype, this.reply})
       : super(key: key);
 
   @override
@@ -560,37 +586,73 @@ class _OrderCommentPostPageState extends State<OrderCommentPostPage> {
                 LoadingDialog.hide(context);
               },
               child: Scaffold(
-                appBar: AppBar(),
                 body: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   children: [
-                    SizedBox(height: 20),
-                    AnyFieldBlocBuilder<double>(
-                      inputFieldBloc: formBloc.rating,
-                      showClearIcon: false,
-                      decoration: InputDecoration(
-                          labelText: 'Rating', border: OutlineInputBorder()),
-                      builder: (context, state) {
-                        return Container(
-                            alignment: Alignment.center,
-                            child: RatingBar(
-                              initialRating: state.value,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              itemCount: 5,
-                              unratedColor: Colors.grey,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
+                    IfNoneWidget(
+                      basis: widget.reply != null,
+                      builder: (context) {
+                        return ListBody(
+                          children: [
+                            SizedBox(height: 10),
+                            ListTile(
+                              leading: Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(32)),
+                                    image: DecorationImage(
+                                        image: widget.reply.user
+                                                    ?.photo['thumbnail'] !=
+                                                null
+                                            ? NetworkImage(widget
+                                                .reply.user?.photo['thumbnail'])
+                                            : ExactAssetImage(
+                                                'assets/images/user.png')),
+                                  )),
+                              title: Text(widget.reply.comment),
+                              subtitle: Text(
+                                '${widget.reply.user.name}  ${widget.reply.create_at}',
                               ),
-                              onRatingUpdate: (rating) {
-                                print(rating);
-                                formBloc.rating.updateValue(rating);
-                              },
-                            ));
+                            ),
+                          ],
+                        );
                       },
+                      none: ListBody(
+                        children: [
+                          SizedBox(height: 10),
+                          AnyFieldBlocBuilder<double>(
+                            inputFieldBloc: formBloc.rating,
+                            showClearIcon: false,
+                            decoration: InputDecoration(
+                                labelText: 'Rating',
+                                border: OutlineInputBorder()),
+                            builder: (context, state) {
+                              return Container(
+                                  alignment: Alignment.center,
+                                  child: RatingBar(
+                                    initialRating: state.value,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    itemCount: 5,
+                                    unratedColor: Colors.grey,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 4.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print(rating);
+                                      formBloc.rating.updateValue(rating);
+                                    },
+                                  ));
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 10),
                     TextFieldBlocBuilder(
@@ -651,11 +713,7 @@ class _OrderPageState extends State<OrderPage> {
                 IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () {
-                      context.navigator
-                          .push('/addition/post',
-                              arguments: AdditionPostPageArguments(
-                                  postId: widget.data.id))
-                          .then((value) {
+                      showImagePostModal(context, widget.data.id).then((value) {
                         if (value != null && value) {
                           additionBloc.add(AdditionRefreshList(widget.data.id));
                           additionBloc.refreshController.requestRefresh();
@@ -668,11 +726,7 @@ class _OrderPageState extends State<OrderPage> {
                 IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () {
-                      context.navigator
-                          .push('/comment/post',
-                              arguments: OrderCommentPostPageArguments(
-                                  objectid: widget.data.id,
-                                  contenttype: 'order'))
+                      showCommentModal(context, widget.data.id, 'order')
                           .then((value) {
                         if (value != null && value) {
                           commentBloc.add(CommentRefreshList(widget.data.id));
@@ -817,8 +871,6 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                 LoadingDialog.hide(context);
               },
               child: Scaffold(
-                key: _scaffoldKey,
-                appBar: AppBar(),
                 body: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   children: [
@@ -828,8 +880,9 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
                       showClearIcon: true,
                       onPick: showImagePickModal,
                       builder: (context, state) {
-                        return AspectRatio(
-                            aspectRatio: 16.0 / 9.0,
+                        return Container(
+                            width: 64,
+                            height: 96,
                             child: DottedBorder(
                                 color: Colors.black,
                                 strokeWidth: 1,

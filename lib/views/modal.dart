@@ -102,3 +102,21 @@ Future<T> showAddressPickModal<T>(BuildContext context) async {
         );
       });
 }
+
+Future<T> showCommentModal<T>(BuildContext context, objectid, contenttype,
+    {reply}) async {
+  return showModalBottomSheet<T>(
+      context: context,
+      builder: (BuildContext context) {
+        return OrderCommentPostPage(
+            objectid: objectid, contenttype: contenttype, reply: reply);
+      });
+}
+
+Future<T> showImagePostModal<T>(BuildContext context, postId) async {
+  return showModalBottomSheet<T>(
+      context: context,
+      builder: (BuildContext context) {
+        return AdditionPostPage(postId: postId);
+      });
+}
