@@ -43,6 +43,8 @@ import 'package:flutter/material.dart';
     AdaptiveRoute(path: '/order/:id?/post', page: OrderPostPage),
     AdaptiveRoute(
         path: '/addition/post', page: AdditionPostPage, fullscreenDialog: true),
+    AdaptiveRoute(
+        path: '/image/order', page: ViewOrderImage, fullscreenDialog: true),
   ],
 )
 class $Router {}

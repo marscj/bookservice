@@ -18,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_form_bloc/src/utils/style.dart' as IStyle;
 import 'package:line_icons/line_icons.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
     as _IL;
@@ -369,29 +370,35 @@ class _OrderAdditionPageState extends State<OrderAdditionPage> {
                 separatorBuilder: (context, index) {
                   return SizedBox(height: 25);
                 },
-                itemBuilder: (c, i) => Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    shape: BoxShape.rectangle,
-                    color: Colors.grey[300],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 250,
-                        child: Image.network(state.list[i].image['full_size'],
-                            fit: BoxFit.cover),
+                itemBuilder: (c, i) => GestureDetector(
+                    onTap: () {
+                      context.navigator.push('/image/order',
+                          arguments: ViewOrderImageArguments(
+                              url: state.list[i].image['full_size']));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        shape: BoxShape.rectangle,
+                        color: Colors.grey[300],
                       ),
-                      Container(
-                          height: 100,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: Expanded(
-                            child: Text(state.list[i].tag ?? ''),
-                          ))
-                    ],
-                  ),
-                ),
+                      height: 300,
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Image.network(
+                                state.list[i].image['full_size'],
+                                fit: BoxFit.cover),
+                          ),
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(state.list[i].tag ?? ''))),
+                        ],
+                      ),
+                    )),
                 itemCount: state.list.length,
               ),
             );
@@ -676,5 +683,39 @@ class _AdditionPostPageState extends State<AdditionPostPage> {
             );
           },
         ));
+  }
+}
+
+class ViewOrderImage extends StatelessWidget {
+  final String url;
+
+  const ViewOrderImage({Key key, this.url}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+        data: Theme.of(context).copyWith(
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.normal),
+            appBarTheme: AppBarTheme(
+                elevation: 0,
+                color: Colors.black,
+                iconTheme: IconThemeData(color: Colors.white),
+                textTheme: GoogleFonts.righteousTextTheme(
+                  Theme.of(context).textTheme.apply(
+                      displayColor: Colors.white, bodyColor: Colors.white),
+                ),
+                brightness: Brightness.dark)),
+        child: Scaffold(
+            appBar: AppBar(),
+            body: BlocBuilder<AppBloc, AppState>(builder: (context, state) {
+              return Stack(
+                children: <Widget>[
+                  Center(
+                      child: PhotoView(
+                          heroAttributes: PhotoViewHeroAttributes(tag: url),
+                          imageProvider: NetworkImage(url))),
+                ],
+              );
+            })));
   }
 }
