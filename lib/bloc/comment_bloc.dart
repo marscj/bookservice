@@ -24,7 +24,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     if (event is CommentRefreshList) {
       yield await RestService.instance.getImages(query: {
         'object_id': event.object_id,
-        'content_type': event.content_type,
+        'content_type': 'order',
         'sorter': '-id'
       }).then<CommentState>((value) {
         refreshController.refreshCompleted();
@@ -41,7 +41,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
 // ignore_for_file: non_constant_identifier_names
 class CommentFormBloc extends FormBloc<String, String> {
   TextFieldBloc comment = TextFieldBloc();
-  TextFieldBloc rating = TextFieldBloc();
+  InputFieldBloc<double, Object> rating = InputFieldBloc<double, Object>();
 
   final int object_id;
   final String content_type;
@@ -73,7 +73,7 @@ class CommentFormBloc extends FormBloc<String, String> {
       'object_id': object_id,
       'content_type': content_type,
       'comment': comment.value,
-      'rating': rating.valueToInt
+      'rating': rating.value
     }).then((value) {
       emitSuccess(canSubmitAgain: true);
     }).catchError((onError) {

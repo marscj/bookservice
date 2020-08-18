@@ -11,9 +11,8 @@ abstract class CommentEvent extends Equatable {
 
 class CommentRefreshList extends CommentEvent {
   final int object_id;
-  final int content_type;
 
-  CommentRefreshList(this.object_id, this.content_type);
+  CommentRefreshList(this.object_id);
 
   @override
   List<Object> get props => [object_id];

@@ -441,10 +441,10 @@ class _OrderCommentPageState extends State<OrderCommentPage> {
 }
 
 class OrderCommentPostPage extends StatefulWidget {
-  final int object_id;
-  final String content_type;
+  final int objectid;
+  final String contenttype;
 
-  const OrderCommentPostPage({Key key, this.object_id, this.content_type})
+  const OrderCommentPostPage({Key key, this.objectid, this.contenttype})
       : super(key: key);
 
   @override
@@ -454,7 +454,58 @@ class OrderCommentPostPage extends StatefulWidget {
 class _OrderCommentPostPageState extends State<OrderCommentPostPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return BlocProvider<CommentFormBloc>(
+        create: (_) =>
+            CommentFormBloc(context, widget.objectid, widget.contenttype),
+        child: Builder(
+          builder: (context) {
+            CommentFormBloc formBloc =
+                BlocProvider.of<CommentFormBloc>(context);
+            return FormBlocListener<CommentFormBloc, String, String>(
+              onSubmitting: (context, state) {
+                LoadingDialog.show(context);
+              },
+              onSuccess: (context, state) {
+                LoadingDialog.hide(context);
+                context.navigator.pop(true);
+              },
+              onFailure: (context, state) {
+                LoadingDialog.hide(context);
+              },
+              child: Scaffold(
+                appBar: AppBar(),
+                body: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  children: [
+                    SizedBox(height: 20),
+                    AnyFieldBlocBuilder<double>(
+                      inputFieldBloc: formBloc.rating,
+                      showClearIcon: true,
+                      onPick: showImagePickModal,
+                      builder: (context, state) {
+                        return Container();
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextFieldBlocBuilder(
+                      textFieldBloc: formBloc.comment,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                          labelText: 'Comment', border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10),
+                    RaisedButton(
+                      child: Text(Localization.of(context).submit),
+                      onPressed: () {
+                        formBloc.submit();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ));
   }
 }
 
@@ -483,7 +534,8 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
-        List<Widget> actions(AdditionBloc bloc) {
+        List<Widget> actions(
+            AdditionBloc additionBloc, CommentBloc commentBloc) {
           switch (selectedIndex) {
             case 0:
             case 3:
@@ -499,14 +551,30 @@ class _OrderPageState extends State<OrderPage> {
                                   postId: widget.data.id))
                           .then((value) {
                         if (value != null && value) {
-                          bloc.add(AdditionRefreshList(widget.data.id));
-                          bloc.refreshController.requestRefresh();
+                          additionBloc.add(AdditionRefreshList(widget.data.id));
+                          additionBloc.refreshController.requestRefresh();
                         }
                       });
                     })
               ];
             case 2:
-              return [IconButton(icon: Icon(Icons.add), onPressed: () {})];
+              return [
+                IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      context.navigator
+                          .push('/comment/post',
+                              arguments: OrderCommentPostPageArguments(
+                                  objectid: widget.data.id,
+                                  contenttype: 'order'))
+                          .then((value) {
+                        if (value != null && value) {
+                          commentBloc.add(CommentRefreshList(widget.data.id));
+                          commentBloc.refreshController.requestRefresh();
+                        }
+                      });
+                    })
+              ];
           }
           return [];
         }
@@ -542,13 +610,14 @@ class _OrderPageState extends State<OrderPage> {
               builder: (context) {
                 AdditionBloc additionBloc =
                     BlocProvider.of<AdditionBloc>(context);
+                CommentBloc commentBloc = BlocProvider.of<CommentBloc>(context);
                 return Scaffold(
                   extendBody: true,
                   appBar: AppBar(
                     title: Text(
                       title[selectedIndex],
                     ),
-                    actions: actions(additionBloc),
+                    actions: actions(additionBloc, commentBloc),
                   ),
                   body: PageView(
                     onPageChanged: (page) {
