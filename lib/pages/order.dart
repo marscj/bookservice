@@ -190,6 +190,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                 LoadingDialog.hide(context);
               },
               child: ListView(
+                primary: post,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 children: <Widget>[
                   Visibility(
