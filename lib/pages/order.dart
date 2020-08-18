@@ -12,6 +12,7 @@ import 'package:bookservice/views/dialog.dart';
 import 'package:bookservice/views/ifnone_widget.dart';
 import 'package:bookservice/views/modal.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flashy_tab_bar/flashy_tab_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -776,7 +777,7 @@ class _OrderPageState extends State<OrderPage> {
 
         List<String> title = ['BaseInfo', 'Additional', 'Comment'];
 
-        List<Widget> child() {
+        List<Widget> pages() {
           return [
             OrderPostPage(data: widget.data),
             OrderAdditionPage(
@@ -788,11 +789,28 @@ class _OrderPageState extends State<OrderPage> {
           ];
         }
 
-        List<OrderNav> tabs() {
+        // List<OrderNav> tabs() {
+        //   return [
+        //     OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
+        //     OrderNav(Colors.purple, Icons.image, 'Additional'),
+        //     OrderNav(Colors.pink, LineIcons.comment, 'Comment'),
+        //   ];
+        // }
+
+        List<FlashyTabBarItem> tabs() {
           return [
-            OrderNav(Colors.blue, LineIcons.calendar, 'Base'),
-            OrderNav(Colors.purple, Icons.image, 'Additional'),
-            OrderNav(Colors.pink, LineIcons.comment, 'Comment'),
+            FlashyTabBarItem(
+              icon: Icon(Icons.event),
+              title: Text('BaseInfo'),
+            ),
+            FlashyTabBarItem(
+              icon: Icon(Icons.image),
+              title: Text('Additional'),
+            ),
+            FlashyTabBarItem(
+              icon: Icon(Icons.comment),
+              title: Text('Comment'),
+            ),
           ];
         }
 
@@ -803,69 +821,94 @@ class _OrderPageState extends State<OrderPage> {
               BlocProvider<AdditionBloc>(create: (context) => AdditionBloc()),
               BlocProvider<CommentBloc>(create: (context) => CommentBloc()),
             ],
-            child: Builder(
-              builder: (context) {
-                AdditionBloc additionBloc =
-                    BlocProvider.of<AdditionBloc>(context);
-                CommentBloc commentBloc = BlocProvider.of<CommentBloc>(context);
-                return Scaffold(
-                  extendBody: true,
-                  appBar: AppBar(
-                    title: Text(
-                      title[selectedIndex],
-                    ),
-                    actions: actions(additionBloc, commentBloc),
-                  ),
-                  body: PageView(
-                    onPageChanged: (page) {
-                      setState(() {
-                        selectedIndex = page;
-                      });
-                    },
-                    controller: controller,
-                    children: child(),
-                  ),
-                  bottomNavigationBar: SafeArea(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: -10,
-                                blurRadius: 60,
-                                color: Colors.black.withOpacity(.20),
-                                offset: Offset(0, 15))
-                          ]),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 5),
-                        child: GNav(
-                            tabs: tabs().map((e) {
-                              return GButton(
-                                gap: 10,
-                                iconActiveColor: e.color,
-                                iconColor: Colors.grey,
-                                textColor: e.color,
-                                backgroundColor: e.color.withOpacity(.2),
-                                iconSize: 24,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 18, vertical: 5),
-                                icon: e.icon,
-                                text: e.text,
-                              );
-                            }).toList(),
-                            selectedIndex: selectedIndex,
-                            onTabChange: (index) {
-                              setState(() {
+            child: BlocBuilder<AppBloc, AppState>(
+              builder: (context, state) {
+                return Builder(
+                  builder: (context) {
+                    AdditionBloc additionBloc =
+                        BlocProvider.of<AdditionBloc>(context);
+                    CommentBloc commentBloc =
+                        BlocProvider.of<CommentBloc>(context);
+                    return Theme(
+                        data: Theme.of(context).copyWith(
+                            bottomNavigationBarTheme:
+                                BottomNavigationBarThemeData(
+                                    backgroundColor: Colors.red,
+                                    selectedIconTheme:
+                                        IconThemeData(color: Colors.white))),
+                        child: Scaffold(
+                            appBar: AppBar(
+                              title: Text(
+                                title[selectedIndex],
+                              ),
+                              actions: state.user.role == 0
+                                  ? actions(additionBloc, commentBloc)
+                                  : null,
+                            ),
+                            body: PageView(
+                              onPageChanged: (page) {
+                                setState(() {
+                                  selectedIndex = page;
+                                });
+                              },
+                              controller: controller,
+                              children: pages(),
+                            ),
+                            bottomNavigationBar: FlashyTabBar(
+                              backgroundColor: Colors.white,
+                              animationCurve: Curves.linear,
+                              selectedIndex: selectedIndex,
+                              showElevation: true,
+                              onItemSelected: (index) => setState(() {
                                 selectedIndex = index;
-                              });
-                              controller.jumpToPage(index);
-                            }),
-                      ),
-                    ),
-                  ),
+                                controller.jumpToPage(index);
+                              }),
+                              items: tabs(),
+                            )
+                            // SafeArea(
+                            //   child: Container(
+                            //     margin: EdgeInsets.symmetric(horizontal: 10),
+                            //     decoration: BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius:
+                            //             BorderRadius.all(Radius.circular(100)),
+                            //         boxShadow: [
+                            //           BoxShadow(
+                            //               spreadRadius: -10,
+                            //               blurRadius: 60,
+                            //               color: Colors.black.withOpacity(.20),
+                            //               offset: Offset(0, 15))
+                            //         ]),
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.symmetric(
+                            //           horizontal: 5.0, vertical: 5),
+                            //       child: GNav(
+                            //           tabs: tabs().map((e) {
+                            //             return GButton(
+                            //               gap: 10,
+                            //               iconActiveColor: e.color,
+                            //               iconColor: Colors.grey,
+                            //               textColor: e.color,
+                            //               backgroundColor: e.color.withOpacity(.2),
+                            //               iconSize: 24,
+                            //               padding: EdgeInsets.symmetric(
+                            //                   horizontal: 18, vertical: 5),
+                            //               icon: e.icon,
+                            //               text: e.text,
+                            //             );
+                            //           }).toList(),
+                            //           selectedIndex: selectedIndex,
+                            //           onTabChange: (index) {
+                            //             setState(() {
+                            //               selectedIndex = index;
+                            //             });
+                            //             controller.jumpToPage(index);
+                            //           }),
+                            //     ),
+                            //   ),
+                            // ),
+                            ));
+                  },
                 );
               },
             ));
