@@ -765,7 +765,7 @@ class _RestService implements RestService {
             baseUrl: baseUrl),
         data: _data);
     var value = _result.data
-        .map((dynamic i) => Comment.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => Job.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
