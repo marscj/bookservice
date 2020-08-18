@@ -10,3 +10,12 @@ abstract class OrderEvent extends Equatable {
 class RefreshOrderList extends OrderEvent {}
 
 class LoadOrderList extends OrderEvent {}
+
+class RefreshOrder extends OrderEvent {
+  final int id;
+
+  RefreshOrder(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

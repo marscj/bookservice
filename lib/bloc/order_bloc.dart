@@ -15,15 +15,15 @@ part 'order_state.dart';
 // ignore_for_file: close_sinks
 // ignore_for_file: non_constant_identifier_names
 
-class OrderBloc extends Bloc<OrderEvent, OrderState> {
+class OrderListBloc extends Bloc<OrderEvent, OrderListState> {
   final BuildContext context;
 
-  OrderBloc(this.context) : super(OrderState.initial());
+  OrderListBloc(this.context) : super(OrderListState.initial());
 
   RefreshController refreshController = RefreshController(initialRefresh: true);
 
   @override
-  Stream<OrderState> mapEventToState(
+  Stream<OrderListState> mapEventToState(
     OrderEvent event,
   ) async* {
     if (event is RefreshOrderList) {
@@ -31,7 +31,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         'pageNo': 1,
         'pageSize': state.pageSize,
         'sorter': '-id'
-      }).then<OrderState>((value) {
+      }).then<OrderListState>((value) {
         refreshController.refreshCompleted();
         return state.copyWith(
             list: value.data ?? [], pageNo: 2, totalCount: value.totalCount);
@@ -47,7 +47,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           'pageNo': state.pageNo,
           'pageSize': state.pageSize,
           'sorter': '-id'
-        }).then<OrderState>((value) {
+        }).then<OrderListState>((value) {
           refreshController.loadComplete();
           return state.copyWith(
               list: state.list + value.data,
@@ -67,6 +67,28 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> close() {
     refreshController.dispose();
     return super.close();
+  }
+}
+
+class OrderBloc extends Bloc<OrderEvent, OrderState> {
+  RefreshController refreshController = RefreshController(initialRefresh: true);
+
+  OrderBloc() : super(OrderState.initial());
+
+  @override
+  Stream<OrderState> mapEventToState(
+    OrderEvent event,
+  ) async* {
+    if (event is RefreshOrder) {
+      yield await RestService.instance
+          .getOrder('${event.id}')
+          .then<OrderState>((value) {
+        refreshController.refreshCompleted();
+        return state.copyWith(order: value);
+      }).catchError((onError) {
+        refreshController.refreshFailed();
+      });
+    }
   }
 }
 

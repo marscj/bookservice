@@ -34,8 +34,8 @@ class _CustomerPageState extends State<CustomerPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<OrderBloc>(
-        create: (_) => OrderBloc(context),
+    return BlocProvider<OrderListBloc>(
+        create: (_) => OrderListBloc(context),
         child: FocusTraversalGroup(
           policy: OrderedTraversalPolicy(),
           child: Column(

@@ -38,8 +38,9 @@ class OrderListPage extends StatefulWidget {
 class _OrderListPageState extends State<OrderListPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
-      OrderBloc bloc = BlocProvider.of<OrderBloc>(context);
+    return BlocBuilder<OrderListBloc, OrderListState>(
+        builder: (context, state) {
+      OrderListBloc bloc = BlocProvider.of<OrderListBloc>(context);
 
       return SmartRefresher(
         enablePullDown: true,
