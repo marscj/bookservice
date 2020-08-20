@@ -375,7 +375,7 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
 class _RestService implements RestService {
   _RestService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    this.baseUrl ??= 'http://127.0.0.1:8000/api/';
+    this.baseUrl ??= 'http://eletecapp.com/api/';
   }
 
   final Dio _dio;
