@@ -7,6 +7,7 @@ import 'package:bookservice/views/dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -87,6 +88,7 @@ class SendView extends StatelessWidget {
         onSubmitted: (value) {
           formBloc.submit();
         },
+        keyboardType: TextInputType.phone,
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
             labelText: Localization.of(context).phoneNumber,

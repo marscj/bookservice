@@ -339,9 +339,10 @@ class _AddressPostPageState extends State<AddressPostPage> {
                                   initialCenter: LatLng(
                                       mapBloc.lat.valueToDouble,
                                       mapBloc.lng.valueToDouble),
-                                  myLocationButtonEnabled: true,
-                                  layersButtonEnabled: true,
-                                  automaticallyAnimateToCurrentLocation: true)
+                                  myLocationButtonEnabled: path == '/post',
+                                  layersButtonEnabled: path == '/post',
+                                  automaticallyAnimateToCurrentLocation:
+                                      path == '/post')
                               .then((value) {
                             if (value != null) {
                               mapBloc.lat

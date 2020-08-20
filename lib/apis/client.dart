@@ -102,6 +102,10 @@ abstract class RestService {
           } else if (e?.response?.statusCode == 401) {
             CacheService.instance.clearToken();
           }
+
+          if (e?.response?.statusCode == 500) {
+            e?.response?.data = {'non_field_errors': e.message};
+          }
           return e;
         })));
 
