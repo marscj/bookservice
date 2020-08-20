@@ -89,7 +89,7 @@ abstract class RestService {
         }, onError: (DioError e) async {
           if (e?.response?.statusCode == 400) {
             var data = e?.response?.data['result'];
-            if (data != null) {
+            if (data != null && data is Map) {
               data.forEach((k, v) {
                 if (v is Iterable) {
                   data[k] = v.join('\n');

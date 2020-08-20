@@ -19,9 +19,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:flutter_form_bloc/src/utils/style.dart' as IStyle;
-import 'package:line_icons/line_icons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:bookservice/views/date_time/date_time_field_bloc_builder.dart'
