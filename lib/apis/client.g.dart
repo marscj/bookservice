@@ -100,6 +100,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
     lng: (json['lng'] as num)?.toDouble(),
     create_at: json['create_at'] as String,
     change_at: json['change_at'] as String,
+    deleted: json['deleted'] as bool,
   );
 }
 
@@ -125,6 +126,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'lng': instance.lng,
       'create_at': instance.create_at,
       'change_at': instance.change_at,
+      'deleted': instance.deleted,
     };
 
 OrderList _$OrderListFromJson(Map<String, dynamic> json) {

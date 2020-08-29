@@ -26,6 +26,7 @@ class Order extends Equatable {
   double lng;
   String create_at;
   String change_at;
+  bool deleted;
 
   Order(
       {this.id,
@@ -48,7 +49,8 @@ class Order extends Equatable {
       this.lat,
       this.lng,
       this.create_at,
-      this.change_at});
+      this.change_at,
+      this.deleted});
 
   static Order fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
   Map<String, dynamic> toJson() => _$OrderToJson(this);
@@ -75,7 +77,8 @@ class Order extends Equatable {
         lat,
         lng,
         create_at,
-        change_at
+        change_at,
+        deleted
       ];
 }
 
