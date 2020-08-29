@@ -236,6 +236,25 @@ class _UserPhotoPageState extends State<UserPhotoPage> {
                               child: PhotoView(
                                   heroAttributes: const PhotoViewHeroAttributes(
                                       tag: "photo"),
+                                  loadingBuilder: (context, progress) => Center(
+                                        child: Container(
+                                          width: 20.0,
+                                          height: 20.0,
+                                          child: CircularProgressIndicator(
+                                            value: progress == null
+                                                ? null
+                                                : progress.expectedTotalBytes ==
+                                                            null ||
+                                                        progress.cumulativeBytesLoaded ==
+                                                            null
+                                                    ? null
+                                                    : progress
+                                                            .cumulativeBytesLoaded /
+                                                        progress
+                                                            .expectedTotalBytes,
+                                          ),
+                                        ),
+                                      ),
                                   imageProvider:
                                       state.user?.photo['full_size'] != null
                                           ? NetworkImage(
